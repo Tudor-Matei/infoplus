@@ -1,0 +1,30 @@
+{
+  "name": "infoplus",
+  "version": "1.0.0",
+  "description": "pbinfo replica x",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prod": "next build",
+    "dev": "next dev"
+  },
+  "author": "muwur",
+  "license": "ISC",
+  "dependencies": {
+    "jsonwebtoken": "^8.5.1",
+    "mongodb": "^3.4.1",
+    "next": "^9.1.7",
+    "react": "^16.12.0",
+    "react-dom": "^16.12.0",
+    "swr": "^0.1.16"
+  },
+  "devDependencies": {
+    "@zeit/next-sass": "^1.0.1",
+    "eslint": "^6.8.0",
+    "eslint-plugin-react": "^7.17.0",
+    "@fortawesome/fontawesome-svg-core": "^1.2.26",
+    "node-sass": "^4.13.1",
+    "@fortawesome/free-solid-svg-icons": "^5.12.0",
+    "@fortawesome/react-fontawesome": "^0.1.8"
+  }
+}
