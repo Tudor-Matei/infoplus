@@ -1,4 +1,5 @@
 import css from "styled-jsx/css";
+
 export const light = css.global`
     :root {
         --background-primary: #fff;
@@ -26,7 +27,7 @@ export const dark = css.global`
         --background-primary: #1e1e1e;
         --background-secondary: #2a2a2a;
         --background-tertiary: #434545;
-        --background-quaternary: #858585;
+        --background-quaternary: #404040;
 
         --text-primary: #f1f1f1;
         --text-secondary: #e6e6e6;

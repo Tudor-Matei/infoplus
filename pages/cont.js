@@ -1,8 +1,5 @@
 import { useState } from "react";
 import mainStyling from "../styles/mainStyling";
-import Header from "../components/globals/Header";
-import Contact from "../components/globals/Contact";
-import Footer from "../components/globals/Footer";
 
 export default function Cont() {
     const [isTabelActive, toggleTabel] = useState(true);
@@ -10,7 +7,6 @@ export default function Cont() {
     const [isProgressActive, toggleProgress] = useState(false);
     return (
         <>
-            <Header />
             <h1 className="details-account">Detalii cont</h1>
             <div className="header-options">
                 <h3 className="header-options__h3 header-options__h3--1">
@@ -24,8 +20,6 @@ export default function Cont() {
                 </h3>
                 <hr />
             </div>
-            <Contact />
-            <Footer />
             <style jsx>{mainStyling}</style>
             <style jsx>{`
                 .details-account {

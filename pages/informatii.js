@@ -11,7 +11,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 export default function Informatii() {
     return (
         <>
-            <Header />
             <section className="main">
                 <PanouLink titlu="Exerciții" link="exercitii" tip="1" />
                 <PanouLink titlu="Resurse" link="resurse" tip="2" />
@@ -21,8 +20,6 @@ export default function Informatii() {
                     tip="3"
                 />
             </section>
-            <Contact />
-            <Footer />
             <style jsx>{mainStyling}</style>
             <style jsx>{`
                 .main {
