@@ -1,4 +1,5 @@
 $lightWhite: #F9F9F9
+$lightWhiteSecondary: var(--background-secondary)
 $lightDark: #2A2A2A
 $boxShadowY: 0px 4px 10px rgba(0, 0, 0, 0.2)
 $boxShadowYActive: 0 4px 15px 5px rgba(0, 0, 0, 0.2)
@@ -6,12 +7,105 @@ $greenAccent: #56F55C
 $yellowAccent: #FFCC00
 $blueAccent: #3DB8FF
 $hrColor: #dadada
+$footer: #1E1E1E
+
+//font sizes
+$h1Big: 5em
+$h1: 2.5em
+$h2: 2em
+$h3: 1.5em
+$p: 1em
+$li: 1em
+
+@mixin flex-center-x
+    display: flex
+    justify-content: center
+    @content
+
+@mixin flex-center-y
+    display: flex
+    align-items: center
+    @content
+
+@mixin flex-center 
+    display: flex
+    justify-content: center
+    align-items: center
+    @content
+
+@mixin backgroundAndFontColors($backgroundColor, $fontColor)
+    background-color: $backgroundColor
+    color: $fontColor
+
+@mixin iconBubble($backgroundColor)
+    width: 30px
+    height: 30px
+    background-color: $backgroundColor
+    border-radius: 50%
+    @content
 
 
 .button--primary-ix
-    background-color: $greenAccent
-    color: $lightDark
+    @include backgroundAndFontColors($greenAccent, $lightDark)
 
 .button--secondary-ix
-    background-color: $lightDark
-    color: $greenAccent
+    @include backgroundAndFontColors($lightDark, $greenAccent)
+
+.button--primary-x 
+    @include backgroundAndFontColors($blueAccent, $lightDark)
+
+
+*
+    box-sizing: border-box
+
+html, body 
+    margin: 0
+    padding: 0
+    font-family: "Red Hat Display", Arial, sans-serif
+    color: $lightDark
+    background-color: $lightWhite
+    z-index: -100
+    
+
+h1, h2, h3, h4, h5, h6, p
+    margin: 0
+    padding: 0
+
+h1, h2, h3, h4, h5, h6
+    font-weight: 800
+    
+a 
+    color: inherit
+    font-weight: 800
+
+ul 
+    margin: 0
+
+hr
+    border-color: $hrColor
+    border-style: solid
+
+
+button 
+    width: 170px
+    height: 45px
+    display: inline-block
+    box-shadow: $boxShadowY
+    text-transform: uppercase
+    text-align: center
+    line-height: 35px
+    border: none
+    font-family: "Red Hat Display"
+    border-radius: 50px
+    cursor: pointer
+    transition: box-shadow 300ms ease
+
+    &:focus
+        outline: none
+
+    &:hover
+        box-shadow: $boxShadowYActive
+
+    svg 
+        margin-left: 10px
+
