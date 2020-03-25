@@ -92,6 +92,17 @@ function PerkPanel({ title, icon, children }) {
                     }
                 }
 
+                @media screen and (max-width: 576px) {
+                    .perk__title {
+                        font-size: var(--font-small);
+                    }
+
+                    .perks__perk {
+                        margin-left: 30px;
+                        margin-right: 30px;
+                    }
+                }
+
                 .perk__icon-title {
                     display: flex;
                     align-items: center;

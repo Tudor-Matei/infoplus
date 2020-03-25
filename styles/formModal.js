@@ -45,7 +45,7 @@ export default css`
     .modal__title {
         position: absolute;
         z-index: 99;
-        margin-top: -5px;
+        margin-top: -10px;
         text-transform: uppercase;
         color: var(--text-button);
     }

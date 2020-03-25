@@ -1,9 +1,4 @@
-//import "../styles/informatii/index.sass"
 import "../configs/icons";
-import Header from "../components/globals/Header";
-import Contact from "../components/globals/Contact";
-import Footer from "../components/globals/Footer";
-import mainStyling from "../styles/mainStyling";
 
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -20,7 +15,6 @@ export default function Informatii() {
                     tip="3"
                 />
             </section>
-            <style jsx>{mainStyling}</style>
             <style jsx>{`
                 .main {
                     width: 100%;
@@ -44,7 +38,7 @@ function PanouLink({ titlu, link, tip }) {
                 <div
                     className={`main__panou-link main__panou-link--tip-${tip}`}
                 >
-                    <h1 className="main__heading-panou">{titlu}</h1>
+                    <h2 className="main__heading-panou">{titlu}</h2>
                     <div className="main__icon-sageata">
                         <FontAwesomeIcon icon="arrow-right" />
                     </div>

@@ -72,7 +72,7 @@ export default function Main() {
                 }
 
                 .main__primary-heading {
-                    font-size: 5rem;
+                    font-size: var(--font-larger);
                     font-weight: 800;
                 }
 
@@ -81,7 +81,7 @@ export default function Main() {
                     justify-content: center;
                     align-items: center;
                     justify-content: space-around;
-                    margin: 20px 0 80px;
+                    margin: 0 0 80px;
                 }
 
                 .main__bullet {
@@ -90,27 +90,33 @@ export default function Main() {
                 }
 
                 .main__buttons {
-                    padding: 0 20px;
                     display: flex;
                     justify-content: space-around;
                 }
 
                 @media screen and (max-width: 520px) {
                     .main__content-panel {
-                        margin-top: 70px;
+                        margin: 70px 30px;
+                    }
+
+                    .main__primary-heading {
+                        font-size: var(--font-large);
                     }
 
                     .main__bullets {
                         display: inline-flex;
                         flex-direction: column;
                         align-items: flex-start;
+                        padding-right: 20px;
                     }
+
                     .main__buttons {
                         flex-direction: column;
                         align-items: center;
                         display: inline-flex;
                         margin-bottom: 40px;
                     }
+
                     .main__button-sign-in {
                         margin-bottom: 40px;
                     }
@@ -175,6 +181,11 @@ function BulletTitle({ title, icon, i }) {
                 :global(.main__bullet-icon--3) {
                     color: var(--accent-tertiary);
                     transition: color 300ms ease;
+                }
+                @media screen and (max-width: 520px) {
+                    .main__bullet {
+                        margin-left: 0;
+                    }
                 }
             `}</style>
         </div>

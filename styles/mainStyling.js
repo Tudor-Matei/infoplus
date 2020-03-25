@@ -69,13 +69,13 @@ export default css.global`
     }
 
     h1 {
-        font-size: 3rem;
+        font-size: var(--font-large);
     }
     h2 {
-        font-size: 2rem;
+        font-size: var(--font-medium);
     }
     h3 {
-        font-size: 1.5rem;
+        font-size: var(--font-small);
     }
 
     a {
@@ -139,10 +139,34 @@ export default css.global`
         font-weight: bold;
         transition: color 300ms linear;
         color: var(--text-primary);
-        width: 150px;
+        width: 120px;
     }
     .button--secondary:hover {
         box-shadow: none;
         color: var(--accent-tertiary);
+    }
+
+    .underlined {
+        text-decoration: underline;
+    }
+
+    .type--easy {
+        color: var(--accent-primary);
+        border-bottom-color: var(--accent-primary);
+    }
+
+    .type--medium {
+        color: var(--accent-tertiary);
+        border-bottom-color: var(--accent-tertiary);
+    }
+
+    .type--challenging {
+        color: var(--accent-secondary);
+        border-bottom-color: var(--accent-secondary);
+    }
+
+    .type--hard {
+        color: var(--accent-quaternary);
+        border-bottom-color: var(--accent-quaternary);
     }
 `;

@@ -18,7 +18,7 @@ export default function Register({ showRegisterModalHandler }) {
             <div className="modal">
                 <div className="modal__title-container">
                     <RegisterModalWave />
-                    <h1 className="modal__title">Înregistrează-te</h1>
+                    <h2 className="modal__title">Înregistrează-te</h2>
                 </div>
                 <div className="modal__input-panels">
                     <div className="modal__input-panel">

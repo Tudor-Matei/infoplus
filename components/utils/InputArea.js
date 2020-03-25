@@ -38,6 +38,7 @@ export default function InputArea({
                     margin-bottom: 10px;
                     text-transform: uppercase;
                     color: var(--text-primary);
+                    font-size: var(--font-smaller);
                 }
             `}</style>
         </>

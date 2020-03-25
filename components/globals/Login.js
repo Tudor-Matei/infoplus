@@ -13,7 +13,7 @@ export default function Login({ showLoginModalHandler }) {
             <div className="modal">
                 <div className="modal__title-container">
                     <LoginModalWave />
-                    <h1 className="modal__title">Logheaza-te</h1>
+                    <h2 className="modal__title">Logheaza-te</h2>
                 </div>
                 <div className="modal__input-panels">
                     <div className="modal__input-panel">
