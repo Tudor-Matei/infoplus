@@ -126,12 +126,14 @@ function DropdownMenuAccordion({ title, children }) {
             >
                 <ul className="dropdown-menu-header__content-ul">
                     {children.map((child, i) => (
-                        <li
-                            className="dropdown-menu-header__secondary-li"
-                            key={`child_${i}`}
-                        >
-                            {child}
-                        </li>
+                        <Link href="/exercitii" key={`child_link-${i}`}>
+                            <li
+                                className="dropdown-menu-header__secondary-li"
+                                key={`child_li-${i}`}
+                            >
+                                {child}
+                            </li>
+                        </Link>
                     ))}
                 </ul>
             </div>

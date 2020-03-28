@@ -9,9 +9,11 @@ import mainStyling from "../styles/mainStyling";
 import useComponentDidMount from "../components/hooks/componentDidMount";
 import LoadingBar from "../components/globals/LoadingBar";
 const ThemeContext = createContext(true);
-const loadingBar = document.querySelector(".loading-bar");
 
-export { ThemeContext };
+Router.events.on("routeChangeStart", loadingStart);
+Router.events.on("routeChangeComplete", loadingFinished);
+Router.events.on("routeChangeError", loadingFinished);
+
 export default function App({ Component, pageProps }) {
     const [isLightTheme, setTheme] = useState(true);
     useComponentDidMount(() => {
@@ -35,12 +37,14 @@ export default function App({ Component, pageProps }) {
     );
 }
 
-Router.events.on("routeChangeStart", () =>
-    loadingBar.classList.add("loading-bar--is-loading")
-);
-Router.events.on("routeChangeComplete", () =>
-    loadingBar.classList.remove("loading-bar--is-loading")
-);
-Router.events.on("routeChangeError", () =>
-    loadingBar.classList.remove("loading-bar--is-loading")
-);
+export { ThemeContext };
+
+function loadingStart() {
+    const loadingBar = document.querySelector(".loading-bar");
+    loadingBar.classList.add("loading-bar--is-loading");
+}
+
+function loadingFinished() {
+    const loadingBar = document.querySelector(".loading-bar");
+    loadingBar.classList.remove("loading-bar--is-loading");
+}

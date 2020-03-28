@@ -133,6 +133,11 @@ export default css.global`
         color: var(--text-button);
     }
 
+    .button--primary-xi {
+        background-color: var(--accent-tertiary);
+        color: var(--text-button);
+    }
+
     .button--secondary {
         background-color: transparent;
         box-shadow: none;

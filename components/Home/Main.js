@@ -96,7 +96,7 @@ export default function Main() {
 
                 @media screen and (max-width: 520px) {
                     .main__content-panel {
-                        margin: 70px 30px;
+                        margin: 70px 30px 10px;
                     }
 
                     .main__primary-heading {
@@ -107,7 +107,7 @@ export default function Main() {
                         display: inline-flex;
                         flex-direction: column;
                         align-items: flex-start;
-                        padding-right: 20px;
+                        margin-bottom: 40px;
                     }
 
                     .main__buttons {

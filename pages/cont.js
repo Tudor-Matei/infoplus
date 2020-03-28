@@ -1,7 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 import AccountDetails from "../components/Account/Details";
 import ExercisesDetails from "../components/Account/Exercises";
+import ProgressDetails from "../components/Account/Progress";
 
 export default function Cont() {
     const [state, setState] = useState({
@@ -23,8 +24,11 @@ export default function Cont() {
                 parentState={state}
                 changeCategory={changeCategory}
             />
+
             {state.isTabelActive && <AccountDetails />}
             {state.isExercisesActive && <ExercisesDetails />}
+            {state.isProgressActive && <ProgressDetails />}
+
             <style jsx>{`
                 .details-account {
                     text-align: center;
@@ -39,36 +43,23 @@ export default function Cont() {
 function HeaderOptionsDetails({ parentState, changeCategory }) {
     return (
         <div className="header-options">
-            <h3
-                className={`header-options__h3 ${
-                    parentState.isTabelActive
-                        ? "header-options__h3--active"
-                        : ""
-                }`}
-                onClick={() => changeCategory("isTabelActive")}
-            >
-                Cont
-            </h3>
-            <h3
-                className={`header-options__h3 ${
-                    parentState.isExercisesActive
-                        ? "header-options__h3--active"
-                        : ""
-                }`}
-                onClick={() => changeCategory("isExercisesActive")}
-            >
-                Exercitii
-            </h3>
-            <h3
-                className={`header-options__h3 ${
-                    parentState.isProgressActive
-                        ? "header-options__h3--active"
-                        : ""
-                }`}
-                onClick={() => changeCategory("isProgressActive")}
-            >
-                Progres
-            </h3>
+            {[
+                { detail: "Tabel", alias: "Cont" },
+                { detail: "Exercises", alias: "Exercitii" },
+                { detail: "Progress", alias: "Progres" }
+            ].map(({ detail, alias }) => (
+                <h3
+                    key={`detail_${detail}`}
+                    className={`header-options__h3 ${
+                        parentState[`is${detail}Active`]
+                            ? "header-options__h3--active"
+                            : ""
+                    }`}
+                    onClick={() => changeCategory(`is${detail}Active`)}
+                >
+                    {alias}
+                </h3>
+            ))}
             <hr />
 
             <style jsx>{`

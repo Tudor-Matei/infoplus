@@ -40,7 +40,7 @@ export default function Login({ showLoginModalHandler }) {
             <style jsx>{formModal}</style>
             <style jsx>{`
                 .modal {
-                    width: 30%;
+                    width: 40%;
                 }
 
                 .modal__buttons-container {

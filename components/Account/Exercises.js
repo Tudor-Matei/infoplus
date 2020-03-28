@@ -26,6 +26,18 @@ export default function ExercisesDetails() {
                         opacity: 1;
                     }
                 }
+
+                @media screen and (max-width: 930px) {
+                    .exercises-account {
+                        flex-direction: column;
+                    }
+                }
+
+                @media screen and (max-width: 768px) {
+                    .exercises-account {
+                        width: 90%;
+                    }
+                }
             `}</style>
         </div>
     );
@@ -88,12 +100,11 @@ function ExercisesPanel({ title, amountOfExercises, children, solvedState }) {
                     color: var(--accent-secondary);
                 }
 
-                :global(.exercises-account__details li) {
-                    padding: 15px 0;
-                }
-
-                :global(.exercises-account__details li span) {
-                    font-weight: bold;
+                @media screen and (max-width: 930px) {
+                    .exercises-account__panel {
+                        width: 100%;
+                        margin-bottom: 50px;
+                    }
                 }
             `}</style>
         </div>
@@ -102,43 +113,70 @@ function ExercisesPanel({ title, amountOfExercises, children, solvedState }) {
 
 function SolvedExercises() {
     return (
-        <ExercisesPanel
-            title="Rezolvate"
-            amountOfExercises={470}
-            solvedState="solved"
-        >
-            <li>
-                Ultima problema rezolvata:{" "}
-                <span className="underlined">27 decembrie</span>
-            </li>
-            <li>
-                Cea mai activa perioada:{" "}
-                <span className="underlined">1 ianuarie - 27 februarie</span>
-            </li>
-            <li>
-                Cel mai ridicat grad de dificultate al unei probleme rezolvate:{" "}
-                <span className="underlined type--challenging">PROVOCATOR</span>
-            </li>
-        </ExercisesPanel>
+        <>
+            <ExercisesPanel
+                title="Rezolvate"
+                amountOfExercises={470}
+                solvedState="solved"
+            >
+                <li>
+                    Ultima problema rezolvata:{" "}
+                    <span className="underlined">27 decembrie</span>
+                </li>
+                <li>
+                    Cea mai activa perioada:{" "}
+                    <span className="underlined">
+                        1 ianuarie - 27 februarie
+                    </span>
+                </li>
+                <li>
+                    Cel mai ridicat grad de dificultate al unei probleme
+                    rezolvate:{" "}
+                    <span className="underlined type--challenging">
+                        PROVOCATOR
+                    </span>
+                </li>
+            </ExercisesPanel>
+            <style jsx>{`
+                li {
+                    padding: 15px 0;
+                }
+
+                li span {
+                    font-weight: bold;
+                }
+            `}</style>
+        </>
     );
 }
 
 function UnsolvedExercises() {
     return (
-        <ExercisesPanel
-            title="Nerezolvate"
-            amountOfExercises={291}
-            solvedState="unsolved"
-        >
-            <li>
-                Ultima problema nerezolvata:{" "}
-                <span className="underlined">27 decembrie</span>
-            </li>
-            <li>
-                Cel mai ridicat grad de dificultate al unei probleme
-                nerezolvate:{" "}
-                <span className="underlined type--hard">DIFICIL</span>
-            </li>
-        </ExercisesPanel>
+        <>
+            <ExercisesPanel
+                title="Nerezolvate"
+                amountOfExercises={291}
+                solvedState="unsolved"
+            >
+                <li>
+                    Ultima problema nerezolvata:{" "}
+                    <span className="underlined">27 decembrie</span>
+                </li>
+                <li>
+                    Cel mai ridicat grad de dificultate al unei probleme
+                    nerezolvate:{" "}
+                    <span className="underlined type--hard">DIFICIL</span>
+                </li>
+            </ExercisesPanel>
+            <style jsx>{`
+                li {
+                    padding: 15px 0;
+                }
+
+                li span {
+                    font-weight: bold;
+                }
+            `}</style>
+        </>
     );
 }

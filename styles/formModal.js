@@ -71,13 +71,14 @@ export default css`
         height: 100%;
     }
 
-    @media screen and (max-width: 756px) {
+    @media screen and (max-width: 768px) {
         .modal {
             width: 90% !important;
             margin-top: -30px;
         }
         .modal__title {
             text-align: center;
+            font-size: var(--font-small);
         }
         .modal__input-panel {
             width: auto !important;
