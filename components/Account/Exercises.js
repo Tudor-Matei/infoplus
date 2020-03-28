@@ -12,7 +12,7 @@ export default function ExercisesDetails() {
                     height: auto;
                     display: flex;
                     justify-content: space-between;
-                    margin: 30px auto;
+                    margin: 30px auto 150px;
                     animation: comeIn 300ms ease;
                 }
 

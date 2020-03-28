@@ -15,6 +15,7 @@ export default function Informatii() {
                     tip="3"
                 />
             </section>
+            <Wave />
             <style jsx>{`
                 .main {
                     width: 100%;
@@ -97,7 +98,6 @@ function PanouLink({ titlu, link, tip }) {
                     border-bottom-color: var(--accent-tertiary);
                 }
             `}</style>
-            <Wave />
         </>
     );
 }
@@ -105,9 +105,10 @@ function PanouLink({ titlu, link, tip }) {
 function Wave() {
     return (
         <svg
-            viewBox="0 0 1920 200"
+            viewBox="0 -100 1800 500"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
+            preserveAspectRatio="none"
         >
             <path d="M443.59 350.818C126.104 369.501 86.0836 140.46 -3 18.8826V643H1920V313.549C1862.56 247.957 1742.79 0 1449.8 0C1022.3 0 840.448 327.463 443.59 350.818Z" />
             <style jsx>
@@ -116,7 +117,6 @@ function Wave() {
                         position: absolute;
                         bottom: 0;
                         fill: var(--background-secondary);
-                        z-index: -1;
                         width: 100%;
                         height: 100%;
                     }

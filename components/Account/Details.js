@@ -38,7 +38,7 @@ export default function AccountDetails() {
             <style jsx>{`
                 .details-account {
                     width: 70%;
-                    margin: 30px auto;
+                    margin: 30px auto 150px;
                     display: flex;
                     background-color: var(--background-primary);
                     box-shadow: var(--box-shadow);

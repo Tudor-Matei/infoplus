@@ -44,10 +44,6 @@ export const dark = css.global`
         --text-secondary: #e6e6e6;
         --text-button: #2a2a2a;
 
-        --accent-primary: #56f55c;
-        --accent-secondary: #3db8ff;
-        --accent-tertiary: #ffcc00;
-
         ${staticThemeVariables}
     }
 `;

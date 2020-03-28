@@ -1,12 +1,12 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import AccountDetails from "../components/Account/Details";
 import ExercisesDetails from "../components/Account/Exercises";
 
 export default function Cont() {
     const [state, setState] = useState({
-        isTabelActive: false,
-        isExercisesActive: true,
+        isTabelActive: true,
+        isExercisesActive: false,
         isProgressActive: false
     });
     const changeCategory = category =>
@@ -15,6 +15,7 @@ export default function Cont() {
             isExercisesActive: category === "isExercisesActive",
             isProgressActive: category === "isProgressActive"
         });
+
     return (
         <>
             <h1 className="details-account">Detalii cont</h1>
