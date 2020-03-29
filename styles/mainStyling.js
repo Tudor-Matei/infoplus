@@ -121,21 +121,25 @@ export default css.global`
     .button--primary-ix {
         background-color: var(--accent-primary);
         color: var(--text-button);
+        height: 40px;
     }
 
     .button--secondary-ix {
         background-color: var(--background-quaternary);
         color: var(--accent-primary);
+        height: 40px;
     }
 
     .button--primary-x {
         background-color: var(--accent-secondary);
         color: var(--text-button);
+        height: 40px;
     }
 
     .button--primary-xi {
         background-color: var(--accent-tertiary);
         color: var(--text-button);
+        height: 40px;
     }
 
     .button--secondary {

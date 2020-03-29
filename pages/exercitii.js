@@ -1,4 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import useComponentDidMount from "../components/hooks/componentDidMount";
+import {
+    ExercisesGradeIX,
+    ExercisesGradeX,
+    ExercisesGradeXI
+} from "../components/Exercises/Panels";
 
 export default function Exercitii() {
     const [state, setState] = useState({
@@ -6,13 +12,34 @@ export default function Exercitii() {
         isGradeXActive: false,
         isGradeXIActive: false
     });
+
     const changeGrade = grade =>
         setState({
             isGradeIXActive: grade === "isGradeIXActive",
             isGradeXActive: grade === "isGradeXActive",
             isGradeXIActive: grade === "isGradeXIActive"
         });
-    return <HeaderGrades parentState={state} changeGrade={changeGrade} />;
+
+    useEffect(() => {
+        const hash = window.location.hash.replace("#", "");
+        if (hash) changeGrade(`isGrade${hash.toUpperCase()}Active`);
+    }, []);
+    return (
+        <>
+            <HeaderGrades parentState={state} changeGrade={changeGrade} />
+            <div className="exercises-container">
+                {state.isGradeIXActive && <ExercisesGradeIX />}
+                {state.isGradeXActive && <ExercisesGradeX />}
+                {state.isGradeXIActive && <ExercisesGradeXI />}
+            </div>
+            <style jsx>{`
+                .exercises-container {
+                    text-align: center;
+                    margin-bottom: 40px;
+                }
+            `}</style>
+        </>
+    );
 }
 
 function HeaderGrades({ parentState, changeGrade }) {
@@ -35,7 +62,7 @@ function HeaderGrades({ parentState, changeGrade }) {
             <style jsx>{`
                 .header-grades {
                     width: 70%;
-                    margin: 120px auto;
+                    margin: 120px auto 40px;
                     display: flex;
                 }
 
@@ -87,6 +114,12 @@ function HeaderGrades({ parentState, changeGrade }) {
 
                 .header-grades__heading-xi::before {
                     background-color: var(--accent-tertiary);
+                }
+
+                @media screen and (max-width: 1024px) {
+                    .header-grades {
+                        width: 90%;
+                    }
                 }
             `}</style>
         </div>

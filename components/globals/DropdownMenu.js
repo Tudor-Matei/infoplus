@@ -1,5 +1,5 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
 
 import { light, dark } from "../../styles/theme";
@@ -15,11 +15,19 @@ export default function DropdownMenu({ isDropdownToggled }) {
             >
                 <ul className="dropdown-menu-header__ul">
                     <DropdownMenuAccordion title="Exercitii">
-                        {["Clasa IX", "Clasa X", "Clasa XI"]}
+                        {[
+                            { titleLi: "Clasa IX", href: "/exercitii#ix" },
+                            { titleLi: "Clasa X", href: "/exercitii#x" },
+                            { titleLi: "Clasa XI", href: "/exercitii#xi" }
+                        ]}
                     </DropdownMenuAccordion>
                     <hr className="dropdown-menu-header__hr" />
                     <DropdownMenuAccordion title="Resurse">
-                        {["Clasa IX", "Clasa X", "Clasa XI"]}
+                        {[
+                            { titleLi: "Clasa IX", href: "/resurse#ix" },
+                            { titleLi: "Clasa X", href: "/resurse#x" },
+                            { titleLi: "Clasa XI", href: "/resurse#xi" }
+                        ]}
                     </DropdownMenuAccordion>
                     <hr className="dropdown-menu-header__hr" />
                     <ThemeConsumer Component={ThemeChangerButton} />
@@ -125,13 +133,13 @@ function DropdownMenuAccordion({ title, children }) {
                 }`}
             >
                 <ul className="dropdown-menu-header__content-ul">
-                    {children.map((child, i) => (
-                        <Link href="/exercitii" key={`child_link-${i}`}>
+                    {children.map(({ titleLi, href }, i) => (
+                        <Link href={href} key={`child_link-${i}-${href}`}>
                             <li
                                 className="dropdown-menu-header__secondary-li"
                                 key={`child_li-${i}`}
                             >
-                                {child}
+                                {titleLi}
                             </li>
                         </Link>
                     ))}
