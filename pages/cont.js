@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 import AccountDetails from "../components/Account/Details";
-import ExercisesDetails from "../components/Account/Exercises";
+import ExercisesDetails from "../components/Account/ExercisesDetails";
 import ProgressDetails from "../components/Account/Progress";
 
 export default function Cont() {

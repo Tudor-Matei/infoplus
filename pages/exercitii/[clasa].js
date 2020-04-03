@@ -12,18 +12,47 @@ export default function ExercisesList() {
                 category="Elemente de bază ale limbajului"
                 subcategory="Operatori și expresii"
             />
-            <Exercise
-                title="ScriereEcran"
-                isSolved
-                description="Mollit enim tempor esse magna id pariatur exercitation. Sint est aute cupidatat dolor adipisicing amet ea ut deserunt nulla do eiusmod aliqua nulla. 
-                Duis tempor ullamco dolore sit adipisicing dolore voluptate anim ex. Qui officia dolore est occaecat velit voluptate id mollit irure. Ut deserunt
-                voluptate est qui quis labore fugiat sint. Dolor qui culpa est ipsum excepteur irure id est voluptate enim elit quis incididunt dolor."
-                authorName="Jane Doe"
-                datePublished="21 mai 2017"
-                source="Model Bacalaureat 2009"
-                difficulty={1}
-                grade="ix"
-            />
+            {clasa && (
+                <>
+                    <Exercise
+                        title="ScriereEcran"
+                        isSolved
+                        authorName="Jane Doe"
+                        datePublished="21 mai 2017"
+                        source="Model Bacalaureat 2009"
+                        difficulty={1}
+                        grade={clasa}
+                        exerciseId="1"
+                    >
+                        Mollit enim tempor esse magna id pariatur exercitation.
+                        Sint est aute cupidatat dolor adipisicing amet ea ut
+                        deserunt nulla do eiusmod aliqua nulla. Duis tempor
+                        ullamco dolore sit adipisicing dolore voluptate anim ex
+                        officia dolore est occaecat velit voluptate id mollit
+                        irure. Ut deserunt voluptate est qui quis labore fugiat
+                        sint. Dolor qui culpa est ipsum excepteur irure id est
+                        voluptate enim elit quis incididunt dolor.
+                    </Exercise>
+                    <Exercise
+                        title="ScriereEcran"
+                        authorName="Jane Doe"
+                        datePublished="21 mai 2017"
+                        source="Model Bacalaureat 2009"
+                        difficulty={3}
+                        grade={clasa}
+                        exerciseId="2"
+                    >
+                        Mollit enim tempor esse magna id pariatur exercitation.
+                        Sint est aute cupidatat dolor adipisicing amet ea ut
+                        deserunt nulla do eiusmod aliqua nulla. Duis tempor
+                        ullamco dolore sit adipisicing dolore voluptate anim ex
+                        officia dolore est occaecat velit voluptate id mollit
+                        irure. Ut deserunt voluptate est qui quis labore fugiat
+                        sint. Dolor qui culpa est ipsum excepteur irure id est
+                        voluptate enim elit quis incididunt dolor.
+                    </Exercise>
+                </>
+            )}
         </>
     );
 }
@@ -33,7 +62,7 @@ function HeaderMainInfo({ grade }) {
         <div className="header-main-info">
             <div className="header-main-info__buttons">
                 <select>
-                    <option>Categorii</option>
+                    <option>Subcategorii</option>
                 </select>
                 <FilterButton />
             </div>
@@ -55,6 +84,7 @@ function HeaderMainInfo({ grade }) {
                     width: 90%;
                     display: flex;
                     justify-content: space-between;
+                    align-items: center;
                 }
 
                 h2 {
@@ -81,6 +111,24 @@ function HeaderMainInfo({ grade }) {
                 select:focus {
                     outline: none;
                 }
+
+                @media screen and (max-width: 560px) {
+                    .header-main-info {
+                        flex-direction: column-reverse;
+                        align-items: flex-start;
+                        margin-top: 120px;
+                    }
+
+                    h2 {
+                        margin-bottom: 15px;
+                    }
+
+                    .header-main-info__buttons {
+                        width: 100%;
+                        display: flex;
+                        justify-content: space-between;
+                    }
+                }
             `}</style>
         </div>
     );
@@ -101,6 +149,19 @@ function CurrentCategoryTitle({ category, subcategory }) {
                 p {
                     font-size: var(--font-small);
                 }
+
+                @media screen and (max-width: 560px) {
+                    .current-category {
+                        margin-bottom: 60px;
+                    }
+
+                    h2 {
+                        font-size: var(--font-small);
+                    }
+                    p {
+                        font-size: var(--font-smaller);
+                    }
+                }
             `}</style>
         </div>
     );
@@ -108,25 +169,8 @@ function CurrentCategoryTitle({ category, subcategory }) {
 
 function FilterButton() {
     return (
-        <button className="button--filter">
+        <button className="button--outline">
             Filtrați <FontAwesomeIcon icon="filter" />
-            <style jsx>{`
-                .button--filter {
-                    background-color: transparent;
-                    color: var(--text-primary);
-                    border: 1px solid var(--background-quaternary);
-                    border-radius: 50px;
-                    box-shadow: none;
-                    width: 150px;
-                    line-height: 32px;
-                    height: 35px;
-                    text-transform: initial;
-                    transition: background-color 300ms ease;
-                }
-                .button--filter:hover {
-                    background-color: var(--background-secondary);
-                }
-            `}</style>
         </button>
     );
 }

@@ -1,14 +1,16 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import Link from "next/link";
 
 export default function Exercise({
     title,
-    isSolved,
-    description,
+    isSolved = false,
+    children,
     authorName,
     datePublished,
     source,
     difficulty,
-    grade
+    grade,
+    exerciseId
 }) {
     const difficultyText =
         difficulty === 1
@@ -22,13 +24,18 @@ export default function Exercise({
         <div className="exercise">
             <h2>{title}</h2>
             {isSolved && <CheckmarkSolved />}
-            <p className="exercise__description">{description}</p>
-            <div className="exercise__details">
-                <div className="exercise__author-profile-picture"></div>
-                <p>{authorName}</p> &#8226;
-                <p>{datePublished}</p> &#8226;
-                <p>{source}</p> &#8226;
-                <p className="exercise__difficulty">{difficultyText}</p>
+            <p className="exercise__description">{children}</p>
+
+            <div className="exercise__details-and-button">
+                <div className="exercise__details">
+                    <div className="exercise__author-profile-picture"></div>
+                    <p>{authorName}</p> &#8226;
+                    <p>{datePublished}</p> &#8226;
+                    <p>{source}</p> &#8226;
+                    <p className="exercise__difficulty">{difficultyText}</p>
+                </div>
+
+                <ButtonSolve href={`/exercitiu/${exerciseId}`} grade={grade} />
             </div>
 
             <style jsx>{`
@@ -45,7 +52,7 @@ export default function Exercise({
             <style jsx>{`
                 .exercise {
                     width: 90%;
-                    margin: auto;
+                    margin: 100px auto;
                     background-color: var(--background-secondary);
                     box-shadow: var(--box-shadow);
                     padding: 30px;
@@ -64,20 +71,69 @@ export default function Exercise({
 
                 .exercise__description {
                     color: var(--text-primary);
-                    max-height: 200px;
+                    max-height: 150px;
+                    overflow-y: auto;
+                }
+
+                .exercise__details-and-button {
+                    width: 100%;
+                    display: flex;
+                    justify-content: space-between;
+                    margin-top: 50px;
                 }
 
                 .exercise__details {
                     color: var(--text-tertiary);
-                    display: flex;
-                    margin-top: 60px;
+                    margin-right: 20px;
+                }
+
+                .exercise__details p {
+                    margin: 10px 7px;
+                    display: inline-block;
+                    
+                }
+
+                .exercise__author-profile-picture {
+                    width: 30px;
+                    height: 30px;
+                    background-color: var(--background-tertiary);
+                    border-radius: 50%;
+                    margin-right: 7px;
+                    display: inline-block;
+                    vertical-align: middle;
                 }
 
                 .exercise__difficulty {
                     font-weight: bold;
                 }
+
+                @media screen and (max-width: 560px){
+                    
+                    .exercise__details-and-button {
+                        flex-direction: column-reverse;
+                    }
+
+                    .exercise__details {
+                        margin-top: 20px;
+                    }
+
+                    h2 {
+                        font-size: var(--font-small);
+                    }
+                }
+
             `}</style>
         </div>
+    );
+}
+
+function ButtonSolve({ href, grade }) {
+    return (
+        <Link href={href}>
+            <button className={`button--primary-${grade}`}>
+                Rezolvă <FontAwesomeIcon icon="arrow-right" />
+            </button>
+        </Link>
     );
 }
 

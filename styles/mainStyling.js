@@ -160,23 +160,19 @@ export default css.global`
         text-decoration: underline;
     }
 
-    .type--easy {
-        color: var(--accent-primary);
-        border-bottom-color: var(--accent-primary);
+    .button--outline {
+        background-color: transparent;
+        color: var(--text-primary);
+        border: 1px solid var(--background-quaternary);
+        border-radius: 50px;
+        box-shadow: none;
+        width: 150px;
+        line-height: 32px;
+        height: 35px;
+        text-transform: initial;
+        transition: background-color 300ms ease;
     }
-
-    .type--medium {
-        color: var(--accent-tertiary);
-        border-bottom-color: var(--accent-tertiary);
-    }
-
-    .type--challenging {
-        color: var(--accent-secondary);
-        border-bottom-color: var(--accent-secondary);
-    }
-
-    .type--hard {
-        color: var(--accent-quaternary);
-        border-bottom-color: var(--accent-quaternary);
+    .button--outline:hover {
+        background-color: var(--background-secondary);
     }
 `;

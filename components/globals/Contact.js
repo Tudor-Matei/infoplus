@@ -31,7 +31,7 @@ export default function Contact() {
                     margin: 0 10px 50px;
                 }
 
-                @media screen and (max-width: 830px) {
+                @media screen and (max-width: 825px) {
                     .contact__heading {
                         font-size: var(--font-medium);
                     }

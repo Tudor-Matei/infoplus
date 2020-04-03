@@ -35,6 +35,12 @@ export default function Header() {
                     justify-content: space-between;
                     transition: color, background-color 300ms ease;
                 }
+
+                @media screen and (max-width: 375px) {
+                    .header {
+                        padding: 0 15px;
+                    }
+                }
             `}</style>
         </header>
     );
