@@ -7,7 +7,10 @@ export default function ExercisesPanel({ title, children, accent, grade }) {
             <h3>{title}</h3>
             <p>{children}</p>
             <Wave accent={accent} />
-            <ButtonStart className={`button--primary-${grade}`} href="test" />
+            <ButtonStart
+                className={`button--primary-${grade}`}
+                href={`/exercitii/${grade}`}
+            />
             <style jsx>{`
                 .exercises-container__exercises-panel {
                     width: 45%;
@@ -40,6 +43,8 @@ export default function ExercisesPanel({ title, children, accent, grade }) {
                 @media screen and (max-width: 1024px) {
                     .exercises-container__exercises-panel {
                         width: 90%;
+                        margin-left: 0;
+                        margin-right: 0;
                     }
                 }
 

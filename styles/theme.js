@@ -6,6 +6,13 @@ const staticThemeVariables = `
     --accent-tertiary: #ffcc00;
     --accent-quaternary: #DE16FF;
 
+    --difficulty-1: var(--accent-primary);
+    --difficulty-2: var(--accent-secondary);
+    --difficulty-3: var(--accent-tertiary);
+    --difficulty-4: var(--accent-quaternary);
+
+    --text-button: #2a2a2a;
+
     --font-larger: 5rem;
     --font-large: 3rem;
     --font-medium: 2rem;
@@ -21,13 +28,13 @@ const staticThemeVariables = `
 export const light = css.global`
     :root {
         --background-primary: #fff;
-        --background-secondary: #f5f5f5;
+        --background-secondary: #fdfdfd;
         --background-tertiary: #dadada;
         --background-quaternary: #2a2a2a;
 
         --text-primary: #2a2a2a;
         --text-secondary: #f1f1f1;
-        --text-button: #2a2a2a;
+        --text-tertiary: #686868;
 
         ${staticThemeVariables}
     }
@@ -42,7 +49,7 @@ export const dark = css.global`
 
         --text-primary: #f1f1f1;
         --text-secondary: #e6e6e6;
-        --text-button: #2a2a2a;
+        --text-tertiary: #777777;
 
         ${staticThemeVariables}
     }

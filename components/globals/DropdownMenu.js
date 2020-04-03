@@ -14,19 +14,17 @@ export default function DropdownMenu({ isDropdownToggled }) {
                 }`}
             >
                 <ul className="dropdown-menu-header__ul">
-                    <DropdownMenuAccordion title="Exercitii">
-                        {[
-                            { titleLi: "Clasa IX", href: "/exercitii#ix" },
-                            { titleLi: "Clasa X", href: "/exercitii#x" },
-                            { titleLi: "Clasa XI", href: "/exercitii#xi" }
-                        ]}
-                    </DropdownMenuAccordion>
+                    <Link href="/exercitii">
+                        <li className="dropdown-menu-header__main-li">
+                            Exercitii
+                        </li>
+                    </Link>
                     <hr className="dropdown-menu-header__hr" />
                     <DropdownMenuAccordion title="Resurse">
                         {[
-                            { titleLi: "Clasa IX", href: "/resurse#ix" },
-                            { titleLi: "Clasa X", href: "/resurse#x" },
-                            { titleLi: "Clasa XI", href: "/resurse#xi" }
+                            { titleLi: "Clasa IX", href: "/resurse/ix" },
+                            { titleLi: "Clasa X", href: "/resurse/x" },
+                            { titleLi: "Clasa XI", href: "/resurse/xi" }
                         ]}
                     </DropdownMenuAccordion>
                     <hr className="dropdown-menu-header__hr" />
@@ -66,7 +64,7 @@ export default function DropdownMenu({ isDropdownToggled }) {
                     }
 
                     .dropdown-menu-header__hr {
-                        width: 90%;
+                        width: 85%;
                     }
 
                     .dropdown-menu-header__ul {
@@ -80,7 +78,7 @@ export default function DropdownMenu({ isDropdownToggled }) {
                         font-size: var(--font-small);
                         cursor: pointer;
                         position: relative;
-                        padding: 10px 0 10px 10px;
+                        padding: 10px 0 10px 15px;
                         user-select: none;
                     }
 

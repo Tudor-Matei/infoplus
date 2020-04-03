@@ -9,8 +9,10 @@ export default function InputArea({
             <h3>{title}</h3>
             {isSelect ? (
                 <select>
-                    {optionValues.map((optionValue, i) => (
-                        <option key={`optiune_${i}`}>{optionValue}</option>
+                    {optionValues.map(optionValue => (
+                        <option key={`optiune_${optionValue}`}>
+                            {optionValue}
+                        </option>
                     ))}
                 </select>
             ) : (

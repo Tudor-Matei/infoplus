@@ -1,10 +1,9 @@
-import { useState, useEffect } from "react";
-import useComponentDidMount from "../components/hooks/componentDidMount";
+import { useState } from "react";
 import {
     ExercisesGradeIX,
     ExercisesGradeX,
     ExercisesGradeXI
-} from "../components/Exercises/Panels";
+} from "../components/Exercises/ExercisesGrades";
 
 export default function Exercitii() {
     const [state, setState] = useState({
@@ -20,10 +19,6 @@ export default function Exercitii() {
             isGradeXIActive: grade === "isGradeXIActive"
         });
 
-    useEffect(() => {
-        const hash = window.location.hash.replace("#", "");
-        if (hash) changeGrade(`isGrade${hash.toUpperCase()}Active`);
-    }, []);
     return (
         <>
             <HeaderGrades parentState={state} changeGrade={changeGrade} />

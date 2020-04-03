@@ -1,0 +1,132 @@
+import { useRouter } from "next/router";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
+import Exercise from "../../components/ExercisesList/Exercise";
+
+export default function ExercisesList() {
+    const { clasa } = useRouter().query;
+    return (
+        <>
+            {clasa && <HeaderMainInfo grade={clasa} />}
+            <CurrentCategoryTitle
+                category="Elemente de bază ale limbajului"
+                subcategory="Operatori și expresii"
+            />
+            <Exercise
+                title="ScriereEcran"
+                isSolved
+                description="Mollit enim tempor esse magna id pariatur exercitation. Sint est aute cupidatat dolor adipisicing amet ea ut deserunt nulla do eiusmod aliqua nulla. 
+                Duis tempor ullamco dolore sit adipisicing dolore voluptate anim ex. Qui officia dolore est occaecat velit voluptate id mollit irure. Ut deserunt
+                voluptate est qui quis labore fugiat sint. Dolor qui culpa est ipsum excepteur irure id est voluptate enim elit quis incididunt dolor."
+                authorName="Jane Doe"
+                datePublished="21 mai 2017"
+                source="Model Bacalaureat 2009"
+                difficulty={1}
+                grade="ix"
+            />
+        </>
+    );
+}
+
+function HeaderMainInfo({ grade }) {
+    return (
+        <div className="header-main-info">
+            <div className="header-main-info__buttons">
+                <select>
+                    <option>Categorii</option>
+                </select>
+                <FilterButton />
+            </div>
+            <h2>Clasa {grade.toUpperCase()}</h2>
+            <style jsx global>{`
+                :root {
+                    --accent-exercises: ${grade === "ix"
+                        ? "var(--accent-primary)"
+                        : grade === "x"
+                        ? "var(--accent-secondary)"
+                        : "var(--accent-tertiary)"};
+                }
+            `}</style>
+            <style jsx>{`
+                .header-main-info {
+                    margin: 160px auto 15px;
+                    padding-bottom: 15px;
+                    border-bottom: 5px solid var(--accent-exercises);
+                    width: 90%;
+                    display: flex;
+                    justify-content: space-between;
+                }
+
+                h2 {
+                    color: var(--text-primary);
+                }
+
+                select {
+                    width: 150px;
+                    height: 35px;
+                    background-color: transparent;
+                    border: 1px solid var(--background-quaternary);
+                    border-radius: 50px;
+                    margin-right: 30px;
+                    color: var(--text-primary);
+                    font-family: "Red Hat Display";
+                    padding: 0 15px;
+                    cursor: pointer;
+                    transition: background-color 300ms ease;
+                }
+
+                select:hover {
+                    background-color: var(--background-secondary);
+                }
+                select:focus {
+                    outline: none;
+                }
+            `}</style>
+        </div>
+    );
+}
+
+function CurrentCategoryTitle({ category, subcategory }) {
+    return (
+        <div className="current-category">
+            <h2>{category}</h2>
+            <p>{subcategory}</p>
+            <style jsx>{`
+                .current-category {
+                    width: 90%;
+                    margin: 0 auto 120px;
+                    color: var(--text-primary);
+                }
+
+                p {
+                    font-size: var(--font-small);
+                }
+            `}</style>
+        </div>
+    );
+}
+
+function FilterButton() {
+    return (
+        <button className="button--filter">
+            Filtrați <FontAwesomeIcon icon="filter" />
+            <style jsx>{`
+                .button--filter {
+                    background-color: transparent;
+                    color: var(--text-primary);
+                    border: 1px solid var(--background-quaternary);
+                    border-radius: 50px;
+                    box-shadow: none;
+                    width: 150px;
+                    line-height: 32px;
+                    height: 35px;
+                    text-transform: initial;
+                    transition: background-color 300ms ease;
+                }
+                .button--filter:hover {
+                    background-color: var(--background-secondary);
+                }
+            `}</style>
+        </button>
+    );
+}

@@ -7,11 +7,11 @@ export default function Informatii() {
     return (
         <>
             <section className="main">
-                <PanouLink titlu="Exerciții" link="exercitii" tip="1" />
-                <PanouLink titlu="Resurse" link="resurse" tip="2" />
+                <PanouLink titlu="Exerciții" link="/exercitii" tip="1" />
+                <PanouLink titlu="Resurse" link="/resurse" tip="2" />
                 <PanouLink
                     titlu="Detalii despre site"
-                    link="detalii-site"
+                    link="/detalii-site"
                     tip="3"
                 />
             </section>

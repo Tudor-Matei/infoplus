@@ -18,6 +18,7 @@ export default css.global`
         --accent-primary: #56f55c;
         --accent-secondary: #3db8ff;
         --accent-tertiary: #ffcc00;
+        --accent-quaternary: #de16ff;
 
         --contact: #2a2a2a;
         --footer: #1e1e1e;

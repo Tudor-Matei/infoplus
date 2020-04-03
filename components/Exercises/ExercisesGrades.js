@@ -1,4 +1,4 @@
-import ExercisesPanel from "../Account/ExercisesPanel";
+import ExercisesPanel from "./ExercisesPanel";
 import {
     exercisesGradeIX,
     exercisesGradeX,

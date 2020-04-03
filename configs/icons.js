@@ -17,7 +17,8 @@ const iconNames = [
     "faEnvelope",
     "faPhone",
     "faArrowRight",
-    "faExternalLinkAlt"
+    "faExternalLinkAlt",
+    "faFilter"
 ];
 
 library.add(iconNames.map(iconName => icons[iconName]));
