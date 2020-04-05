@@ -28,7 +28,7 @@ export default function Login({ showLoginModalHandler }) {
 
                     <div className="modal__buttons-container">
                         <button
-                            className="button--secondary"
+                            className="button--tertiary"
                             onClick={showLoginModalHandler}
                         >
                             Renunță

@@ -18,8 +18,12 @@ const iconNames = [
     "faPhone",
     "faArrowRight",
     "faExternalLinkAlt",
-    "faFilter"
+    "faFilter",
+    "faClock",
+    "faMemory",
+    "faCodeBranch",
+    "faUpload",
 ];
 
-library.add(iconNames.map(iconName => icons[iconName]));
+library.add(iconNames.map((iconName) => icons[iconName]));
 export default library;

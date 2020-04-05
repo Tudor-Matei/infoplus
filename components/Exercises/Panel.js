@@ -7,10 +7,7 @@ export default function ExercisesPanel({ title, children, accent, grade }) {
             <h3>{title}</h3>
             <p>{children}</p>
             <Wave accent={accent} />
-            <ButtonStart
-                className={`button--primary-${grade}`}
-                href={`/exercitii/${grade}`}
-            />
+            <ButtonStart grade={grade} />
             <style jsx>{`
                 .exercises-container__exercises-panel {
                     width: 45%;
@@ -63,11 +60,11 @@ export default function ExercisesPanel({ title, children, accent, grade }) {
     );
 }
 
-function ButtonStart({ className, href }) {
+function ButtonStart({ grade }) {
     return (
         <>
-            <Link href={href}>
-                <button className={className}>
+            <Link href={`/exercitii/${grade}`}>
+                <button className={`button--primary`}>
                     Incepe
                     <FontAwesomeIcon icon="external-link-alt" />
                 </button>
@@ -75,6 +72,14 @@ function ButtonStart({ className, href }) {
             <style jsx>{`
                 button {
                     display: block;
+                    /* prettier-ignore */
+                    background-color: var(--accent-${
+                        grade === "ix"
+                            ? "primary"
+                            : grade === "x"
+                            ? "secondary"
+                            : "tertiary"
+                    })
                 }
             `}</style>
         </>

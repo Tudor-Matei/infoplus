@@ -53,12 +53,12 @@ export default function Register({ showRegisterModalHandler }) {
 
                     <div className="modal__buttons-container">
                         <button
-                            className="button--secondary"
+                            className="button--tertiary"
                             onClick={showRegisterModalHandler}
                         >
                             Renunță
                         </button>
-                        <button className="button--primary-ix">Creează</button>
+                        <button className="button--primary">Creează</button>
                     </div>
                 </div>
             </div>

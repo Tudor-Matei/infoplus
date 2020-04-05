@@ -1,5 +1,7 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
+import CheckmarkSolved from "../utils/CheckmarkSolved";
+import difficultyText from "../utils/difficultyText";
 
 export default function Exercise({
     title,
@@ -9,17 +11,8 @@ export default function Exercise({
     datePublished,
     source,
     difficulty,
-    grade,
-    exerciseId
+    exerciseId,
 }) {
-    const difficultyText =
-        difficulty === 1
-            ? "UȘOR"
-            : difficulty === 2
-            ? "MEDIU"
-            : difficulty === 3
-            ? "PROVOCATOR"
-            : "DIFICIL";
     return (
         <div className="exercise">
             <h2>{title}</h2>
@@ -32,10 +25,15 @@ export default function Exercise({
                     <p>{authorName}</p> &#8226;
                     <p>{datePublished}</p> &#8226;
                     <p>{source}</p> &#8226;
-                    <p className="exercise__difficulty">{difficultyText}</p>
+                    <p className="exercise__difficulty">
+                        {difficultyText(difficulty)}
+                    </p>
                 </div>
 
-                <ButtonSolve href={`/exercitiu/${exerciseId}`} grade={grade} />
+                <ButtonSolve
+                    href={`/exercitiu/${exerciseId}`}
+                    difficulty={difficulty}
+                />
             </div>
 
             <style jsx>{`
@@ -59,19 +57,19 @@ export default function Exercise({
                     border-radius: 20px;
                     /* prettier-ignore */
                     border-bottom: 5px solid var(--difficulty-${difficulty});
+                    transition: background-color 300ms ease;
                 }
 
                 h2 {
                     display: inline-block;
-                    margin-right: 15px;
-                    margin-bottom: 10px;
-                    vertical-align: middle;
+                    vertical-align: sub;
                     color: var(--text-primary);
                 }
 
                 .exercise__description {
                     color: var(--text-primary);
                     max-height: 150px;
+                    margin-top: 10px;
                     overflow-y: auto;
                 }
 
@@ -127,26 +125,20 @@ export default function Exercise({
     );
 }
 
-function ButtonSolve({ href, grade }) {
-    return (
-        <Link href={href}>
-            <button className={`button--primary-${grade}`}>
-                Rezolvă <FontAwesomeIcon icon="arrow-right" />
-            </button>
-        </Link>
-    );
-}
-
-function CheckmarkSolved() {
+function ButtonSolve({ href, difficulty }) {
     return (
         <>
-            <FontAwesomeIcon icon="check" className="checkmark-solved" />
-            <style jsx global>{`
-                .checkmark-solved {
-                    display: inline-block;
-                    color: var(--accent-primary);
+            <Link href={href}>
+                <button className="button--primary">
+                    Rezolvă <FontAwesomeIcon icon="arrow-right" />
+                </button>
+            </Link>
+            <style jsx>{`
+                .button--primary {
+                    /* prettier-ignore */
+                    background-color: var(--difficulty-${difficulty});
                 }
-            `}</style>
+                `}</style>
         </>
     );
 }

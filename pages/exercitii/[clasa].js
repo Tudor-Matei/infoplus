@@ -1,10 +1,13 @@
 import { useRouter } from "next/router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import Error from "next/error";
 
 import Exercise from "../../components/ExercisesList/Exercise";
 
 export default function ExercisesList() {
     const { clasa } = useRouter().query;
+    //  if (!["ix", "x", "xi"].includes(clasa)) return <Error statusCode={404} />;
+
     return (
         <>
             {clasa && <HeaderMainInfo grade={clasa} />}
@@ -51,6 +54,26 @@ export default function ExercisesList() {
                         sint. Dolor qui culpa est ipsum excepteur irure id est
                         voluptate enim elit quis incididunt dolor.
                     </Exercise>
+
+                    <Exercise
+                        title="ScriereEcran"
+                        authorName="Jane Doe"
+                        datePublished="21 mai 2017"
+                        source="Model Bacalaureat 2009"
+                        difficulty={4}
+                        grade={clasa}
+                        isSolved
+                        exerciseId="2"
+                    >
+                        Mollit enim tempor esse magna id pariatur exercitation.
+                        Sint est aute cupidatat dolor adipisicing amet ea ut
+                        deserunt nulla do eiusmod aliqua nulla. Duis tempor
+                        ullamco dolore sit adipisicing dolore voluptate anim ex
+                        officia dolore est occaecat velit voluptate id mollit
+                        irure. Ut deserunt voluptate est qui quis labore fugiat
+                        sint. Dolor qui culpa est ipsum excepteur irure id est
+                        voluptate enim elit quis incididunt dolor.
+                    </Exercise>
                 </>
             )}
         </>
@@ -67,20 +90,11 @@ function HeaderMainInfo({ grade }) {
                 <FilterButton />
             </div>
             <h2>Clasa {grade.toUpperCase()}</h2>
-            <style jsx global>{`
-                :root {
-                    --accent-exercises: ${grade === "ix"
-                        ? "var(--accent-primary)"
-                        : grade === "x"
-                        ? "var(--accent-secondary)"
-                        : "var(--accent-tertiary)"};
-                }
-            `}</style>
             <style jsx>{`
                 .header-main-info {
                     margin: 160px auto 15px;
                     padding-bottom: 15px;
-                    border-bottom: 5px solid var(--accent-exercises);
+                    border-bottom: 5px solid var(--accent-primary);
                     width: 90%;
                     display: flex;
                     justify-content: space-between;

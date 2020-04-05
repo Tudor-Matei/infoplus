@@ -2,21 +2,21 @@ import { useState } from "react";
 import {
     ExercisesGradeIX,
     ExercisesGradeX,
-    ExercisesGradeXI
-} from "../components/Exercises/ExercisesGrades";
+    ExercisesGradeXI,
+} from "../components/Exercises/Grades";
 
 export default function Exercitii() {
     const [state, setState] = useState({
         isGradeIXActive: true,
         isGradeXActive: false,
-        isGradeXIActive: false
+        isGradeXIActive: false,
     });
 
-    const changeGrade = grade =>
+    const changeGrade = (grade) =>
         setState({
             isGradeIXActive: grade === "isGradeIXActive",
             isGradeXActive: grade === "isGradeXActive",
-            isGradeXIActive: grade === "isGradeXIActive"
+            isGradeXIActive: grade === "isGradeXIActive",
         });
 
     return (
@@ -40,7 +40,7 @@ export default function Exercitii() {
 function HeaderGrades({ parentState, changeGrade }) {
     return (
         <div className="header-grades">
-            {["IX", "X", "XI"].map(grade => (
+            {["IX", "X", "XI"].map((grade) => (
                 <h3
                     key={`grade_${grade}`}
                     className={`header-grades__heading-${grade.toLowerCase()} ${

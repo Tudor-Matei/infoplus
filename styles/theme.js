@@ -4,7 +4,7 @@ const staticThemeVariables = `
     --accent-primary: #56f55c;
     --accent-secondary: #3db8ff;
     --accent-tertiary: #ffcc00;
-    --accent-quaternary: #DE16FF;
+    --accent-quaternary: #e43dff;
 
     --difficulty-1: var(--accent-primary);
     --difficulty-2: var(--accent-tertiary);

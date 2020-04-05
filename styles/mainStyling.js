@@ -119,31 +119,19 @@ export default css.global`
         margin-left: 10px;
     }
 
-    .button--primary-ix {
+    .button--primary {
         background-color: var(--accent-primary);
         color: var(--text-button);
         height: 40px;
     }
 
-    .button--secondary-ix {
+    .button--secondary {
         background-color: var(--background-quaternary);
         color: var(--accent-primary);
         height: 40px;
     }
 
-    .button--primary-x {
-        background-color: var(--accent-secondary);
-        color: var(--text-button);
-        height: 40px;
-    }
-
-    .button--primary-xi {
-        background-color: var(--accent-tertiary);
-        color: var(--text-button);
-        height: 40px;
-    }
-
-    .button--secondary {
+    .button--tertiary {
         background-color: transparent;
         box-shadow: none;
         font-weight: bold;
@@ -151,7 +139,7 @@ export default css.global`
         color: var(--text-primary);
         width: 120px;
     }
-    .button--secondary:hover {
+    .button--tertiary:hover {
         box-shadow: none;
         color: var(--accent-tertiary);
     }
@@ -172,7 +160,9 @@ export default css.global`
         text-transform: initial;
         transition: background-color 300ms ease;
     }
+
     .button--outline:hover {
-        background-color: var(--background-secondary);
+        box-shadow: none;
+        background-color: var(--background-tertiary);
     }
 `;

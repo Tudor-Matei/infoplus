@@ -1,8 +1,8 @@
-import ExercisesPanel from "./ExercisesPanel";
+import ExercisesPanel from "./Panel";
 import {
     exercisesGradeIX,
     exercisesGradeX,
-    exercisesGradeXI
+    exercisesGradeXI,
 } from "../utils/exercisesGradesData";
 
 export function ExercisesGradeIX() {

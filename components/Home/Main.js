@@ -30,7 +30,7 @@ export default function Main() {
                 <div className="main__buttons">
                     <div className="main__button-sign-in">
                         <Button
-                            type="button--primary-ix"
+                            type="button--primary"
                             title="Logheaza-te"
                             icon="sign-in-alt"
                             link=""
@@ -44,7 +44,7 @@ export default function Main() {
                         </p>
                     </div>
                     <Button
-                        type="button--secondary-ix"
+                        type="button--secondary"
                         title="Vezi mai multe"
                         icon="ellipsis-h"
                         link="/informatii"
