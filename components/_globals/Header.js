@@ -2,47 +2,53 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import DropdownMenu from "./DropdownMenu";
 import { useState } from "react";
 import Link from "next/link";
+import OverlayDarkener from "../utils/OverlayDarkener";
 
 export default function Header() {
     const [isDropdownToggled, toggleDropdown] = useState(false);
     const toggleMenuDropdown = () => toggleDropdown(!isDropdownToggled);
 
     return (
-        <header className="header">
-            <Link href="/">
-                <div className="header__site-logo">
-                    <SiteLogo />
-                </div>
-            </Link>
-            <IconsRightMenu
-                isDropdownToggled={isDropdownToggled}
-                toggleMenuDropdown={toggleMenuDropdown}
-            />
-            <DropdownMenu isDropdownToggled={isDropdownToggled} />
-            <style jsx global>{`
-                .header {
-                    width: 100%;
-                    height: 60px;
-                    background-color: var(--background-secondary);
-                    box-shadow: var(--box-shadow);
-                    color: var(--text-primary);
-                    position: fixed;
-                    top: 0;
-                    padding: 0 40px;
-                    z-index: 100;
-                    display: flex;
-                    align-items: center;
-                    justify-content: space-between;
-                    transition: color, background-color 300ms ease;
-                }
-
-                @media screen and (max-width: 375px) {
+        <>
+            <header className="header">
+                <Link href="/">
+                    <div className="header__site-logo">
+                        <SiteLogo />
+                    </div>
+                </Link>
+                <IconsRightMenu
+                    isDropdownToggled={isDropdownToggled}
+                    toggleMenuDropdown={toggleMenuDropdown}
+                />
+                <DropdownMenu isDropdownToggled={isDropdownToggled} />
+                <style jsx global>{`
                     .header {
-                        padding: 0 15px;
+                        width: 100%;
+                        height: 60px;
+                        background-color: var(--background-secondary);
+                        box-shadow: var(--box-shadow);
+                        color: var(--text-primary);
+                        position: fixed;
+                        top: 0;
+                        padding: 0 40px;
+                        z-index: 100;
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
+                        transition: color, background-color 300ms ease;
                     }
-                }
-            `}</style>
-        </header>
+
+                    @media screen and (max-width: 375px) {
+                        .header {
+                            padding: 0 15px;
+                        }
+                    }
+                `}</style>
+            </header>
+            {isDropdownToggled && (
+                <OverlayDarkener onClick={toggleMenuDropdown} />
+            )}
+        </>
     );
 }
 

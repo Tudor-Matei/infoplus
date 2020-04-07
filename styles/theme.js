@@ -6,6 +6,7 @@ const staticThemeVariables = `
     --accent-tertiary: #ffcc00;
     --accent-quaternary: #e43dff;
 
+
     --difficulty-1: var(--accent-primary);
     --difficulty-2: var(--accent-tertiary);
     --difficulty-3: var(--accent-secondary);
@@ -28,7 +29,7 @@ const staticThemeVariables = `
 export const light = css.global`
     :root {
         --background-primary: #fff;
-        --background-secondary: #f9f9f9;
+        --background-secondary: #f5f5f5;
         --background-tertiary: #dadada;
         --background-quaternary: #2a2a2a;
 

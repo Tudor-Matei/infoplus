@@ -1,6 +1,7 @@
 import { useState } from "react";
 import InputArea from "../utils/InputArea";
 import formModal from "../../styles/formModal";
+import OverlayDarkener from "../utils/OverlayDarkener";
 
 export default function Register({ showRegisterModalHandler }) {
     const [nume, setNume] = useState("");
@@ -11,10 +12,7 @@ export default function Register({ showRegisterModalHandler }) {
     const [parola, setParola] = useState("");
     return (
         <>
-            <div
-                className="overlay-darkener"
-                onClick={showRegisterModalHandler}
-            ></div>
+            <OverlayDarkener onClick={showRegisterModalHandler} />
             <div className="modal">
                 <div className="modal__title-container">
                     <RegisterModalWave />

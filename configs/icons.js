@@ -17,12 +17,14 @@ const iconNames = [
     "faEnvelope",
     "faPhone",
     "faArrowRight",
+    "faArrowLeft",
     "faExternalLinkAlt",
     "faFilter",
     "faClock",
     "faMemory",
     "faCodeBranch",
     "faUpload",
+    "faTimesCircle",
 ];
 
 library.add(iconNames.map((iconName) => icons[iconName]));

@@ -16,17 +16,6 @@ export default function ExercisesDetails() {
                     animation: comeIn 300ms ease;
                 }
 
-                @keyframes comeIn {
-                    from {
-                        transform: translateX(15px);
-                        opacity: 0;
-                    }
-                    to {
-                        transform: translateX(0);
-                        opacity: 1;
-                    }
-                }
-
                 @media screen and (max-width: 930px) {
                     .exercises-account {
                         flex-direction: column;
@@ -36,6 +25,17 @@ export default function ExercisesDetails() {
                 @media screen and (max-width: 768px) {
                     .exercises-account {
                         width: 90%;
+                    }
+                }
+
+                @keyframes comeIn {
+                    from {
+                        transform: translateX(15px);
+                        opacity: 0;
+                    }
+                    to {
+                        transform: translateX(0);
+                        opacity: 1;
                     }
                 }
             `}</style>

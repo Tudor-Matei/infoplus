@@ -1,15 +1,13 @@
 import { useState } from "react";
 import InputArea from "../utils/InputArea";
 import formModal from "../../styles/formModal";
+import OverlayDarkener from "../utils/OverlayDarkener";
 export default function Login({ showLoginModalHandler }) {
     const [numeUtilizator, setNumeUtilizator] = useState("");
     const [parola, setParola] = useState("");
     return (
         <>
-            <div
-                className="overlay-darkener"
-                onClick={showLoginModalHandler}
-            ></div>
+            <OverlayDarkener onClick={showLoginModalHandler} />
             <div className="modal">
                 <div className="modal__title-container">
                     <LoginModalWave />

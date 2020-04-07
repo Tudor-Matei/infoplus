@@ -1,12 +1,16 @@
 import { useRouter } from "next/router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Error from "next/error";
+import useComponentDidMount from "../../components/_hooks/componentDidMount";
 
 import Exercise from "../../components/ExercisesList/Exercise";
 
 export default function ExercisesList() {
     const { clasa } = useRouter().query;
-    //  if (!["ix", "x", "xi"].includes(clasa)) return <Error statusCode={404} />;
+    useComponentDidMount(() => {
+        if (!["ix", "x", "xi"].includes(clasa))
+            return <Error statusCode={404} />;
+    });
 
     return (
         <>

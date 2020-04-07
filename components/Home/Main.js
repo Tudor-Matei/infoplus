@@ -1,6 +1,6 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import Register from "../globals/Register";
-import Login from "../globals/Login";
+import Register from "../_globals/Register";
+import Login from "../_globals/Login";
 import Link from "next/link";
 import { useState } from "react";
 

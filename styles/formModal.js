@@ -11,13 +11,6 @@ export default css`
             transform: translateY(0);
         }
     }
-    .overlay-darkener {
-        width: 100%;
-        height: 100%;
-        position: fixed;
-        background-color: rgba(0, 0, 0, 0.8);
-        z-index: 50;
-    }
 
     .modal {
         max-height: 80%;
