@@ -31,7 +31,7 @@ export default function Login({ showLoginModalHandler }) {
                         >
                             Renunță
                         </button>
-                        <button className="button--primary-x">Logare</button>
+                        <button className="button--primary">Logare</button>
                     </div>
                 </div>
             </div>
@@ -47,6 +47,10 @@ export default function Login({ showLoginModalHandler }) {
 
                 .modal__input-panel {
                     width: 80%;
+                }
+
+                .button--primary {
+                    background-color: var(--accent-secondary);
                 }
             `}</style>
         </>

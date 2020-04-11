@@ -98,6 +98,26 @@ export default css.global`
         margin-left: 10px;
     }
 
+    .error-message {
+        color: var(--accent-quaternary);
+        text-align: right;
+        opacity: 0;
+        padding-left: 20px;
+        transform: translateX(10px);
+        animation: fadeFromRight 300ms ease forwards;
+    }
+
+    @keyframes fadeFromRight {
+        from {
+            opacity: 0;
+            transform: translateX(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
     .button--primary {
         background-color: var(--accent-primary);
         color: var(--text-button);
@@ -144,16 +164,5 @@ export default css.global`
     .button--outline:hover {
         box-shadow: none;
         background-color: var(--background-tertiary);
-    }
-
-    @keyframes comeIn {
-        from {
-            transform: translateX(15px);
-            opacity: 0;
-        }
-        to {
-            transform: translateX(0);
-            opacity: 1;
-        }
     }
 `;

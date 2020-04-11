@@ -43,16 +43,6 @@ export default css`
         color: var(--text-button);
     }
 
-    .modal__input-panels {
-        padding: 30px 0;
-        text-align: center;
-    }
-
-    .modal__input-panel {
-        display: inline-block;
-        margin: 20px 15px;
-    }
-
     .modal__buttons-container {
         display: flex;
         justify-content: flex-end;
@@ -62,25 +52,5 @@ export default css`
     :global(.modal__wave) {
         width: 100%;
         height: 100%;
-    }
-
-    @media screen and (max-width: 768px) {
-        .modal {
-            width: 90% !important;
-            margin-top: -30px;
-        }
-        .modal__title {
-            text-align: center;
-            font-size: var(--font-small);
-        }
-        .modal__input-panel {
-            width: auto !important;
-            margin-left: 20px;
-            margin-right: 20px;
-            display: block;
-        }
-        .modal__buttons-container {
-            margin-right: 20px !important;
-        }
     }
 `;

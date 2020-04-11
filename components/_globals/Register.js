@@ -2,14 +2,26 @@ import { useState } from "react";
 import InputArea from "../utils/InputArea";
 import formModal from "../../styles/formModal";
 import OverlayDarkener from "../utils/OverlayDarkener";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export default function Register({ showRegisterModalHandler }) {
-    const [nume, setNume] = useState("");
-    const [prenume, setPrenume] = useState("");
-    const [judet, setJudet] = useState("");
-    const [numeUtilizator, setNumeUtilizator] = useState("");
-    const [email, setEmail] = useState("");
-    const [parola, setParola] = useState("");
+    const [userDetails, setUserDetail] = useState({
+        name: "",
+        surname: "",
+        county: "Alba",
+        profession: "Elev",
+        username: "",
+        email: "",
+        password: "",
+    });
+
+    const userDetailChanger = ({ target }, userDetail) =>
+        setUserDetail({ ...userDetails, [userDetail]: target.value });
+
+    const [errorMessage, setErrorMessage] = useState("");
+
+    const showErrorMessage = (error) => setErrorMessage(error);
+
     return (
         <>
             <OverlayDarkener onClick={showRegisterModalHandler} />
@@ -18,18 +30,31 @@ export default function Register({ showRegisterModalHandler }) {
                     <RegisterModalWave />
                     <h2 className="modal__title">Înregistrează-te</h2>
                 </div>
-                <div className="modal__input-panels">
+                <form className="modal__input-panels" onSubmit={() => false}>
                     <div className="modal__input-panel">
-                        <InputArea title="Nume" inputType="text" />
+                        <InputArea
+                            title="Nume"
+                            inputType="text"
+                            inputProps={{ minLength: 3, required: true }}
+                            eventHandler={(e) => userDetailChanger(e, "name")}
+                        />
                     </div>
                     <div className="modal__input-panel">
-                        <InputArea title="Prenume" inputType="text" />
+                        <InputArea
+                            title="Prenume"
+                            inputType="text"
+                            inputProps={{ minLength: 3, required: true }}
+                            eventHandler={(e) =>
+                                userDetailChanger(e, "surname")
+                            }
+                        />
                     </div>
                     <div className="modal__input-panel">
                         <InputArea
                             title="Județ"
                             isSelect
                             optionValues={["Alba", "Cluj", "Bistrita-Nasaud"]}
+                            eventHandler={(e) => userDetailChanger(e, "county")}
                         />
                     </div>
                     <div className="modal__input-panel">
@@ -37,18 +62,39 @@ export default function Register({ showRegisterModalHandler }) {
                             title="Profesie"
                             isSelect
                             optionValues={["Elev", "Profesor"]}
+                            eventHandler={(e) =>
+                                userDetailChanger(e, "profession")
+                            }
                         />
                     </div>
                     <div className="modal__input-panel">
-                        <InputArea title="Nume Utilizator" inputType="text" />
+                        <InputArea
+                            title="Nume Utilizator"
+                            inputType="text"
+                            inputProps={{ minLength: 5, required: true }}
+                            eventHandler={(e) =>
+                                userDetailChanger(e, "username")
+                            }
+                        />
                     </div>
                     <div className="modal__input-panel">
-                        <InputArea title="E-mail" inputType="text" />
+                        <InputArea
+                            title="E-mail"
+                            inputType="email"
+                            inputProps={{ required: true }}
+                            eventHandler={(e) => userDetailChanger(e, "email")}
+                        />
                     </div>
                     <div className="modal__input-panel modal__input-panel--last">
-                        <InputArea title="Parola" inputType="password" />
+                        <InputArea
+                            title="Parola"
+                            inputType="password"
+                            inputProps={{ minLength: 8, required: true }}
+                            eventHandler={(e) =>
+                                userDetailChanger(e, "password")
+                            }
+                        />
                     </div>
-
                     <div className="modal__buttons-container">
                         <button
                             className="button--tertiary"
@@ -56,9 +102,45 @@ export default function Register({ showRegisterModalHandler }) {
                         >
                             Renunță
                         </button>
-                        <button className="button--primary">Creează</button>
+                        <button
+                            type="submit"
+                            onClick={() => {
+                                if (
+                                    Object.values(userDetails).some(
+                                        (userDetail) => userDetail === ""
+                                    )
+                                )
+                                    return showErrorMessage(
+                                        "Nu ai completat unul sau mai multe câmpuri."
+                                    );
+
+                                if (
+                                    userDetails.name.length < 3 ||
+                                    userDetails.surname.length < 3 ||
+                                    userDetails.username.length < 5 ||
+                                    userDetails.password.length < 8
+                                )
+                                    return showErrorMessage(
+                                        "Unul sau mai multe câmpuri nu indeplinesc numarul de caractere minim."
+                                    );
+
+                                fetch("/api/register", {
+                                    method: "POST",
+                                    body: JSON.stringify(userDetails),
+                                }).then(() => console.log("sent"));
+                            }}
+                            className="button--primary"
+                        >
+                            Creează
+                        </button>
                     </div>
-                </div>
+                    {errorMessage !== "" && (
+                        <p className="error-message">
+                            {errorMessage}{" "}
+                            <FontAwesomeIcon icon="times-circle" />{" "}
+                        </p>
+                    )}
+                </form>
             </div>
             <style jsx>{formModal}</style>
             <style jsx>{`
@@ -66,16 +148,14 @@ export default function Register({ showRegisterModalHandler }) {
                     width: 50%;
                 }
 
-                .modal__input-panel {
-                    width: 40%;
+                .modal__input-panels {
+                    width: 80%;
+                    margin: auto;
                 }
 
-                .modal__buttons-container {
+                .error-message {
+                    margin-top: 20px;
                     margin-right: 60px;
-                }
-
-                .modal__input-panel--last {
-                    width: 85%;
                 }
             `}</style>
         </>
