@@ -14,12 +14,10 @@ export default function Register({ showRegisterModalHandler }) {
         email: "",
         password: "",
     });
-
     const userDetailChanger = ({ target }, userDetail) =>
         setUserDetail({ ...userDetails, [userDetail]: target.value });
 
     const [errorMessage, setErrorMessage] = useState("");
-
     const showErrorMessage = (error) => setErrorMessage(error);
 
     return (
@@ -31,70 +29,91 @@ export default function Register({ showRegisterModalHandler }) {
                     <h2 className="modal__title">Înregistrează-te</h2>
                 </div>
                 <form className="modal__input-panels" onSubmit={() => false}>
-                    <div className="modal__input-panel">
-                        <InputArea
-                            title="Nume"
-                            inputType="text"
-                            inputProps={{ minLength: 3, required: true }}
-                            eventHandler={(e) => userDetailChanger(e, "name")}
-                        />
+                    <div className="modal__input-panel-group">
+                        <div className="modal__input-panel">
+                            <InputArea
+                                title="Nume"
+                                inputType="text"
+                                inputProps={{ minLength: 3, required: true }}
+                                eventHandler={(e) =>
+                                    userDetailChanger(e, "name")
+                                }
+                            />
+                        </div>
+                        <div className="modal__input-panel">
+                            <InputArea
+                                title="Prenume"
+                                inputType="text"
+                                inputProps={{ minLength: 3, required: true }}
+                                eventHandler={(e) =>
+                                    userDetailChanger(e, "surname")
+                                }
+                            />
+                        </div>
                     </div>
-                    <div className="modal__input-panel">
-                        <InputArea
-                            title="Prenume"
-                            inputType="text"
-                            inputProps={{ minLength: 3, required: true }}
-                            eventHandler={(e) =>
-                                userDetailChanger(e, "surname")
-                            }
-                        />
+                    <div className="modal__input-panel-group">
+                        <div className="modal__input-panel">
+                            <InputArea
+                                title="Județ"
+                                isSelect
+                                optionValues={[
+                                    "Alba",
+                                    "Cluj",
+                                    "Bistrita-Nasaud",
+                                ]}
+                                eventHandler={(e) =>
+                                    userDetailChanger(e, "county")
+                                }
+                            />
+                        </div>
+                        <div className="modal__input-panel">
+                            <InputArea
+                                title="Profesie"
+                                isSelect
+                                optionValues={["Elev", "Profesor"]}
+                                eventHandler={(e) =>
+                                    userDetailChanger(e, "profession")
+                                }
+                            />
+                        </div>
                     </div>
-                    <div className="modal__input-panel">
-                        <InputArea
-                            title="Județ"
-                            isSelect
-                            optionValues={["Alba", "Cluj", "Bistrita-Nasaud"]}
-                            eventHandler={(e) => userDetailChanger(e, "county")}
-                        />
+                    <div className="modal__input-panel-group">
+                        <div className="modal__input-panel">
+                            <InputArea
+                                title="Nume Utilizator"
+                                inputType="text"
+                                inputProps={{ minLength: 5, required: true }}
+                                eventHandler={(e) =>
+                                    userDetailChanger(e, "username")
+                                }
+                            />
+                        </div>
+                        <div className="modal__input-panel">
+                            <InputArea
+                                title="E-mail"
+                                inputType="email"
+                                inputProps={{
+                                    required: true,
+                                }}
+                                eventHandler={(e) =>
+                                    userDetailChanger(e, "email")
+                                }
+                            />
+                        </div>
                     </div>
-                    <div className="modal__input-panel">
-                        <InputArea
-                            title="Profesie"
-                            isSelect
-                            optionValues={["Elev", "Profesor"]}
-                            eventHandler={(e) =>
-                                userDetailChanger(e, "profession")
-                            }
-                        />
+                    <div className="modal__input-panel-group">
+                        <div className="modal__input-panel modal__input-panel--last">
+                            <InputArea
+                                title="Parola"
+                                inputType="password"
+                                inputProps={{ minLength: 8, required: true }}
+                                eventHandler={(e) =>
+                                    userDetailChanger(e, "password")
+                                }
+                            />
+                        </div>
                     </div>
-                    <div className="modal__input-panel">
-                        <InputArea
-                            title="Nume Utilizator"
-                            inputType="text"
-                            inputProps={{ minLength: 5, required: true }}
-                            eventHandler={(e) =>
-                                userDetailChanger(e, "username")
-                            }
-                        />
-                    </div>
-                    <div className="modal__input-panel">
-                        <InputArea
-                            title="E-mail"
-                            inputType="email"
-                            inputProps={{ required: true }}
-                            eventHandler={(e) => userDetailChanger(e, "email")}
-                        />
-                    </div>
-                    <div className="modal__input-panel modal__input-panel--last">
-                        <InputArea
-                            title="Parola"
-                            inputType="password"
-                            inputProps={{ minLength: 8, required: true }}
-                            eventHandler={(e) =>
-                                userDetailChanger(e, "password")
-                            }
-                        />
-                    </div>
+
                     <div className="modal__buttons-container">
                         <button
                             className="button--tertiary"
@@ -102,37 +121,10 @@ export default function Register({ showRegisterModalHandler }) {
                         >
                             Renunță
                         </button>
-                        <button
-                            type="submit"
-                            onClick={() => {
-                                if (
-                                    Object.values(userDetails).some(
-                                        (userDetail) => userDetail === ""
-                                    )
-                                )
-                                    return showErrorMessage(
-                                        "Nu ai completat unul sau mai multe câmpuri."
-                                    );
-
-                                if (
-                                    userDetails.name.length < 3 ||
-                                    userDetails.surname.length < 3 ||
-                                    userDetails.username.length < 5 ||
-                                    userDetails.password.length < 8
-                                )
-                                    return showErrorMessage(
-                                        "Unul sau mai multe câmpuri nu indeplinesc numarul de caractere minim."
-                                    );
-
-                                fetch("/api/register", {
-                                    method: "POST",
-                                    body: JSON.stringify(userDetails),
-                                }).then(() => console.log("sent"));
-                            }}
-                            className="button--primary"
-                        >
-                            Creează
-                        </button>
+                        <SubmitButton
+                            userDetails={userDetails}
+                            showErrorMessage={showErrorMessage}
+                        />
                     </div>
                     {errorMessage !== "" && (
                         <p className="error-message">
@@ -148,17 +140,46 @@ export default function Register({ showRegisterModalHandler }) {
                     width: 50%;
                 }
 
-                .modal__input-panels {
-                    width: 80%;
-                    margin: auto;
+                .modal__input-panel:nth-child(odd) {
+                    margin-right: 15px;
                 }
 
-                .error-message {
-                    margin-top: 20px;
-                    margin-right: 60px;
+                .modal__input-panel:nth-child(even) {
+                    margin-left: 15px;
+                }
+
+                .modal__input-panel.modal__input-panel--last {
+                    margin-right: 0;
+                    margin-left: 0;
+                }
+                @media screen and (max-width: 825px) {
+                    .modal__input-panel:nth-child(n) {
+                        margin-left: 0;
+                        margin-right: 0;
+                    }
                 }
             `}</style>
         </>
+    );
+}
+
+function SubmitButton({ userDetails, showErrorMessage }) {
+    return (
+        <button
+            type="submit"
+            onClick={(e) => {
+                if (!checkFieldValidity(userDetails, showErrorMessage)) return;
+                e.preventDefault();
+
+                fetch("/api/register", {
+                    method: "POST",
+                    body: JSON.stringify(userDetails),
+                });
+            }}
+            className="button--primary"
+        >
+            Creează
+        </button>
     );
 }
 
@@ -176,5 +197,34 @@ function RegisterModalWave() {
                 fill="var(--accent-primary)"
             />
         </svg>
+    );
+}
+
+function checkFieldValidity(state, showErrorMessage) {
+    if (Object.values(state).some((value) => value.trim() === "")) {
+        showErrorMessage("Nu ai completat unul sau mai multe câmpuri.");
+        return false;
+    } else if (
+        state.name.length < 3 ||
+        state.surname.length < 3 ||
+        state.username.length < 5 ||
+        state.password.length < 8
+    ) {
+        showErrorMessage(
+            "Unul sau mai multe câmpuri nu indeplinesc numarul de caractere minim."
+        );
+        return false;
+    } else if (!isEmailValid(state.email)) {
+        showErrorMessage(
+            "Adresa de e-mail pe care ai introdus-o nu este validă."
+        );
+        return false;
+    }
+    return true;
+}
+
+function isEmailValid(email) {
+    return /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/gim.test(
+        email
     );
 }

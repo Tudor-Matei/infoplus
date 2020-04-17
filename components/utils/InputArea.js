@@ -1,6 +1,6 @@
 export default function InputArea({
     title,
-    inputType,
+    inputType = "text",
     isSelect = false,
     optionValues = [],
     eventHandler = null,

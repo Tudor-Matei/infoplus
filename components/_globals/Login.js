@@ -39,14 +39,12 @@ export default function Login({ showLoginModalHandler }) {
             <style jsx>{`
                 .modal {
                     width: 40%;
-                }
-
-                .modal__buttons-container {
-                    margin-right: 40px;
+                    max-height: 81%;
                 }
 
                 .modal__input-panel {
-                    width: 80%;
+                    width: 100%;
+                    margin-bottom: 20px;
                 }
 
                 .button--primary {

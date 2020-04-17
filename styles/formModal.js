@@ -16,7 +16,7 @@ export default css`
         max-height: 80%;
         background-color: var(--background-primary);
         box-shadow: var(--box-shadow);
-        overflow: auto;
+        overflow: overlay;
         border-radius: 10px;
         position: fixed;
         top: 100px;
@@ -52,5 +52,51 @@ export default css`
     :global(.modal__wave) {
         width: 100%;
         height: 100%;
+    }
+
+    .modal__input-panels {
+        width: 80%;
+        margin: 50px auto;
+    }
+
+    .modal__input-panel {
+        width: 100%;
+    }
+
+    .modal__input-panel-group {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        margin: 30px 0;
+    }
+
+    .error-message {
+        margin-top: 20px;
+    }
+
+    @media screen and (max-width: 825px) {
+        div.modal {
+            width: 80%;
+        }
+
+        .modal__input-panels {
+            width: 90%;
+        }
+
+        .modal__input-panel-group {
+            flex-direction: column;
+            margin: 0;
+        }
+
+        .modal__input-panel:nth-child(n) {
+            margin: 10px 0;
+        }
+    }
+
+    @media screen and (max-width: 425px) {
+        .modal__title {
+            font-size: var(--font-smaller);
+        }
     }
 `;
