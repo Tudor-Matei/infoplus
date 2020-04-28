@@ -1,4 +1,4 @@
 export default {
-  dbName: "infoplus",
-  dbURI: "mongodb://localhost:27017"
+    dbURI: "mongodb://localhost:27017",
+    dbName: "infoplus",
 };

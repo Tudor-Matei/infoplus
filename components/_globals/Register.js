@@ -1,8 +1,12 @@
 import { useState } from "react";
+import { useRouter } from "next/router";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
 import InputArea from "../utils/InputArea";
 import formModal from "../../styles/formModal";
 import OverlayDarkener from "../utils/OverlayDarkener";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
+import checkFieldsValidity from "../../utils/checkFieldsValidity";
 
 export default function Register({ showRegisterModalHandler }) {
     const [userDetails, setUserDetail] = useState({
@@ -164,22 +168,60 @@ export default function Register({ showRegisterModalHandler }) {
 }
 
 function SubmitButton({ userDetails, showErrorMessage }) {
-    return (
-        <button
-            type="submit"
-            onClick={(e) => {
-                if (!checkFieldValidity(userDetails, showErrorMessage)) return;
-                e.preventDefault();
+    const [isDisabled, setDisabled] = useState(false);
+    const Router = useRouter();
 
-                fetch("/api/register", {
-                    method: "POST",
-                    body: JSON.stringify(userDetails),
-                });
-            }}
-            className="button--primary"
-        >
-            Creează
-        </button>
+    return (
+        <>
+            <button
+                type="submit"
+                disabled={isDisabled}
+                onClick={(e) => {
+                    e.preventDefault();
+                    setDisabled(true);
+
+                    const errorMessage = checkFieldsValidity({
+                        fields: userDetails,
+                        minimumLengthForEachField: {
+                            name: 3,
+                            surname: 3,
+                            username: 5,
+                            password: 8,
+                        },
+                        hasEmail: true,
+                    });
+
+                    if (errorMessage !== false) {
+                        setDisabled(false);
+                        return showErrorMessage(errorMessage);
+                    }
+
+                    fetch("/api/register", {
+                        method: "POST",
+                        body: JSON.stringify(userDetails),
+                    })
+                        .then((r) => r.json())
+                        .then((r) => {
+                            alert(JSON.stringify(r));
+                            // if (ok) Router.push("/cont");
+                            // else {
+                            //     setDisabled(false);
+                            //     return showErrorMessage(
+                            //         "A aparut o eroare interna, va rog sa ne scuzati."
+                            //     );
+                            // }
+                        });
+                }}
+                className="button--primary"
+            >
+                Creează
+            </button>
+            <style jsx>{`
+                .button--primary {
+                    background-color: var(--accent-secondary);
+                }
+            `}</style>
+        </>
     );
 }
 
@@ -194,37 +236,8 @@ function RegisterModalWave() {
         >
             <path
                 d="M0 0L646 9.53674e-07V155.911C646 155.911 580.59 179.393 468.2 182.62C355.81 185.847 285.267 171.488 207.13 155.911C46.027 123.793 1.90735e-06 155.911 1.90735e-06 155.911L0 0Z"
-                fill="var(--accent-primary)"
+                fill="var(--accent-secondary)"
             />
         </svg>
-    );
-}
-
-function checkFieldValidity(state, showErrorMessage) {
-    if (Object.values(state).some((value) => value.trim() === "")) {
-        showErrorMessage("Nu ai completat unul sau mai multe câmpuri.");
-        return false;
-    } else if (
-        state.name.length < 3 ||
-        state.surname.length < 3 ||
-        state.username.length < 5 ||
-        state.password.length < 8
-    ) {
-        showErrorMessage(
-            "Unul sau mai multe câmpuri nu indeplinesc numarul de caractere minim."
-        );
-        return false;
-    } else if (!isEmailValid(state.email)) {
-        showErrorMessage(
-            "Adresa de e-mail pe care ai introdus-o nu este validă."
-        );
-        return false;
-    }
-    return true;
-}
-
-function isEmailValid(email) {
-    return /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/gim.test(
-        email
     );
 }

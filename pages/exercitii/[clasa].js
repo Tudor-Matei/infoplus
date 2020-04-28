@@ -1,17 +1,25 @@
-import { useRouter } from "next/router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import Error from "next/error";
-import useComponentDidMount from "../../components/_hooks/componentDidMount";
 
 import Exercise from "../../components/ExercisesList/Exercise";
 
-export default function ExercisesList() {
-    const { clasa } = useRouter().query;
-    useComponentDidMount(() => {
-        if (!["ix", "x", "xi"].includes(clasa))
-            return <Error statusCode={404} />;
-    });
+export async function getStaticPaths() {
+    return {
+        paths: [
+            { params: { clasa: "ix" } },
+            { params: { clasa: "x" } },
+            { params: { clasa: "xi" } },
+        ],
+        fallback: false,
+    };
+}
 
+export async function getStaticProps({ params: { clasa } }) {
+    return {
+        props: { clasa },
+    };
+}
+
+export default function ExercisesList({ clasa }) {
     return (
         <>
             {clasa && <HeaderMainInfo grade={clasa} />}

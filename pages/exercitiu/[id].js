@@ -5,10 +5,6 @@ import Results from "../../components/IndividualExercise/ResultsArea";
 
 import { useState } from "react";
 export default function Exercitiu() {
-    //TODO: dati seama cum sa fie fetch aici, in functie de butonul "trimite"
-    //trebuie totusi sa astept dupa raspunsul de la server cand termina de compilat...
-    //websockets-ul ar fi un overkill.
-    //o idee naspa ar fi sa setez un timeout dupa care sa fac fetch.
     const [needsResultsComponent, setResultsComponent] = useState(true);
     const toggleResultsComponent = () =>
         setResultsComponent(!needsResultsComponent);

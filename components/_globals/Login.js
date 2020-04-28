@@ -46,10 +46,6 @@ export default function Login({ showLoginModalHandler }) {
                     width: 100%;
                     margin-bottom: 20px;
                 }
-
-                .button--primary {
-                    background-color: var(--accent-secondary);
-                }
             `}</style>
         </>
     );
@@ -66,7 +62,7 @@ function LoginModalWave() {
         >
             <path
                 d="M0 0L646 9.53674e-07V155.911C646 155.911 580.59 179.393 468.2 182.62C355.81 185.847 285.267 171.488 207.13 155.911C46.027 123.793 1.90735e-06 155.911 1.90735e-06 155.911L0 0Z"
-                fill="var(--accent-secondary)"
+                fill="var(--accent-primary)"
             />
         </svg>
     );

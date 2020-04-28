@@ -1,0 +1,1 @@
+{"ast":null,"code":"export default function difficultyText(difficulty) {\n  return difficulty === 1 ? \"UȘOR\" : difficulty === 2 ? \"MEDIU\" : difficulty === 3 ? \"PROVOCATOR\" : \"DIFICIL\";\n}","map":null,"metadata":{},"sourceType":"module"}

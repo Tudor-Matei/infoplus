@@ -1,1 +1,0 @@
-{"ast":null,"code":"export default function Database() {}","map":{"version":3,"sources":["C:/Users/Tudor/Desktop/Proiecte Web/infoplus/pages/database.js"],"names":["Database"],"mappings":"AAAA,eAAe,SAASA,QAAT,GAAoB,CAAE","sourcesContent":["export default function Database() {}\r\n"]},"metadata":{},"sourceType":"module"}
