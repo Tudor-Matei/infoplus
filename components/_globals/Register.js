@@ -1,14 +1,15 @@
-import { useState } from "react";
-import { useRouter } from "next/router";
+import { useState, useContext } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-import InputArea from "../utils/InputArea";
 import formModal from "../../styles/formModal";
 import OverlayDarkener from "../utils/OverlayDarkener";
-
 import checkFieldsValidity from "../../utils/checkFieldsValidity";
+import InputAreas from "../utils/InputAreas";
 
-export default function Register({ showRegisterModalHandler }) {
+import { RegisterModalHandler } from "../Home/Main";
+import { ShowNotificationContext } from "../../pages/_app";
+
+export default function Register() {
     const [userDetails, setUserDetail] = useState({
         name: "",
         surname: "",
@@ -18,11 +19,13 @@ export default function Register({ showRegisterModalHandler }) {
         email: "",
         password: "",
     });
-    const userDetailChanger = ({ target }, userDetail) =>
-        setUserDetail({ ...userDetails, [userDetail]: target.value });
 
     const [errorMessage, setErrorMessage] = useState("");
     const showErrorMessage = (error) => setErrorMessage(error);
+    const updateDetails = (e, fieldName) =>
+        setUserDetail({ ...userDetails, [fieldName]: e.target.value });
+
+    const showRegisterModalHandler = useContext(RegisterModalHandler);
 
     return (
         <>
@@ -33,96 +36,9 @@ export default function Register({ showRegisterModalHandler }) {
                     <h2 className="modal__title">Înregistrează-te</h2>
                 </div>
                 <form className="modal__input-panels" onSubmit={() => false}>
-                    <div className="modal__input-panel-group">
-                        <div className="modal__input-panel">
-                            <InputArea
-                                title="Nume"
-                                inputType="text"
-                                inputProps={{ minLength: 3, required: true }}
-                                eventHandler={(e) =>
-                                    userDetailChanger(e, "name")
-                                }
-                            />
-                        </div>
-                        <div className="modal__input-panel">
-                            <InputArea
-                                title="Prenume"
-                                inputType="text"
-                                inputProps={{ minLength: 3, required: true }}
-                                eventHandler={(e) =>
-                                    userDetailChanger(e, "surname")
-                                }
-                            />
-                        </div>
-                    </div>
-                    <div className="modal__input-panel-group">
-                        <div className="modal__input-panel">
-                            <InputArea
-                                title="Județ"
-                                isSelect
-                                optionValues={[
-                                    "Alba",
-                                    "Cluj",
-                                    "Bistrita-Nasaud",
-                                ]}
-                                eventHandler={(e) =>
-                                    userDetailChanger(e, "county")
-                                }
-                            />
-                        </div>
-                        <div className="modal__input-panel">
-                            <InputArea
-                                title="Profesie"
-                                isSelect
-                                optionValues={["Elev", "Profesor"]}
-                                eventHandler={(e) =>
-                                    userDetailChanger(e, "profession")
-                                }
-                            />
-                        </div>
-                    </div>
-                    <div className="modal__input-panel-group">
-                        <div className="modal__input-panel">
-                            <InputArea
-                                title="Nume Utilizator"
-                                inputType="text"
-                                inputProps={{ minLength: 5, required: true }}
-                                eventHandler={(e) =>
-                                    userDetailChanger(e, "username")
-                                }
-                            />
-                        </div>
-                        <div className="modal__input-panel">
-                            <InputArea
-                                title="E-mail"
-                                inputType="email"
-                                inputProps={{
-                                    required: true,
-                                }}
-                                eventHandler={(e) =>
-                                    userDetailChanger(e, "email")
-                                }
-                            />
-                        </div>
-                    </div>
-                    <div className="modal__input-panel-group">
-                        <div className="modal__input-panel modal__input-panel--last">
-                            <InputArea
-                                title="Parola"
-                                inputType="password"
-                                inputProps={{ minLength: 8, required: true }}
-                                eventHandler={(e) =>
-                                    userDetailChanger(e, "password")
-                                }
-                            />
-                        </div>
-                    </div>
-
+                    <InputAreas updateDetails={updateDetails} />
                     <div className="modal__buttons-container">
-                        <button
-                            className="button--tertiary"
-                            onClick={showRegisterModalHandler}
-                        >
+                        <button className="button--tertiary" onClick={showRegisterModalHandler}>
                             Renunță
                         </button>
                         <SubmitButton
@@ -132,14 +48,13 @@ export default function Register({ showRegisterModalHandler }) {
                     </div>
                     {errorMessage !== "" && (
                         <p className="error-message">
-                            {errorMessage}{" "}
-                            <FontAwesomeIcon icon="times-circle" />{" "}
+                            {errorMessage} <FontAwesomeIcon icon="times-circle" />{" "}
                         </p>
                     )}
                 </form>
             </div>
             <style jsx>{formModal}</style>
-            <style jsx>{`
+            <style jsx global>{`
                 .modal {
                     width: 50%;
                 }
@@ -169,49 +84,25 @@ export default function Register({ showRegisterModalHandler }) {
 
 function SubmitButton({ userDetails, showErrorMessage }) {
     const [isDisabled, setDisabled] = useState(false);
-    const Router = useRouter();
+
+    const showRegisterModalHandler = useContext(RegisterModalHandler);
+    const modifyAlert = useContext(ShowNotificationContext);
 
     return (
         <>
             <button
                 type="submit"
                 disabled={isDisabled}
-                onClick={(e) => {
-                    e.preventDefault();
-                    setDisabled(true);
-
-                    const errorMessage = checkFieldsValidity({
-                        fields: userDetails,
-                        minimumLengthForEachField: {
-                            name: 3,
-                            surname: 3,
-                            username: 5,
-                            password: 8,
-                        },
-                        hasEmail: true,
-                    });
-
-                    if (errorMessage !== false) {
-                        setDisabled(false);
-                        return showErrorMessage(errorMessage);
-                    }
-
-                    fetch("/api/register", {
-                        method: "POST",
-                        body: JSON.stringify(userDetails),
+                onClick={(e) =>
+                    registerSubmitHandler({
+                        e,
+                        userDetails,
+                        showErrorMessage,
+                        setDisabled,
+                        showRegisterModalHandler,
+                        modifyAlert,
                     })
-                        .then((r) => r.json())
-                        .then((r) => {
-                            alert(JSON.stringify(r));
-                            // if (ok) Router.push("/cont");
-                            // else {
-                            //     setDisabled(false);
-                            //     return showErrorMessage(
-                            //         "A aparut o eroare interna, va rog sa ne scuzati."
-                            //     );
-                            // }
-                        });
-                }}
+                }
                 className="button--primary"
             >
                 Creează
@@ -223,6 +114,67 @@ function SubmitButton({ userDetails, showErrorMessage }) {
             `}</style>
         </>
     );
+}
+
+function registerSubmitHandler({
+    e,
+    userDetails,
+    showErrorMessage,
+    setDisabled,
+    showRegisterModalHandler,
+    modifyAlert,
+}) {
+    e.preventDefault();
+    setDisabled(true);
+
+    const errorMessage = checkFieldsValidity({
+        fields: userDetails,
+        minimumLengthForEachField: {
+            name: 3,
+            surname: 3,
+            username: 5,
+            password: 8,
+        },
+        hasEmail: true,
+    });
+
+    if (errorMessage !== false) {
+        setDisabled(false);
+        return showErrorMessage(errorMessage);
+    }
+
+    fetch("/api/register", {
+        method: "POST",
+        body: JSON.stringify(userDetails),
+    })
+        .then((r) => r.json())
+        .then(({ ok, error = null }) => {
+            if (!ok)
+                modifyAlert({
+                    isVisible: true,
+                    props: {
+                        type: 0,
+                        children: !error
+                            ? "A apărut o eroare internă, vă rugam să ne scuzați."
+                            : error,
+                    },
+                });
+            else
+                modifyAlert({
+                    isVisible: true,
+                    props: {
+                        type: 1,
+                        children: "Înregistrarea a fost efectuată cu succes.",
+                    },
+                });
+
+            showRegisterModalHandler();
+        })
+        .catch((error) => {
+            console.error(error);
+            setDisabled(false);
+            showErrorMessage("A aparut o eroare interna, va rog sa ne scuzati.");
+        });
 }
 
 function RegisterModalWave() {

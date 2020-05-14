@@ -84,7 +84,13 @@ export default css.global`
         font-family: "Red Hat Display";
         border-radius: 50px;
         cursor: pointer;
-        transition: box-shadow 300ms ease;
+        transition-property: box-shadow, opacity;
+        transition-duration: 300ms;
+        transition-timing-function: ease;
+    }
+
+    button:disabled {
+        opacity: 0.2;
     }
 
     button:focus {
@@ -136,12 +142,13 @@ export default css.global`
         font-weight: bold;
         transition: color 300ms linear;
         color: var(--text-primary);
-        width: 120px;
+        width: auto;
+        margin: 0 25px;
     }
 
     .button--tertiary:hover {
         box-shadow: none;
-        color: var(--accent-tertiary);
+        color: var(--accent-quaternary);
     }
 
     .underlined {

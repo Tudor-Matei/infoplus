@@ -1,14 +1,19 @@
 import { createContext, useState } from "react";
 import Router from "next/router";
+import useComponentDidMount from "../components/_hooks/componentDidMount";
+
 import "../configs/icons";
+import mainStyling from "../styles/mainStyling";
 
 import Header from "../components/_globals/Header";
 import Contact from "../components/_globals/Contact";
 import Footer from "../components/_globals/Footer";
-import mainStyling from "../styles/mainStyling";
-import useComponentDidMount from "../components/_hooks/componentDidMount";
+
+import AlertNotification from "../components/_globals/AlertNotification";
 import LoadingBar from "../components/_globals/LoadingBar";
+
 const ThemeContext = createContext(true);
+const ShowNotificationContext = createContext(null);
 
 Router.events.on("routeChangeStart", loadingStart);
 Router.events.on("routeChangeComplete", loadingFinished);
@@ -27,14 +32,31 @@ export default function App({ Component, pageProps }) {
         setTheme(localTheme === "light");
     });
 
+    const [alert, modifyAlert] = useState({
+        isVisible: false,
+        props: { type: 1, children: "" },
+    });
+
     return (
         <>
+            {alert.isVisible && (
+                <AlertNotification
+                    type={alert.props.type}
+                    alertToggleHandler={() =>
+                        modifyAlert({ ...alert, isVisible: false })
+                    }
+                >
+                    {alert.props.children}
+                </AlertNotification>
+            )}
             <LoadingBar />
             <ThemeContext.Provider value={{ isLightTheme, setTheme }}>
                 <Header />
             </ThemeContext.Provider>
 
-            <Component {...pageProps} />
+            <ShowNotificationContext.Provider value={modifyAlert}>
+                <Component {...pageProps} />
+            </ShowNotificationContext.Provider>
 
             <Contact />
             <Footer />
@@ -43,7 +65,7 @@ export default function App({ Component, pageProps }) {
     );
 }
 
-export { ThemeContext };
+export { ThemeContext, ShowNotificationContext };
 
 function loadingStart() {
     const loadingBar = document.querySelector(".loading-bar");

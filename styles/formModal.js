@@ -1,6 +1,6 @@
 import css from "styled-jsx/css";
 
-export default css`
+export default css.global`
     @keyframes modalAnimation {
         from {
             opacity: 0;

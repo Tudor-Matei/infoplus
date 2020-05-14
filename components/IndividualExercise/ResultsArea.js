@@ -1,11 +1,8 @@
 import CheckmarkSolved from "../utils/CheckmarkSolved";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import ErrorCircle from "../utils/ErrorCircle";
 
-export default function Results({
-    totalPointsGained,
-    testResults = [],
-    toggleResultsComponent,
-}) {
+export default function Results({ totalPointsGained, testResults = [], toggleResultsComponent }) {
     return (
         <>
             <div className="results">
@@ -15,45 +12,32 @@ export default function Results({
                     <h2>{totalPointsGained} puncte</h2>
                 </div>
                 <div className="results__tests">
-                    {testResults.map(
-                        (
-                            { didPass, timeTaken, memoryUsed, failureCode },
-                            i
-                        ) => (
-                            <div
-                                className={`results__test ${
-                                    !didPass
-                                        ? "results__test--failed"
-                                        : "results__test--passed"
-                                }`}
-                                style={{ animationDelay: 200 * (i + 1) + "ms" }}
-                                key={`results__test-container_${i + 1}`}
-                            >
-                                <h3 key={`results__test-number_${i + 1}`}>
-                                    Testul {i + 1}
-                                </h3>
-                                {didPass ? (
-                                    <div className="results__details">
-                                        <p className="results__seconds--with-border">
-                                            <FontAwesomeIcon icon="clock" />
-                                            {timeTaken} secunde
-                                        </p>
-                                        <p>
-                                            <FontAwesomeIcon icon="memory" />
-                                            {memoryUsed} MB folosiți
-                                        </p>
-                                        <CheckmarkSolved
-                                            key={`results__solved-test_${
-                                                i + 1
-                                            }`}
-                                        />
-                                    </div>
-                                ) : (
-                                    returnElementForFailureCode(failureCode)
-                                )}
-                            </div>
-                        )
-                    )}
+                    {testResults.map(({ didPass, timeTaken, memoryUsed, failureCode }, i) => (
+                        <div
+                            className={`results__test ${
+                                !didPass ? "results__test--failed" : "results__test--passed"
+                            }`}
+                            style={{ animationDelay: 200 * (i + 1) + "ms" }}
+                            key={`results__test-container_${i + 1}`}
+                        >
+                            <h3 key={`results__test-number_${i + 1}`}>Testul {i + 1}</h3>
+                            {didPass ? (
+                                <div className="results__details">
+                                    <p className="results__seconds--with-border">
+                                        <FontAwesomeIcon icon="clock" />
+                                        {timeTaken} secunde
+                                    </p>
+                                    <p>
+                                        <FontAwesomeIcon icon="memory" />
+                                        {memoryUsed} MB folosiți
+                                    </p>
+                                    <CheckmarkSolved key={`results__solved-test_${i + 1}`} />
+                                </div>
+                            ) : (
+                                returnElementForFailureCode(failureCode)
+                            )}
+                        </div>
+                    ))}
                     <ReturnToSolutionButton onClick={toggleResultsComponent} />
                 </div>
             </div>
@@ -67,10 +51,6 @@ export default function Results({
                     color: var(--text-button);
                     margin: 50px 0 80px;
                     padding: 0 65px;
-
-                    --test-passed: #a7f7ab;
-                    --test-failed: #ffa9a9;
-                    --test-failed-icon: #ff5e5e;
                 }
 
                 .results__band {
@@ -141,19 +121,15 @@ export default function Results({
                 }
 
                 .results__test--passed {
-                    background-color: var(--test-passed);
+                    background-color: var(--accent-success);
                 }
 
                 .results__test--failed {
-                    background-color: var(--test-failed);
+                    background-color: var(--accent-failure-secondary);
                 }
 
-                :global(.results__test--failed svg) {
-                    width: 22px !important;
-                    height: 22px;
-                    background-color: var(--test-failed-icon);
-                    border-radius: 50%;
-                    padding: 5px;
+                :global(.results .error-circle) {
+                    margin-right: 0;
                 }
 
                 .results__test:last-child {
@@ -258,19 +234,19 @@ function returnElementForFailureCode(failureCode) {
     if (failureCode === -1)
         return (
             <p>
-                Limită de timp depășită <FontAwesomeIcon icon="clock" />{" "}
+                Limită de timp depășită <ErrorCircle />{" "}
             </p>
         );
     else if (failureCode === -2)
         return (
             <p>
-                Limită de memorie depășită <FontAwesomeIcon icon="memory" />{" "}
+                Limită de memorie depășită <ErrorCircle />{" "}
             </p>
         );
     else if (failureCode === -3)
         return (
             <p>
-                Eroare cod -3 <FontAwesomeIcon icon="times-circle" />{" "}
+                Eroare cod -3 <ErrorCircle />{" "}
             </p>
         );
 }

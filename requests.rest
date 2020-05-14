@@ -1,0 +1,6 @@
+
+
+POST http://localhost:3000/api/register
+Content-Type: 'application/json'
+
+{"name":"hearherh","surname":"earhaerh","county":"Alba","profession":"Elev","username":"aerhaerh","email":"eharherah@gmail.com","password":"pdofgjdiabhadiofbjan"}

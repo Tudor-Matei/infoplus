@@ -2,7 +2,11 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Register from "../_globals/Register";
 import Login from "../_globals/Login";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, createContext } from "react";
+
+const RegisterModalHandler = createContext(null);
+const LoginModalHandler = createContext(null);
+export { RegisterModalHandler, LoginModalHandler };
 
 export default function Main() {
     const [registerModalVisible, showRegisterModal] = useState(false);
@@ -14,12 +18,12 @@ export default function Main() {
 
     return (
         <section className="main">
-            {registerModalVisible && (
-                <Register showRegisterModalHandler={showRegisterModalHandler} />
-            )}
-            {loginModalVisible && (
-                <Login showLoginModalHandler={showLoginModalHandler} />
-            )}
+            <RegisterModalHandler.Provider value={showRegisterModalHandler}>
+                {registerModalVisible && <Register />}
+            </RegisterModalHandler.Provider>
+            <LoginModalHandler.Provider value={showLoginModalHandler}>
+                {loginModalVisible && <Login />}
+            </LoginModalHandler.Provider>
             <div className="main__content-panel">
                 <h1 className="main__primary-heading">infoplus</h1>
                 <div className="main__bullets">
