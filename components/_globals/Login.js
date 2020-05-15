@@ -1,37 +1,55 @@
-import { useState } from "react";
-import InputArea from "../utils/InputArea";
+import { useState, useContext } from "react";
 import formModal from "../../styles/formModal";
+
 import OverlayDarkener from "../utils/OverlayDarkener";
-export default function Login({ showLoginModalHandler }) {
-    const [numeUtilizator, setNumeUtilizator] = useState("");
-    const [parola, setParola] = useState("");
+import SubmitButton from "../utils/SubmitButton";
+import InputAreas from "../utils/InputAreas";
+import inputAreaLoginData from "../utils/inputAreaLoginData";
+
+import { LoginModalHandler } from "../Home/Main";
+
+export default function Login() {
+    const [userDetails, setUserDetail] = useState({
+        username: "",
+        password: "",
+    });
+    const updateDetails = (e, fieldName) =>
+        setUserDetail({ ...userDetails, [fieldName]: e.target.value });
+
+    const [errorMessage, setErrorMessage] = useState("");
+    const showErrorMessage = (error) => setErrorMessage(error);
+
+    const showLoginModalHandler = useContext(LoginModalHandler);
+
     return (
         <>
             <OverlayDarkener onClick={showLoginModalHandler} />
-            <div className="modal">
+            <div className="modal modal--login">
                 <div className="modal__title-container">
                     <LoginModalWave />
                     <h2 className="modal__title">Logheaza-te</h2>
                 </div>
                 <div className="modal__input-panels">
-                    <div className="modal__input-panel">
-                        <InputArea
-                            title="E-mail/Nume utilizator"
-                            inputType="text"
-                        />
-                    </div>
-                    <div className="modal__input-panel">
-                        <InputArea title="Parola" inputType="password" />
-                    </div>
+                    <InputAreas updateDetails={updateDetails} inputAreaData={inputAreaLoginData} />
 
                     <div className="modal__buttons-container">
-                        <button
-                            className="button--tertiary"
-                            onClick={showLoginModalHandler}
-                        >
+                        <button className="button--tertiary" onClick={showLoginModalHandler}>
                             Renunță
                         </button>
-                        <button className="button--primary">Logare</button>
+                        <SubmitButton
+                            userData={{
+                                username: userDetails.username,
+                                password: userDetails.password,
+                            }}
+                            showErrorMessage={showErrorMessage}
+                            buttonTitle="Logare"
+                            type="login"
+                        />
+                        {errorMessage !== "" && (
+                            <p className="error-message">
+                                {errorMessage} <FontAwesomeIcon icon="times-circle" />{" "}
+                            </p>
+                        )}
                     </div>
                 </div>
             </div>
@@ -42,9 +60,15 @@ export default function Login({ showLoginModalHandler }) {
                     max-height: 81%;
                 }
 
-                .modal__input-panel {
-                    width: 100%;
+                :global(.modal__input-panel-group) {
+                    flex-direction: column;
+                }
+                :global(.modal--login .modal__input-panel) {
                     margin-bottom: 20px;
+                }
+
+                :global(.modal--login .button--primary) {
+                    background-color: var(--accent-primary);
                 }
             `}</style>
         </>

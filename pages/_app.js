@@ -13,7 +13,7 @@ import AlertNotification from "../components/_globals/AlertNotification";
 import LoadingBar from "../components/_globals/LoadingBar";
 
 const ThemeContext = createContext(true);
-const ShowNotificationContext = createContext(null);
+const ShowAlertContext = createContext(null);
 
 Router.events.on("routeChangeStart", loadingStart);
 Router.events.on("routeChangeComplete", loadingFinished);
@@ -24,8 +24,7 @@ export default function App({ Component, pageProps }) {
     useComponentDidMount(() => {
         const localTheme =
             window.localStorage.getItem("theme") ||
-            (window.matchMedia &&
-            window.matchMedia("(prefers-color-scheme: dark)").matches
+            (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches
                 ? "dark"
                 : "light");
 
@@ -42,9 +41,7 @@ export default function App({ Component, pageProps }) {
             {alert.isVisible && (
                 <AlertNotification
                     type={alert.props.type}
-                    alertToggleHandler={() =>
-                        modifyAlert({ ...alert, isVisible: false })
-                    }
+                    alertToggleHandler={() => modifyAlert({ ...alert, isVisible: false })}
                 >
                     {alert.props.children}
                 </AlertNotification>
@@ -54,9 +51,9 @@ export default function App({ Component, pageProps }) {
                 <Header />
             </ThemeContext.Provider>
 
-            <ShowNotificationContext.Provider value={modifyAlert}>
+            <ShowAlertContext.Provider value={modifyAlert}>
                 <Component {...pageProps} />
-            </ShowNotificationContext.Provider>
+            </ShowAlertContext.Provider>
 
             <Contact />
             <Footer />
@@ -65,7 +62,7 @@ export default function App({ Component, pageProps }) {
     );
 }
 
-export { ThemeContext, ShowNotificationContext };
+export { ThemeContext, ShowAlertContext };
 
 function loadingStart() {
     const loadingBar = document.querySelector(".loading-bar");

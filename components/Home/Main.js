@@ -10,8 +10,7 @@ export { RegisterModalHandler, LoginModalHandler };
 
 export default function Main() {
     const [registerModalVisible, showRegisterModal] = useState(false);
-    const showRegisterModalHandler = () =>
-        showRegisterModal(!registerModalVisible);
+    const showRegisterModalHandler = () => showRegisterModal(!registerModalVisible);
 
     const [loginModalVisible, showLoginModal] = useState(false);
     const showLoginModalHandler = () => showLoginModal(!loginModalVisible);
@@ -40,10 +39,7 @@ export default function Main() {
                             link=""
                             onClick={showLoginModalHandler}
                         />
-                        <p
-                            onClick={showRegisterModalHandler}
-                            className="main__button-make-account"
-                        >
+                        <p onClick={showRegisterModalHandler} className="main__button-make-account">
                             Nu ai cont? <a href="#">Fa-ti unul!</a>
                         </p>
                     </div>
@@ -138,10 +134,7 @@ function BulletTitle({ title, icon, i }) {
     return (
         <div className="main__bullet">
             <div className="main__icon-bubble">
-                <FontAwesomeIcon
-                    icon={icon}
-                    className={`main__bullet-icon--${i}`}
-                />
+                <FontAwesomeIcon icon={icon} className={`main__bullet-icon--${i}`} />
             </div>
             <h3 className="main__tertiary-heading">{title}</h3>
 

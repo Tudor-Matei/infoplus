@@ -1,13 +1,13 @@
 import { useState, useContext } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-
 import formModal from "../../styles/formModal";
+
 import OverlayDarkener from "../utils/OverlayDarkener";
-import checkFieldsValidity from "../../utils/checkFieldsValidity";
 import InputAreas from "../utils/InputAreas";
+import inputAreaRegisterData from "../utils/inputAreaRegisterData";
+import SubmitButton from "../utils/SubmitButton";
 
 import { RegisterModalHandler } from "../Home/Main";
-import { ShowNotificationContext } from "../../pages/_app";
 
 export default function Register() {
     const [userDetails, setUserDetail] = useState({
@@ -36,14 +36,20 @@ export default function Register() {
                     <h2 className="modal__title">Înregistrează-te</h2>
                 </div>
                 <form className="modal__input-panels" onSubmit={() => false}>
-                    <InputAreas updateDetails={updateDetails} />
+                    <InputAreas
+                        updateDetails={updateDetails}
+                        inputAreaData={inputAreaRegisterData}
+                    />
                     <div className="modal__buttons-container">
                         <button className="button--tertiary" onClick={showRegisterModalHandler}>
                             Renunță
                         </button>
+
                         <SubmitButton
                             userDetails={userDetails}
                             showErrorMessage={showErrorMessage}
+                            buttonTitle="Creează"
+                            type="register"
                         />
                     </div>
                     {errorMessage !== "" && (
@@ -80,101 +86,6 @@ export default function Register() {
             `}</style>
         </>
     );
-}
-
-function SubmitButton({ userDetails, showErrorMessage }) {
-    const [isDisabled, setDisabled] = useState(false);
-
-    const showRegisterModalHandler = useContext(RegisterModalHandler);
-    const modifyAlert = useContext(ShowNotificationContext);
-
-    return (
-        <>
-            <button
-                type="submit"
-                disabled={isDisabled}
-                onClick={(e) =>
-                    registerSubmitHandler({
-                        e,
-                        userDetails,
-                        showErrorMessage,
-                        setDisabled,
-                        showRegisterModalHandler,
-                        modifyAlert,
-                    })
-                }
-                className="button--primary"
-            >
-                Creează
-            </button>
-            <style jsx>{`
-                .button--primary {
-                    background-color: var(--accent-secondary);
-                }
-            `}</style>
-        </>
-    );
-}
-
-function registerSubmitHandler({
-    e,
-    userDetails,
-    showErrorMessage,
-    setDisabled,
-    showRegisterModalHandler,
-    modifyAlert,
-}) {
-    e.preventDefault();
-    setDisabled(true);
-
-    const errorMessage = checkFieldsValidity({
-        fields: userDetails,
-        minimumLengthForEachField: {
-            name: 3,
-            surname: 3,
-            username: 5,
-            password: 8,
-        },
-        hasEmail: true,
-    });
-
-    if (errorMessage !== false) {
-        setDisabled(false);
-        return showErrorMessage(errorMessage);
-    }
-
-    fetch("/api/register", {
-        method: "POST",
-        body: JSON.stringify(userDetails),
-    })
-        .then((r) => r.json())
-        .then(({ ok, error = null }) => {
-            if (!ok)
-                modifyAlert({
-                    isVisible: true,
-                    props: {
-                        type: 0,
-                        children: !error
-                            ? "A apărut o eroare internă, vă rugam să ne scuzați."
-                            : error,
-                    },
-                });
-            else
-                modifyAlert({
-                    isVisible: true,
-                    props: {
-                        type: 1,
-                        children: "Înregistrarea a fost efectuată cu succes.",
-                    },
-                });
-
-            showRegisterModalHandler();
-        })
-        .catch((error) => {
-            console.error(error);
-            setDisabled(false);
-            showErrorMessage("A aparut o eroare interna, va rog sa ne scuzati.");
-        });
 }
 
 function RegisterModalWave() {

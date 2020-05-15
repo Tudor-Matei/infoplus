@@ -3121,14 +3121,14 @@ if (false) {} else {
 /*!***********************!*\
   !*** ./pages/_app.js ***!
   \***********************/
-/*! exports provided: default, ThemeContext, ShowNotificationContext */
+/*! exports provided: default, ThemeContext, ShowAlertContext */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return App; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ThemeContext", function() { return ThemeContext; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ShowNotificationContext", function() { return ShowNotificationContext; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ShowAlertContext", function() { return ShowAlertContext; });
 /* harmony import */ var styled_jsx_style__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! styled-jsx/style */ "styled-jsx/style");
 /* harmony import */ var styled_jsx_style__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(styled_jsx_style__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react */ "react");
@@ -3167,7 +3167,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 
 const ThemeContext = Object(react__WEBPACK_IMPORTED_MODULE_1__["createContext"])(true);
-const ShowNotificationContext = Object(react__WEBPACK_IMPORTED_MODULE_1__["createContext"])(null);
+const ShowAlertContext = Object(react__WEBPACK_IMPORTED_MODULE_1__["createContext"])(null);
 next_router__WEBPACK_IMPORTED_MODULE_2___default.a.events.on("routeChangeStart", loadingStart);
 next_router__WEBPACK_IMPORTED_MODULE_2___default.a.events.on("routeChangeComplete", loadingFinished);
 next_router__WEBPACK_IMPORTED_MODULE_2___default.a.events.on("routeChangeError", loadingFinished);
@@ -3201,14 +3201,14 @@ function App({
     __self: this,
     __source: {
       fileName: _jsxFileName,
-      lineNumber: 43,
+      lineNumber: 42,
       columnNumber: 17
     }
   }, alert.props.children), __jsx(_components_globals_LoadingBar__WEBPACK_IMPORTED_MODULE_10__["default"], {
     __self: this,
     __source: {
       fileName: _jsxFileName,
-      lineNumber: 52,
+      lineNumber: 49,
       columnNumber: 13
     }
   }), __jsx(ThemeContext.Provider, {
@@ -3219,22 +3219,22 @@ function App({
     __self: this,
     __source: {
       fileName: _jsxFileName,
-      lineNumber: 53,
+      lineNumber: 50,
       columnNumber: 13
     }
   }, __jsx(_components_globals_Header__WEBPACK_IMPORTED_MODULE_6__["default"], {
     __self: this,
     __source: {
       fileName: _jsxFileName,
-      lineNumber: 54,
+      lineNumber: 51,
       columnNumber: 17
     }
-  })), __jsx(ShowNotificationContext.Provider, {
+  })), __jsx(ShowAlertContext.Provider, {
     value: modifyAlert,
     __self: this,
     __source: {
       fileName: _jsxFileName,
-      lineNumber: 57,
+      lineNumber: 54,
       columnNumber: 13
     }
   }, __jsx(Component, _extends({}, pageProps, {
@@ -3242,21 +3242,21 @@ function App({
     __self: this,
     __source: {
       fileName: _jsxFileName,
-      lineNumber: 58,
+      lineNumber: 55,
       columnNumber: 17
     }
   }))), __jsx(_components_globals_Contact__WEBPACK_IMPORTED_MODULE_7__["default"], {
     __self: this,
     __source: {
       fileName: _jsxFileName,
-      lineNumber: 61,
+      lineNumber: 58,
       columnNumber: 13
     }
   }), __jsx(_components_globals_Footer__WEBPACK_IMPORTED_MODULE_8__["default"], {
     __self: this,
     __source: {
       fileName: _jsxFileName,
-      lineNumber: 62,
+      lineNumber: 59,
       columnNumber: 13
     }
   }), __jsx(styled_jsx_style__WEBPACK_IMPORTED_MODULE_0___default.a, {
