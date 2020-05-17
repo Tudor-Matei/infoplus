@@ -1,5 +1,4 @@
 import { useState } from "react";
-
 import AccountDetails from "../components/Account/Details";
 import ExercisesDetails from "../components/Account/ExercisesDetails";
 import ProgressDetails from "../components/Account/Progress";
@@ -8,22 +7,19 @@ export default function Cont() {
     const [state, setState] = useState({
         isTabelActive: true,
         isExercisesActive: false,
-        isProgressActive: false
+        isProgressActive: false,
     });
-    const changeCategory = category =>
+    const changeCategory = (category) =>
         setState({
             isTabelActive: category === "isTabelActive",
             isExercisesActive: category === "isExercisesActive",
-            isProgressActive: category === "isProgressActive"
+            isProgressActive: category === "isProgressActive",
         });
 
     return (
         <>
             <h1 className="details-account">Detalii cont</h1>
-            <HeaderOptionsDetails
-                parentState={state}
-                changeCategory={changeCategory}
-            />
+            <HeaderOptionsDetails parentState={state} changeCategory={changeCategory} />
 
             {state.isTabelActive && <AccountDetails />}
             {state.isExercisesActive && <ExercisesDetails />}
@@ -46,14 +42,12 @@ function HeaderOptionsDetails({ parentState, changeCategory }) {
             {[
                 { detail: "Tabel", alias: "Cont" },
                 { detail: "Exercises", alias: "Exercitii" },
-                { detail: "Progress", alias: "Progres" }
+                { detail: "Progress", alias: "Progres" },
             ].map(({ detail, alias }) => (
                 <h3
                     key={`detail_${detail}`}
                     className={`header-options__h3 ${
-                        parentState[`is${detail}Active`]
-                            ? "header-options__h3--active"
-                            : ""
+                        parentState[`is${detail}Active`] ? "header-options__h3--active" : ""
                     }`}
                     onClick={() => changeCategory(`is${detail}Active`)}
                 >

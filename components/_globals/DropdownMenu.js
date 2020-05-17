@@ -44,9 +44,13 @@ function DropdownMenuUl() {
     return (
         <>
             <ul className="dropdown-menu-header__ul">
-                <Link href="/exercitii">
-                    <li className="dropdown-menu-header__main-li">Exercitii</li>
-                </Link>
+                <DropdownMenuAccordion title="Exercitii">
+                    {[
+                        { titleLi: "Clasa IX", href: "/exercitii/ix" },
+                        { titleLi: "Clasa X", href: "/exercitii/x" },
+                        { titleLi: "Clasa XI", href: "/exercitii/xi" },
+                    ]}
+                </DropdownMenuAccordion>
                 <hr className="dropdown-menu-header__hr" />
                 <DropdownMenuAccordion title="Resurse">
                     {[
@@ -61,9 +65,7 @@ function DropdownMenuUl() {
                 <li className="dropdown-menu-header__main-li">Mod proiector</li>
                 <hr className="dropdown-menu-header__hr" />
                 <Link href="/cont">
-                    <li className="dropdown-menu-header__main-li">
-                        Detalii cont
-                    </li>
+                    <li className="dropdown-menu-header__main-li">Detalii cont</li>
                 </Link>
             </ul>
             <style jsx>{`
@@ -112,10 +114,7 @@ function DropdownMenuAccordion({ title, children }) {
 
     return (
         <div className="dropdown-menu-header__option-dropdown">
-            <li
-                onClick={toggleDropdown}
-                className="dropdown-menu-header__main-li"
-            >
+            <li onClick={toggleDropdown} className="dropdown-menu-header__main-li">
                 {title}
                 <FontAwesomeIcon
                     icon="angle-down"
@@ -131,7 +130,7 @@ function DropdownMenuAccordion({ title, children }) {
                 }`}
             >
                 <ul className="dropdown-menu-header__content-ul">
-                    {children.map(({ titleLi, href }, i) => (
+                    {children.map(({ titleLi = "", href = "" }, i) => (
                         <Link href={href} key={`child_link-${i}-${href}`}>
                             <li
                                 className="dropdown-menu-header__secondary-li"
@@ -187,12 +186,7 @@ function ThemeConsumer({ Component }) {
     return (
         <ThemeContext.Consumer>
             {({ isLightTheme, setTheme }) => {
-                return (
-                    <Component
-                        isLightTheme={isLightTheme}
-                        setTheme={setTheme}
-                    />
-                );
+                return <Component isLightTheme={isLightTheme} setTheme={setTheme} />;
             }}
         </ThemeContext.Consumer>
     );

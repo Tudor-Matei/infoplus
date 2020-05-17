@@ -4,7 +4,13 @@ import { RegisterModalHandler } from "../Home/Main";
 import { LoginModalHandler } from "../Home/Main";
 import checkFieldsValidity from "../../utils/checkFieldsValidity";
 
-export default function SubmitButton({ userData, showErrorMessage, buttonTitle, type }) {
+export default function SubmitButton({
+    userDetails,
+    fieldOptions,
+    showErrorMessage,
+    buttonTitle,
+    type,
+}) {
     const [isDisabled, setDisabled] = useState(false);
 
     const showModalHandler = useContext(
@@ -20,7 +26,8 @@ export default function SubmitButton({ userData, showErrorMessage, buttonTitle, 
                 onClick={(e) =>
                     submitHandler({
                         e,
-                        userData,
+                        userDetails,
+                        fieldOptions,
                         showErrorMessage,
                         setDisabled,
                         modalHandler: showModalHandler,
@@ -43,7 +50,8 @@ export default function SubmitButton({ userData, showErrorMessage, buttonTitle, 
 
 function submitHandler({
     e,
-    userData,
+    userDetails,
+    fieldOptions,
     showErrorMessage,
     setDisabled,
     modalHandler,
@@ -54,14 +62,8 @@ function submitHandler({
     setDisabled(true);
 
     const errorMessage = checkFieldsValidity({
-        fields: userData,
-        minimumLengthForEachField: {
-            name: 3,
-            surname: 3,
-            username: 5,
-            password: 8,
-        },
-        hasEmail: true,
+        fields: userDetails,
+        ...fieldOptions,
     });
 
     if (errorMessage !== false) {
@@ -71,11 +73,11 @@ function submitHandler({
 
     fetch(fetchEndpoint, {
         method: "POST",
-        body: JSON.stringify(userData),
+        body: JSON.stringify(userDetails),
     })
         .then((r) => r.json())
         .then(({ ok, error = null }) => {
-            if (!ok)
+            if (!ok) {
                 modifyAlert({
                     isVisible: true,
                     props: {
@@ -85,7 +87,8 @@ function submitHandler({
                             : error,
                     },
                 });
-            else
+                setDisabled(false);
+            } else {
                 modifyAlert({
                     isVisible: true,
                     props: {
@@ -94,7 +97,8 @@ function submitHandler({
                     },
                 });
 
-            modalHandler();
+                modalHandler();
+            }
         })
         .catch((error) => {
             console.error(error);

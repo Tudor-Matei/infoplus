@@ -1,0 +1,1 @@
+{"ast":null,"code":"export default {\n  saltRounds: 10\n};","map":{"version":3,"sources":["C:/Users/plesa/Desktop/Proiecte Web/infoplus/configs/bcrypt.js"],"names":["saltRounds"],"mappings":"AAAA,eAAe;AACXA,EAAAA,UAAU,EAAE;AADD,CAAf","sourcesContent":["export default {\r\n    saltRounds: 10,\r\n};\r\n"]},"metadata":{},"sourceType":"module"}

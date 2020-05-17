@@ -20,7 +20,7 @@ export default function Register() {
         password: "",
     });
 
-    const [errorMessage, setErrorMessage] = useState("");
+    const [errorMessage, setErrorMessage] = useState(false);
     const showErrorMessage = (error) => setErrorMessage(error);
     const updateDetails = (e, fieldName) =>
         setUserDetail({ ...userDetails, [fieldName]: e.target.value });
@@ -47,12 +47,21 @@ export default function Register() {
 
                         <SubmitButton
                             userDetails={userDetails}
+                            fieldOptions={{
+                                minimumLengthForEachField: {
+                                    name: 3,
+                                    surname: 3,
+                                    username: 5,
+                                    password: 8,
+                                },
+                                hasEmail: true,
+                            }}
                             showErrorMessage={showErrorMessage}
                             buttonTitle="Creează"
                             type="register"
                         />
                     </div>
-                    {errorMessage !== "" && (
+                    {errorMessage && (
                         <p className="error-message">
                             {errorMessage} <FontAwesomeIcon icon="times-circle" />{" "}
                         </p>

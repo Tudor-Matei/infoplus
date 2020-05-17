@@ -1,6 +1,7 @@
 import { useState, useContext } from "react";
-import formModal from "../../styles/formModal";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
+import formModal from "../../styles/formModal";
 import OverlayDarkener from "../utils/OverlayDarkener";
 import SubmitButton from "../utils/SubmitButton";
 import InputAreas from "../utils/InputAreas";
@@ -16,7 +17,7 @@ export default function Login() {
     const updateDetails = (e, fieldName) =>
         setUserDetail({ ...userDetails, [fieldName]: e.target.value });
 
-    const [errorMessage, setErrorMessage] = useState("");
+    const [errorMessage, setErrorMessage] = useState(false);
     const showErrorMessage = (error) => setErrorMessage(error);
 
     const showLoginModalHandler = useContext(LoginModalHandler);
@@ -37,20 +38,23 @@ export default function Login() {
                             Renunță
                         </button>
                         <SubmitButton
-                            userData={{
-                                username: userDetails.username,
-                                password: userDetails.password,
+                            userDetails={userDetails}
+                            fieldOptions={{
+                                minimumLengthForEachField: {
+                                    username: 5,
+                                    password: 8,
+                                },
                             }}
                             showErrorMessage={showErrorMessage}
                             buttonTitle="Logare"
                             type="login"
                         />
-                        {errorMessage !== "" && (
-                            <p className="error-message">
-                                {errorMessage} <FontAwesomeIcon icon="times-circle" />{" "}
-                            </p>
-                        )}
                     </div>
+                    {errorMessage && (
+                        <p className="error-message">
+                            {errorMessage} <FontAwesomeIcon icon="times-circle" />{" "}
+                        </p>
+                    )}
                 </div>
             </div>
             <style jsx>{formModal}</style>

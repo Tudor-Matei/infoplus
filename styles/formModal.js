@@ -16,7 +16,7 @@ export default css.global`
         max-height: 80%;
         background-color: var(--background-primary);
         box-shadow: var(--box-shadow);
-        overflow: overlay;
+        overflow-y: auto;
         border-radius: 10px;
         position: fixed;
         top: 100px;
@@ -76,8 +76,8 @@ export default css.global`
     }
 
     @media screen and (max-width: 825px) {
-        div.modal {
-            width: 80%;
+        .modal {
+            width: 80% !important;
         }
 
         .modal__input-panels {

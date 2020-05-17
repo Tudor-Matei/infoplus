@@ -15,25 +15,21 @@ export default async (req, res) => {
         },
         hasEmail: true,
     });
-    if (error) return res.status(500).json({ ok: false, error });
+    if (error) return res.status(403).json({ ok: false, error });
     validatedUserData.refreshToken = "";
 
+    let closeConnection;
     try {
         validatedUserData.password = await bcrypt.hash(validatedUserData.password, SALT_ROUNDS);
-        const { db, closeConnection } = await connectToDatabase();
-        const users = db.collection("users");
 
-        users.insertOne(validatedUserData, (error) => {
-            if (error) {
-                console.error(error);
-                closeConnection();
-                return res.status(500).json({ ok: false });
-            }
+        const { db, closeConnectionHandler } = await connectToDatabase();
+        closeConnection = closeConnectionHandler;
+        await db.collection("users").insertOne(validatedUserData);
 
-            closeConnection();
-            return res.status(200).json({ ok: true });
-        });
+        res.status(200).json({ ok: true });
+        return closeConnection();
     } catch (e) {
+        if (closeConnection) closeConection();
         console.error(e);
         return res.status(500).json({ ok: false });
     }

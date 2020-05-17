@@ -27,7 +27,7 @@ export default function AlertNotification({ type, children, alertToggleHandler }
 
                 <style jsx>{`
                     .alert {
-                        max-width: 40%;
+                        max-width: 50%;
                         height: fit-content;
                         padding: 30px 30px 20px;
                         border-radius: 20px;
@@ -73,6 +73,12 @@ export default function AlertNotification({ type, children, alertToggleHandler }
                     h2 {
                         display: inline-block;
                         vertical-align: middle;
+                    }
+
+                    @media screen and (max-width: 576px) {
+                        .alert {
+                            max-width: 75%;
+                        }
                     }
 
                     @keyframes comeIn {

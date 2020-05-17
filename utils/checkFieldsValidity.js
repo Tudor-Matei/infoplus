@@ -22,8 +22,7 @@ function thereAreEmptyFields(fieldValues) {
 
 function fieldValuesAreNotLongEnough(fields, minimumLengthForEachField) {
     for (const field of Object.keys(minimumLengthForEachField)) {
-        if (fields[field].length < minimumLengthForEachField[field])
-            return true;
+        if (fields[field].length < minimumLengthForEachField[field]) return true;
     }
     return false;
 }
