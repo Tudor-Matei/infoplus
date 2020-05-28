@@ -58,7 +58,7 @@ function IconsRightMenu({ isDropdownToggled, toggleMenuDropdown }) {
             <div className="header__search-button">
                 <FontAwesomeIcon icon="search" className="header__icon" />
             </div>
-            <Link href="/cont">
+            <Link href="/dashboard">
                 <div className="header__user-button">
                     <FontAwesomeIcon icon="user" className="header__icon" />
                 </div>

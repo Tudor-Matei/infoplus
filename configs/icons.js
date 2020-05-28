@@ -10,6 +10,7 @@ const iconNames = [
     "faBolt",
     "faLightbulb",
     "faSignInAlt",
+    "faSignOutAlt",
     "faEllipsisH",
     "faCoffee",
     "faTools",

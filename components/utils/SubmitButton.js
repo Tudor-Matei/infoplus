@@ -96,7 +96,6 @@ function submitHandler({
                         children: "Operațiunea a fost efectuată cu succes.",
                     },
                 });
-
                 modalHandler();
             }
         })

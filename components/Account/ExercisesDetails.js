@@ -8,23 +8,14 @@ export default function ExercisesDetails() {
 
             <style jsx>{`
                 .exercises-account {
-                    width: 70%;
                     height: auto;
                     display: flex;
-                    justify-content: space-between;
-                    margin: 30px auto 150px;
                     animation: comeIn 300ms ease;
                 }
 
-                @media screen and (max-width: 930px) {
+                @media screen and (max-width: 1024px) {
                     .exercises-account {
                         flex-direction: column;
-                    }
-                }
-
-                @media screen and (max-width: 768px) {
-                    .exercises-account {
-                        width: 90%;
                     }
                 }
 
@@ -49,10 +40,7 @@ function ExercisesPanel({ title, amountOfExercises, children, solvedState }) {
             <div className="exercises-account__title-container">
                 <h3 className="exercises-account__exercises-title">
                     {title}
-                    <FontAwesomeIcon
-                        icon="external-link-alt"
-                        className="exercises-account__icon"
-                    />
+                    <FontAwesomeIcon icon="external-link-alt" className="exercises-account__icon" />
                 </h3>
                 <h3
                     className={`exercises-account__exercises-amount exercises-amount--${solvedState}`}
@@ -64,12 +52,16 @@ function ExercisesPanel({ title, amountOfExercises, children, solvedState }) {
             <ul className="exercises-account__details">{children}</ul>
             <style jsx>{`
                 .exercises-account__panel {
-                    width: 45%;
+                    max-width: 400px;
                     min-height: 100%;
                     background-color: var(--background-secondary);
                     border-radius: 20px;
-                    padding: 45px;
+                    padding: 30px;
                     color: var(--text-primary);
+                }
+
+                .exercises-account__panel:first-of-type {
+                    margin-right: 30px;
                 }
 
                 .exercises-account__title-container {
@@ -100,10 +92,13 @@ function ExercisesPanel({ title, amountOfExercises, children, solvedState }) {
                     color: var(--accent-secondary);
                 }
 
-                @media screen and (max-width: 930px) {
+                @media screen and (max-width: 1024px) {
+                    .exercises-account__panel:first-of-type {
+                        margin-right: 0;
+                    }
+
                     .exercises-account__panel {
-                        width: 100%;
-                        margin-bottom: 50px;
+                        margin-bottom: 30px;
                     }
                 }
             `}</style>
@@ -114,27 +109,17 @@ function ExercisesPanel({ title, amountOfExercises, children, solvedState }) {
 function SolvedExercises() {
     return (
         <>
-            <ExercisesPanel
-                title="Rezolvate"
-                amountOfExercises={470}
-                solvedState="solved"
-            >
+            <ExercisesPanel title="Rezolvate" amountOfExercises={470} solvedState="solved">
                 <li>
-                    Ultima problema rezolvata:{" "}
-                    <span className="underlined">27 decembrie</span>
+                    Ultima problema rezolvata: <span className="underlined">27 decembrie</span>
                 </li>
                 <li>
                     Cea mai activa perioada:{" "}
-                    <span className="underlined">
-                        1 ianuarie - 27 februarie
-                    </span>
+                    <span className="underlined">1 ianuarie - 27 februarie</span>
                 </li>
                 <li>
-                    Cel mai ridicat grad de dificultate al unei probleme
-                    rezolvate:{" "}
-                    <span className="underlined type--challenging">
-                        PROVOCATOR
-                    </span>
+                    Cel mai ridicat grad de dificultate al unei probleme rezolvate:{" "}
+                    <span className="underlined type--challenging">PROVOCATOR</span>
                 </li>
             </ExercisesPanel>
             <style jsx>{`
@@ -153,18 +138,12 @@ function SolvedExercises() {
 function UnsolvedExercises() {
     return (
         <>
-            <ExercisesPanel
-                title="Nerezolvate"
-                amountOfExercises={291}
-                solvedState="unsolved"
-            >
+            <ExercisesPanel title="Nerezolvate" amountOfExercises={291} solvedState="unsolved">
                 <li>
-                    Ultima problema nerezolvata:{" "}
-                    <span className="underlined">27 decembrie</span>
+                    Ultima problema nerezolvata: <span className="underlined">27 decembrie</span>
                 </li>
                 <li>
-                    Cel mai ridicat grad de dificultate al unei probleme
-                    nerezolvate:{" "}
+                    Cel mai ridicat grad de dificultate al unei probleme nerezolvate:{" "}
                     <span className="underlined type--hard">DIFICIL</span>
                 </li>
             </ExercisesPanel>

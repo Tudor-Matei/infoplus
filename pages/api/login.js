@@ -62,13 +62,18 @@ export default async (req, res) => {
                     { expiresIn: "7d" }
                 );
 
-                res.setHeader(
-                    "Set-Cookie",
-                    serialize("_refreshToken", refreshToken, { httpOnly: true })
-                );
-
-                res.setHeader("Authorization", accessToken);
-
+                res.setHeader("Set-Cookie", [
+                    serialize("_accessToken", accessToken, {
+                        httpOnly: true,
+                        sameSite: true,
+                        path: "/",
+                    }),
+                    serialize("_refreshToken", refreshToken, {
+                        httpOnly: true,
+                        sameSite: true,
+                        path: "/",
+                    }),
+                ]);
                 res.status(200).json({ ok: true });
             }
         }

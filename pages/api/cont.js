@@ -1,4 +1,3 @@
-export default (req, res) => {
-    console.log(req.headers);
+export default async (req, res) => {
     return res.status(200).end();
 };

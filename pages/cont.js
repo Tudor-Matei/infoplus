@@ -2,8 +2,16 @@ import { useState } from "react";
 import AccountDetails from "../components/Account/Details";
 import ExercisesDetails from "../components/Account/ExercisesDetails";
 import ProgressDetails from "../components/Account/Progress";
+import { parse } from "cookie";
 
-export default function Cont() {
+export async function getServerSideProps({ req, res }) {
+    const cookies = req.headers["cookie"];
+    if (!cookies) return { props: { authenticated: false } };
+    console.log(cookies);
+    return { props: { authenticated: true } };
+}
+
+export default function Cont({ authenticated }) {
     const [state, setState] = useState({
         isTabelActive: true,
         isExercisesActive: false,
@@ -15,6 +23,8 @@ export default function Cont() {
             isExercisesActive: category === "isExercisesActive",
             isProgressActive: category === "isProgressActive",
         });
+
+    if (!authenticated) console.log("You are not authenticated.");
 
     return (
         <>

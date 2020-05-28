@@ -64,7 +64,7 @@ function DropdownMenuUl() {
                 <hr className="dropdown-menu-header__hr" />
                 <li className="dropdown-menu-header__main-li">Mod proiector</li>
                 <hr className="dropdown-menu-header__hr" />
-                <Link href="/cont">
+                <Link href="/dashboard">
                     <li className="dropdown-menu-header__main-li">Detalii cont</li>
                 </Link>
             </ul>
