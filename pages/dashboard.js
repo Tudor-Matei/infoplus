@@ -2,6 +2,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import AccountDetails from "../components/Account/Details";
 import ProgressDetails from "../components/Account/Progress";
 import ExercisesDetails from "../components/Account/ExercisesDetails";
+import Exercise from "../components/ExercisesList/Exercise";
 
 export default function Dashboard() {
     return (
@@ -22,10 +23,70 @@ export default function Dashboard() {
                         <ExercisesDetails />
                     </div>
                 </div>
-
+                <div className="dashboard__heading">
+                    <h3>Detaliile contului tău</h3>
+                </div>
                 <AccountDetails />
-                <ProgressDetails />
+                {/* <ProgressDetails /> */}
+
+                <div className="exercises-container">
+                    <div className="dashboard__heading">
+                        <h3>Cele mai noi exerciții</h3>
+                    </div>
+                    <Exercise
+                        className="exercise--less-margin-top"
+                        title="Vrei sa pleci dar numa numa yay"
+                        authorName="Your mom"
+                        datePublished="your moeeeem"
+                        source="my ass"
+                        difficulty={3}
+                        exerciseId="3291"
+                    >
+                        numa numa yayyyyeeet
+                    </Exercise>
+                    <Exercise
+                        title="Vrei sa pleci dar numa numa yay"
+                        authorName="Your mom"
+                        datePublished="your moeeeem"
+                        source="my ass"
+                        difficulty={3}
+                        exerciseId="3291"
+                    >
+                        numa numa yayyyyeeet
+                    </Exercise>
+                    <Exercise
+                        title="Vrei sa pleci dar numa numa yay"
+                        authorName="Your mom"
+                        datePublished="your moeeeem"
+                        source="my ass"
+                        difficulty={3}
+                        exerciseId="3291"
+                    >
+                        numa numa yayyyyeeet
+                    </Exercise>
+                    <Exercise
+                        title="Vrei sa pleci dar numa numa yay"
+                        authorName="Your mom"
+                        datePublished="your moeeeem"
+                        source="my ass"
+                        difficulty={3}
+                        exerciseId="3291"
+                    >
+                        numa numa yayyyyeeet
+                    </Exercise>
+                    <Exercise
+                        title="Vrei sa pleci dar numa numa yay"
+                        authorName="Your mom"
+                        datePublished="your moeeeem"
+                        source="my ass"
+                        difficulty={3}
+                        exerciseId="3291"
+                    >
+                        numa numa yayyyyeeet
+                    </Exercise>
+                </div>
             </section>
+
             <style jsx>{`
                 .dashboard {
                     width: 100%;
@@ -42,15 +103,29 @@ export default function Dashboard() {
                     display: flex;
                     justify-content: space-evenly;
                     padding: 0 10px;
+                    margin-bottom: 70px;
                 }
 
                 .dashboard__quick-action-pills {
                     display: flex;
                 }
 
+                .dashboard__heading {
+                    width: 90%;
+                    margin: auto;
+                }
+
                 h3 {
                     margin-top: 10px;
                     margin-bottom: 20px;
+                }
+
+                .exercise-container {
+                    margin-top: 70px;
+                }
+
+                :global(.dashboard .exercise--less-margin-top) {
+                    margin-top: 30px;
                 }
 
                 @media screen and (max-width: 1024px) {
@@ -66,6 +141,13 @@ export default function Dashboard() {
                 @media screen and (max-width: 512px) {
                     .dashboard__introduction {
                         flex-direction: column;
+                        padding: 0;
+                    }
+
+                    .dashboard__side-info {
+                        padding-left: 0;
+                        width: 80%;
+                        margin: 30px auto;
                     }
                 }
             `}</style>

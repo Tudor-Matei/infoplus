@@ -4,6 +4,7 @@ import CheckmarkSolved from "../utils/CheckmarkSolved";
 import difficultyText from "../utils/difficultyText";
 
 export default function Exercise({
+    className = "",
     title,
     isSolved = false,
     children,
@@ -14,7 +15,7 @@ export default function Exercise({
     exerciseId,
 }) {
     return (
-        <div className="exercise">
+        <div className={`exercise ${className}`}>
             <h2>{title}</h2>
             {isSolved && <CheckmarkSolved />}
             <p className="exercise__description">{children}</p>
@@ -25,15 +26,10 @@ export default function Exercise({
                     <p>{authorName}</p> &#8226;
                     <p>{datePublished}</p> &#8226;
                     <p>{source}</p> &#8226;
-                    <p className="exercise__difficulty">
-                        {difficultyText(difficulty)}
-                    </p>
+                    <p className="exercise__difficulty">{difficultyText(difficulty)}</p>
                 </div>
 
-                <ButtonSolve
-                    href={`/exercitiu/${exerciseId}`}
-                    difficulty={difficulty}
-                />
+                <ButtonSolve href={`/exercitiu/${exerciseId}`} difficulty={difficulty} />
             </div>
 
             <style jsx>{`

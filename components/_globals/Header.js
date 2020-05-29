@@ -45,9 +45,7 @@ export default function Header() {
                     }
                 `}</style>
             </header>
-            {isDropdownToggled && (
-                <OverlayDarkener onClick={toggleMenuDropdown} />
-            )}
+            {isDropdownToggled && <OverlayDarkener onClick={toggleMenuDropdown} />}
         </>
     );
 }
