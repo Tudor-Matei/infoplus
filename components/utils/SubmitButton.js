@@ -2,6 +2,7 @@ import { useState, useContext } from "react";
 import { ShowAlertContext } from "../../pages/_app";
 import { RegisterModalHandler } from "../Home/Main";
 import { LoginModalHandler } from "../Home/Main";
+import { LoggedInDataContext } from "../../pages/_app";
 import checkFieldsValidity from "../../utils/checkFieldsValidity";
 
 export default function SubmitButton({
@@ -17,7 +18,9 @@ export default function SubmitButton({
         type === "register" ? RegisterModalHandler : LoginModalHandler
     );
     const modifyAlert = useContext(ShowAlertContext);
-
+    let isAuthenticatedHandler;
+    if (type === "login") isAuthenticatedHandler = useContext(LoggedInDataContext);
+    console.log(isAuthenticatedHandler, LoggedInDataContext, 1);
     return (
         <>
             <button
@@ -33,6 +36,7 @@ export default function SubmitButton({
                         modalHandler: showModalHandler,
                         modifyAlert,
                         fetchEndpoint: `api/${type}`,
+                        isAuthenticatedHandler,
                     })
                 }
                 className="button--primary"
@@ -57,6 +61,7 @@ function submitHandler({
     modalHandler,
     modifyAlert,
     fetchEndpoint,
+    isAuthenticatedHandler = undefined,
 }) {
     e.preventDefault();
     setDisabled(true);
@@ -97,6 +102,7 @@ function submitHandler({
                     },
                 });
                 modalHandler();
+                if (isAuthenticatedHandler) isAuthenticatedHandler.setAuthenticatedTo(true);
             }
         })
         .catch((error) => {

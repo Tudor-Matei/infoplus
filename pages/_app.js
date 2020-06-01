@@ -14,6 +14,9 @@ import LoadingBar from "../components/_globals/LoadingBar";
 
 const ThemeContext = createContext(true);
 const ShowAlertContext = createContext(null);
+const LoggedInDataContext = createContext(null);
+import { parse } from "cookie";
+import jwt from "jsonwebtoken";
 
 Router.events.on("routeChangeStart", loadingStart);
 Router.events.on("routeChangeComplete", loadingFinished);
@@ -36,6 +39,13 @@ export default function App({ Component, pageProps }) {
         props: { type: 1, children: "" },
     });
 
+    const [isAuthenticated, setAuthenticatedTo] = useState(false);
+
+    useComponentDidMount(() => {
+        const accessTokenCookie = document.cookie && parse(document.cookie);
+        if (!isAuthenticated && accessTokenCookie["_accessToken"]) setAuthenticatedTo(true);
+    });
+
     return (
         <>
             {alert.isVisible && (
@@ -51,9 +61,11 @@ export default function App({ Component, pageProps }) {
                 <Header />
             </ThemeContext.Provider>
 
-            <ShowAlertContext.Provider value={modifyAlert}>
-                <Component {...pageProps} />
-            </ShowAlertContext.Provider>
+            <LoggedInDataContext.Provider value={{ isAuthenticated, setAuthenticatedTo }}>
+                <ShowAlertContext.Provider value={modifyAlert}>
+                    <Component {...pageProps} />
+                </ShowAlertContext.Provider>
+            </LoggedInDataContext.Provider>
 
             <Contact />
             <Footer />
@@ -62,7 +74,7 @@ export default function App({ Component, pageProps }) {
     );
 }
 
-export { ThemeContext, ShowAlertContext };
+export { ThemeContext, ShowAlertContext, LoggedInDataContext };
 
 function loadingStart() {
     const loadingBar = document.querySelector(".loading-bar");

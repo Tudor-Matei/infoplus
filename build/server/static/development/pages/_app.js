@@ -3122,7 +3122,7 @@ if (false) {} else {
 /*!***********************!*\
   !*** ./pages/_app.js ***!
   \***********************/
-/*! exports provided: default, ThemeContext, ShowAlertContext */
+/*! exports provided: default, ThemeContext, ShowAlertContext, LoggedInDataContext */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3130,6 +3130,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return App; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ThemeContext", function() { return ThemeContext; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ShowAlertContext", function() { return ShowAlertContext; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "LoggedInDataContext", function() { return LoggedInDataContext; });
 /* harmony import */ var styled_jsx_style__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! styled-jsx/style */ "styled-jsx/style");
 /* harmony import */ var styled_jsx_style__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(styled_jsx_style__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react */ "react");
@@ -3144,6 +3145,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _components_globals_Footer__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../components/_globals/Footer */ "./components/_globals/Footer.js");
 /* harmony import */ var _components_globals_AlertNotification__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../components/_globals/AlertNotification */ "./components/_globals/AlertNotification.js");
 /* harmony import */ var _components_globals_LoadingBar__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../components/_globals/LoadingBar */ "./components/_globals/LoadingBar.js");
+/* harmony import */ var cookie__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! cookie */ "cookie");
+/* harmony import */ var cookie__WEBPACK_IMPORTED_MODULE_11___default = /*#__PURE__*/__webpack_require__.n(cookie__WEBPACK_IMPORTED_MODULE_11__);
+/* harmony import */ var jsonwebtoken__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! jsonwebtoken */ "jsonwebtoken");
+/* harmony import */ var jsonwebtoken__WEBPACK_IMPORTED_MODULE_12___default = /*#__PURE__*/__webpack_require__.n(jsonwebtoken__WEBPACK_IMPORTED_MODULE_12__);
 var _jsxFileName = "C:\\Users\\plesa\\Desktop\\Proiecte Web\\infoplus\\pages\\_app.js";
 
 
@@ -3169,6 +3174,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 const ThemeContext = Object(react__WEBPACK_IMPORTED_MODULE_1__["createContext"])(true);
 const ShowAlertContext = Object(react__WEBPACK_IMPORTED_MODULE_1__["createContext"])(null);
+const LoggedInDataContext = Object(react__WEBPACK_IMPORTED_MODULE_1__["createContext"])(null);
+
+
 next_router__WEBPACK_IMPORTED_MODULE_2___default.a.events.on("routeChangeStart", loadingStart);
 next_router__WEBPACK_IMPORTED_MODULE_2___default.a.events.on("routeChangeComplete", loadingFinished);
 next_router__WEBPACK_IMPORTED_MODULE_2___default.a.events.on("routeChangeError", loadingFinished);
@@ -3194,6 +3202,14 @@ function App({
       children: ""
     }
   });
+  const {
+    0: isAuthenticated,
+    1: setAuthenticatedTo
+  } = Object(react__WEBPACK_IMPORTED_MODULE_1__["useState"])(false);
+  Object(_components_hooks_componentDidMount__WEBPACK_IMPORTED_MODULE_3__["default"])(() => {
+    const accessTokenCookie = document.cookie && Object(cookie__WEBPACK_IMPORTED_MODULE_11__["parse"])(document.cookie);
+    if (!isAuthenticated && accessTokenCookie["_accessToken"]) setAuthenticatedTo(true);
+  });
   return __jsx(react__WEBPACK_IMPORTED_MODULE_1___default.a.Fragment, null, alert.isVisible && __jsx(_components_globals_AlertNotification__WEBPACK_IMPORTED_MODULE_9__["default"], {
     type: alert.props.type,
     alertToggleHandler: () => modifyAlert(_objectSpread({}, alert, {
@@ -3202,14 +3218,14 @@ function App({
     __self: this,
     __source: {
       fileName: _jsxFileName,
-      lineNumber: 42,
+      lineNumber: 52,
       columnNumber: 17
     }
   }, alert.props.children), __jsx(_components_globals_LoadingBar__WEBPACK_IMPORTED_MODULE_10__["default"], {
     __self: this,
     __source: {
       fileName: _jsxFileName,
-      lineNumber: 49,
+      lineNumber: 59,
       columnNumber: 13
     }
   }), __jsx(ThemeContext.Provider, {
@@ -3220,44 +3236,55 @@ function App({
     __self: this,
     __source: {
       fileName: _jsxFileName,
-      lineNumber: 50,
+      lineNumber: 60,
       columnNumber: 13
     }
   }, __jsx(_components_globals_Header__WEBPACK_IMPORTED_MODULE_6__["default"], {
     __self: this,
     __source: {
       fileName: _jsxFileName,
-      lineNumber: 51,
+      lineNumber: 61,
       columnNumber: 17
     }
-  })), __jsx(ShowAlertContext.Provider, {
+  })), __jsx(LoggedInDataContext.Provider, {
+    value: {
+      isAuthenticated,
+      setAuthenticatedTo
+    },
+    __self: this,
+    __source: {
+      fileName: _jsxFileName,
+      lineNumber: 64,
+      columnNumber: 13
+    }
+  }, __jsx(ShowAlertContext.Provider, {
     value: modifyAlert,
     __self: this,
     __source: {
       fileName: _jsxFileName,
-      lineNumber: 54,
-      columnNumber: 13
+      lineNumber: 65,
+      columnNumber: 17
     }
   }, __jsx(Component, _extends({}, pageProps, {
     className: `jsx-${_styles_mainStyling__WEBPACK_IMPORTED_MODULE_5__["default"].__hash}` + " " + (pageProps && pageProps.className != null && pageProps.className || ""),
     __self: this,
     __source: {
       fileName: _jsxFileName,
-      lineNumber: 55,
-      columnNumber: 17
+      lineNumber: 66,
+      columnNumber: 21
     }
-  }))), __jsx(_components_globals_Contact__WEBPACK_IMPORTED_MODULE_7__["default"], {
+  })))), __jsx(_components_globals_Contact__WEBPACK_IMPORTED_MODULE_7__["default"], {
     __self: this,
     __source: {
       fileName: _jsxFileName,
-      lineNumber: 58,
+      lineNumber: 70,
       columnNumber: 13
     }
   }), __jsx(_components_globals_Footer__WEBPACK_IMPORTED_MODULE_8__["default"], {
     __self: this,
     __source: {
       fileName: _jsxFileName,
-      lineNumber: 59,
+      lineNumber: 71,
       columnNumber: 13
     }
   }), __jsx(styled_jsx_style__WEBPACK_IMPORTED_MODULE_0___default.a, {
@@ -3387,6 +3414,28 @@ module.exports = require("@fortawesome/free-solid-svg-icons");
 /***/ (function(module, exports) {
 
 module.exports = require("@fortawesome/react-fontawesome");
+
+/***/ }),
+
+/***/ "cookie":
+/*!*************************!*\
+  !*** external "cookie" ***!
+  \*************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = require("cookie");
+
+/***/ }),
+
+/***/ "jsonwebtoken":
+/*!*******************************!*\
+  !*** external "jsonwebtoken" ***!
+  \*******************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = require("jsonwebtoken");
 
 /***/ }),
 

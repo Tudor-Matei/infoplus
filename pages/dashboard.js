@@ -1,10 +1,23 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import AccountDetails from "../components/Account/Details";
-import ProgressDetails from "../components/Account/Progress";
 import ExercisesDetails from "../components/Account/ExercisesDetails";
 import Exercise from "../components/ExercisesList/Exercise";
+import Login from "../components/_globals/Login";
+import { useContext } from "react";
+import { LoggedInDataContext } from "./_app";
+
+export async function getServerSideProps({ req, res }) {
+    return { props: { authenticated: false } };
+}
 
 export default function Dashboard() {
+    //we are going to have stuff that's like on the header or an option with "log out" (auth: true)
+    // when wee get user data and set it with React Context from SSR routes and login
+    const {
+        isAuthenticated: { authenticated },
+    } = useContext(LoggedInDataContext);
+    if (!authenticated) return <Login />;
+
     return (
         <>
             <section className="dashboard">
