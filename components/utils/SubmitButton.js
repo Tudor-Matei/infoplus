@@ -20,7 +20,7 @@ export default function SubmitButton({
     const modifyAlert = useContext(ShowAlertContext);
     let isAuthenticatedHandler;
     if (type === "login") isAuthenticatedHandler = useContext(LoggedInDataContext);
-    console.log(isAuthenticatedHandler, LoggedInDataContext, 1);
+
     return (
         <>
             <button

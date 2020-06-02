@@ -20,7 +20,7 @@ export default async (req, res) => {
     // in cazul in care utilizatorul face o smecherie si sterge el cookie-ul cu accessToken si face
     // authenticated: false, chiar daca este autentificat deja, pe siturile cu SSG
     const cookies = req.headers["cookie"] && parse(req.headers["cookie"]);
-    if (cookies && cookies["_refreshToken"])
+    if (cookies && (cookies["_refreshToken"] || cookies["_accessToken"]))
         return res.status(403).json({
             ok: false,
             error: "Ce incerci sa faci? >->. Te rog nu mai umbla la cookie-uri, ms.",

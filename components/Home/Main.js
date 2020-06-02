@@ -2,11 +2,10 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Register from "../_globals/Register";
 import Login from "../_globals/Login";
 import Link from "next/link";
-import { useState, createContext, useContext } from "react";
+import { useState, createContext, useContext, useEffect } from "react";
 
 import { LoggedInDataContext } from "../../pages/_app";
 import { parse } from "cookie";
-import useComponentDidMount from "../_hooks/componentDidMount";
 
 const RegisterModalHandler = createContext(null);
 const LoginModalHandler = createContext(null);
@@ -18,14 +17,18 @@ export default function Main() {
 
     const [loginModalVisible, showLoginModal] = useState(false);
     const showLoginModalHandler = () => showLoginModal(!loginModalVisible);
-    const {
-        isAuthenticated: { authenticated, data },
-    } = useContext(LoggedInDataContext);
+    const { isAuthenticated } = useContext(LoggedInDataContext);
 
-    const [accessToken, setAccessToken] = useState(null);
+    const [isAuthenticatedWithToken, setAuthenticatedWithToken] = useState(false);
 
-    useComponentDidMount(() =>
-        setAccessToken(document.cookie.length !== 0 && parse(document.cookie)["_accessToken"])
+    useEffect(
+        () =>
+            setAuthenticatedWithToken(
+                document.cookie.length !== 0 &&
+                    parse(document.cookie)["_accessToken"] &&
+                    isAuthenticated
+            ),
+        [isAuthenticated]
     );
 
     return (
@@ -45,30 +48,24 @@ export default function Main() {
                 </div>
                 <div className="main__buttons">
                     <div className="main__button-sign-in">
-                        {!authenticated && !accessToken ? (
-                            <>
-                                <Button
-                                    type="button--primary"
-                                    title="Logheaza-te"
-                                    icon="sign-in-alt"
-                                    link=""
-                                    onClick={showLoginModalHandler}
-                                />
-                                <p
-                                    onClick={showRegisterModalHandler}
-                                    className="main__button-make-account"
-                                >
-                                    Nu ai cont? <a href="#">Fa-ti unul!</a>
-                                </p>
-                            </>
-                        ) : (
-                            <Button
-                                type="button--primary"
-                                title="Către contul tău"
-                                icon="arrow-right"
-                                link="/dashboard"
-                            />
-                        )}
+                        <Button
+                            type="button--primary"
+                            title={!isAuthenticatedWithToken ? "Logheaza-te" : "Către contul tău"}
+                            icon={!isAuthenticatedWithToken ? "sign-in-alt" : "arrow-right"}
+                            link={!isAuthenticatedWithToken ? "" : "/dashboard"}
+                            onClick={!isAuthenticatedWithToken ? showLoginModalHandler : undefined}
+                        />
+                        <p className="main__button-make-account">
+                            {!isAuthenticatedWithToken && "Nu ai cont? "}
+                            <a
+                                href="#"
+                                onClick={
+                                    !isAuthenticatedWithToken ? showRegisterModalHandler : undefined
+                                }
+                            >
+                                {!isAuthenticatedWithToken ? "Fa-ti unul!" : "Delogheaza-te"}
+                            </a>
+                        </p>
                     </div>
                     <Button
                         type="button--secondary"

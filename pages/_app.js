@@ -16,7 +16,6 @@ const ThemeContext = createContext(true);
 const ShowAlertContext = createContext(null);
 const LoggedInDataContext = createContext(null);
 import { parse } from "cookie";
-import jwt from "jsonwebtoken";
 
 Router.events.on("routeChangeStart", loadingStart);
 Router.events.on("routeChangeComplete", loadingFinished);
@@ -24,16 +23,6 @@ Router.events.on("routeChangeError", loadingFinished);
 
 export default function App({ Component, pageProps }) {
     const [isLightTheme, setTheme] = useState(true);
-    useComponentDidMount(() => {
-        const localTheme =
-            window.localStorage.getItem("theme") ||
-            (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches
-                ? "dark"
-                : "light");
-
-        setTheme(localTheme === "light");
-    });
-
     const [alert, modifyAlert] = useState({
         isVisible: false,
         props: { type: 1, children: "" },
@@ -42,8 +31,21 @@ export default function App({ Component, pageProps }) {
     const [isAuthenticated, setAuthenticatedTo] = useState(false);
 
     useComponentDidMount(() => {
-        const accessTokenCookie = document.cookie && parse(document.cookie);
-        if (!isAuthenticated && accessTokenCookie["_accessToken"]) setAuthenticatedTo(true);
+        const localTheme =
+            window.localStorage.getItem("theme") ||
+            (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches
+                ? "dark"
+                : "light");
+
+        setTheme(localTheme === "light");
+
+        // seteaza daca este autentificat bazat pe existenta cookie-ului pentru cand se viziteaza
+        // site-ul, astfel, memorand faptul ca utilizatorul este logat
+        // nu conteaza daca este sters cookie-ul de catre client pentru ca putem
+        // verifica pe server daca este autentificat cu refreshToken-ul
+
+        const cookies = document.cookie && parse(document.cookie);
+        if (!isAuthenticated && cookies && cookies["_accessToken"]) setAuthenticatedTo(true);
     });
 
     return (

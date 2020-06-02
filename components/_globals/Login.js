@@ -14,12 +14,9 @@ export default function Login() {
         username: "",
         password: "",
     });
-    const updateDetails = (e, fieldName) => {
+    const updateDetails = (e, fieldName) =>
         setUserDetail({ ...userDetails, [fieldName]: e.target.value });
-        console.log(userDetails);
-        //TODO: figure out why "incorrect username" when its correct. i think its because
-        // it doesn't update fast enough for fast typers like me ahahah-hh
-    };
+
     const [errorMessage, setErrorMessage] = useState(false);
     const showErrorMessage = (error) => setErrorMessage(error);
 

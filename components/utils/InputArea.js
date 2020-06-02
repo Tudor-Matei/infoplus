@@ -12,17 +12,11 @@ export default function InputArea({
             {isSelect ? (
                 <select onInput={eventHandler}>
                     {optionValues.map((optionValue) => (
-                        <option key={`optiune_${optionValue}`}>
-                            {optionValue}
-                        </option>
+                        <option key={`optiune_${optionValue}`}>{optionValue}</option>
                     ))}
                 </select>
             ) : (
-                <input
-                    {...inputProps}
-                    onKeyUp={eventHandler}
-                    type={inputType}
-                />
+                <input {...inputProps} onInput={eventHandler} type={inputType} />
             )}
             <style jsx>{`
                 input,
