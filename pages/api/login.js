@@ -74,6 +74,8 @@ export default async (req, res) => {
             { expiresIn: "7d" }
         );
 
+        await users.updateOne({ _id: foundUser._id }, { $set: { refreshToken } });
+
         res.setHeader("Set-Cookie", [
             serialize("_accessToken", accessToken, {
                 sameSite: true,

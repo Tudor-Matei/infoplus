@@ -26,6 +26,7 @@ export default function App({ Component, pageProps }) {
     const [alert, modifyAlert] = useState({
         isVisible: false,
         props: { type: 1, children: "" },
+        customToggleHandler: null,
     });
 
     const [isAuthenticated, setAuthenticatedTo] = useState(false);
@@ -54,6 +55,7 @@ export default function App({ Component, pageProps }) {
                 <AlertNotification
                     type={alert.props.type}
                     alertToggleHandler={() => modifyAlert({ ...alert, isVisible: false })}
+                    customToggleHandler={alert.customToggleHandler}
                 >
                     {alert.props.children}
                 </AlertNotification>

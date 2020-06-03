@@ -2,10 +2,22 @@ import CheckmarkSolved from "../utils/CheckmarkSolved";
 import ErrorCircle from "../utils/ErrorCircle";
 import OverlayDarkener from "../utils/OverlayDarkener";
 
-export default function AlertNotification({ type, children, alertToggleHandler }) {
+export default function AlertNotification({
+    type,
+    children,
+    alertToggleHandler,
+    customToggleHandler = null,
+}) {
     return (
         <>
-            <OverlayDarkener onClick={alertToggleHandler} className="overlay-darkener--alert" />
+            <OverlayDarkener
+                onClick={
+                    customToggleHandler
+                        ? () => (customToggleHandler(), alertToggleHandler())
+                        : alertToggleHandler
+                }
+                className="overlay-darkener--alert"
+            />
             <div className={`alert alert--type-${type}`}>
                 <div className="alert__info">
                     {type === 1 ? (
@@ -21,7 +33,14 @@ export default function AlertNotification({ type, children, alertToggleHandler }
                     )}
                     <p>{children}</p>
                 </div>
-                <button className="alert__button button--tertiary" onClick={alertToggleHandler}>
+                <button
+                    className="alert__button button--tertiary"
+                    onClick={
+                        customToggleHandler
+                            ? () => (customToggleHandler(), alertToggleHandler())
+                            : alertToggleHandler
+                    }
+                >
                     OK
                 </button>
             </div>

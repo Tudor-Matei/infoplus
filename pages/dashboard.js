@@ -2,21 +2,52 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import AccountDetails from "../components/Account/Details";
 import ExercisesDetails from "../components/Account/ExercisesDetails";
 import Exercise from "../components/ExercisesList/Exercise";
-import Login from "../components/_globals/Login";
-import { useContext } from "react";
-import { LoggedInDataContext } from "./_app";
+import { useContext, useState } from "react";
+import getTokenInfo from "../utils/getTokenInfo";
+import { serialize } from "cookie";
+import { ShowAlertContext } from "./_app";
+
+import Router from "next/router";
+import useComponentDidMount from "../components/_hooks/componentDidMount";
 
 export async function getServerSideProps({ req, res }) {
-    return { props: { authenticated: false } };
+    const { data, err } = await getTokenInfo(req.headers["cookie"]);
+
+    //err = 1 -> neautentificat
+    if (err === 1) return { props: { authenticated: false, userData: null, err: null } };
+    else if (err !== 1 && err) return { props: { authenticated: false, userData: null, err } };
+
+    if (data.newAccessToken)
+        res.setHeader(
+            "Set-Cookie",
+            serialize("_accessToken", data.newAccessToken, {
+                sameSite: true,
+                path: "/",
+            })
+        );
+
+    return { props: { authenticated: true, userData: data, err: null } };
 }
 
-export default function Dashboard() {
+export default function Dashboard({ authenticated, userData, err }) {
     //we are going to have stuff that's like on the header or an option with "log out" (auth: true)
     // when wee get user data and set it with React Context from SSR routes and login
-    const {
-        isAuthenticated: { authenticated },
-    } = useContext(LoggedInDataContext);
-    if (!authenticated) return <Login />;
+    const modifyAlert = useContext(ShowAlertContext);
+
+    useComponentDidMount(() => {
+        if (!authenticated) Router.push("/");
+
+        if (!err) {
+            modifyAlert({
+                isVisible: true,
+                props: {
+                    type: 0,
+                    children: err,
+                },
+                customToggleHandler: () => Router.push("/"),
+            });
+        }
+    });
 
     return (
         <>

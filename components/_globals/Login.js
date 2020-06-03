@@ -1,4 +1,4 @@
-import { useState, useContext, useEffect } from "react";
+import { useState, useContext } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import formModal from "../../styles/formModal";
@@ -9,7 +9,7 @@ import inputAreaLoginData from "../utils/inputAreaLoginData";
 
 import { LoginModalHandler } from "../Home/Main";
 
-export default function Login() {
+export default function Login({ cancelDisabled = false }) {
     const [userDetails, setUserDetail] = useState({
         username: "",
         password: "",
@@ -34,9 +34,11 @@ export default function Login() {
                     <InputAreas updateDetails={updateDetails} inputAreaData={inputAreaLoginData} />
 
                     <div className="modal__buttons-container">
-                        <button className="button--tertiary" onClick={showLoginModalHandler}>
-                            Renunță
-                        </button>
+                        {!cancelDisabled && (
+                            <button className="button--tertiary" onClick={showLoginModalHandler}>
+                                Renunță
+                            </button>
+                        )}
                         <SubmitButton
                             userDetails={userDetails}
                             fieldOptions={{
