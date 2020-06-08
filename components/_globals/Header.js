@@ -1,8 +1,9 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import DropdownMenu from "./DropdownMenu";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import Link from "next/link";
 import OverlayDarkener from "../utils/OverlayDarkener";
+import { LoggedInDataContext, ShowLoginContext } from "../../pages/_app";
 
 export default function Header() {
     const [isDropdownToggled, toggleDropdown] = useState(false);
@@ -51,18 +52,30 @@ export default function Header() {
 }
 
 function IconsRightMenu({ isDropdownToggled, toggleMenuDropdown }) {
+    const { isAuthenticated } = useContext(LoggedInDataContext);
+    const showLoginModal = useContext(ShowLoginContext);
+
     return (
         <div className="header__icons-right">
-            <div className="header__search-button">
+            <div className="header__button">
                 <FontAwesomeIcon icon="search" className="header__icon" />
             </div>
-            <Link href="/dashboard">
-                <div className="header__user-button">
-                    <FontAwesomeIcon icon="user" className="header__icon" />
+            {isAuthenticated ? (
+                <>
+                    <Link href="/dashboard">
+                        <div className="header__button">
+                            <FontAwesomeIcon icon="user" className="header__icon" />
+                        </div>
+                    </Link>
+                    logout
+                </>
+            ) : (
+                <div className="header__button" onClick={showLoginModal}>
+                    <FontAwesomeIcon icon="sign-in-alt" className="header__icon" />
                 </div>
-            </Link>
+            )}
 
-            <div className="header__menu-button" onClick={toggleMenuDropdown}>
+            <div className="header__button header__button--menu" onClick={toggleMenuDropdown}>
                 <FontAwesomeIcon
                     icon="bars"
                     className={`header__menu-icon ${
@@ -74,14 +87,12 @@ function IconsRightMenu({ isDropdownToggled, toggleMenuDropdown }) {
 
             <style jsx global>{`
                 .header__icons-right,
-                .header__menu-button {
+                .header__button--menu {
                     display: flex;
                     align-items: center;
                 }
 
-                .header__search-button,
-                .header__user-button,
-                .header__menu-button {
+                .header__button {
                     margin: 0 15px;
                     cursor: pointer;
                 }

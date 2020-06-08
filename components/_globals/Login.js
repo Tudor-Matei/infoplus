@@ -7,7 +7,7 @@ import SubmitButton from "../utils/SubmitButton";
 import InputAreas from "../utils/InputAreas";
 import inputAreaLoginData from "../utils/inputAreaLoginData";
 
-import { LoginModalHandler } from "../Home/Main";
+import { LoginModalHandler } from "../../pages/_app";
 
 export default function Login({ cancelDisabled = false }) {
     const [userDetails, setUserDetail] = useState({

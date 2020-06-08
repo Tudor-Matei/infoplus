@@ -56,18 +56,18 @@ export default async (req, res) => {
 
         const accessToken = jwt.sign(
             {
-                id: foundUser._id,
+                id: JSON.stringify(foundUser._id),
                 name: foundUser.name,
                 surname: foundUser.surname,
                 username: foundUser.username,
             },
             process.env.ACCESS_TOKEN_SECRET,
-            { expiresIn: "1m" }
+            { expiresIn: "15s" }
         );
 
         const refreshToken = jwt.sign(
             {
-                id: foundUser._id,
+                id: JSON.stringify(foundUser._id),
                 username: foundUser.username,
             },
             process.env.REFRESH_TOKEN_SECRET,

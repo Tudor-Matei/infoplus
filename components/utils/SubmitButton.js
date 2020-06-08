@@ -1,8 +1,6 @@
 import { useState, useContext } from "react";
-import { ShowAlertContext } from "../../pages/_app";
 import { RegisterModalHandler } from "../Home/Main";
-import { LoginModalHandler } from "../Home/Main";
-import { LoggedInDataContext } from "../../pages/_app";
+import { ShowAlertContext, LoggedInDataContext, LoginModalHandler } from "../../pages/_app";
 import checkFieldsValidity from "../../utils/checkFieldsValidity";
 
 export default function SubmitButton({
@@ -18,6 +16,7 @@ export default function SubmitButton({
         type === "register" ? RegisterModalHandler : LoginModalHandler
     );
     const modifyAlert = useContext(ShowAlertContext);
+
     let isAuthenticatedHandler;
     if (type === "login") isAuthenticatedHandler = useContext(LoggedInDataContext);
 
@@ -35,7 +34,7 @@ export default function SubmitButton({
                         setDisabled,
                         modalHandler: showModalHandler,
                         modifyAlert,
-                        fetchEndpoint: `api/${type}`,
+                        fetchEndpoint: `http://localhost:3000/api/${type}`,
                         isAuthenticatedHandler,
                     })
                 }
@@ -58,7 +57,7 @@ function submitHandler({
     fieldOptions,
     showErrorMessage,
     setDisabled,
-    modalHandler,
+    modalHandler = null,
     modifyAlert,
     fetchEndpoint,
     isAuthenticatedHandler = undefined,
@@ -101,7 +100,7 @@ function submitHandler({
                         children: "Operațiunea a fost efectuată cu succes.",
                     },
                 });
-                modalHandler();
+                if (modalHandler) modalHandler();
                 if (isAuthenticatedHandler) isAuthenticatedHandler.setAuthenticatedTo(true);
             }
         })

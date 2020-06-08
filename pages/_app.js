@@ -1,4 +1,4 @@
-import { createContext, useState } from "react";
+import { createContext, useState, useEffect } from "react";
 import Router from "next/router";
 import useComponentDidMount from "../components/_hooks/componentDidMount";
 
@@ -11,11 +11,14 @@ import Footer from "../components/_globals/Footer";
 
 import AlertNotification from "../components/_globals/AlertNotification";
 import LoadingBar from "../components/_globals/LoadingBar";
+import { parse } from "cookie";
+import Login from "../components/_globals/Login";
 
 const ThemeContext = createContext(true);
 const ShowAlertContext = createContext(null);
+const LoginModalHandler = createContext(null);
+const ShowLoginContext = createContext(null);
 const LoggedInDataContext = createContext(null);
-import { parse } from "cookie";
 
 Router.events.on("routeChangeStart", loadingStart);
 Router.events.on("routeChangeComplete", loadingFinished);
@@ -30,6 +33,8 @@ export default function App({ Component, pageProps }) {
     });
 
     const [isAuthenticated, setAuthenticatedTo] = useState(false);
+    const [loginModalVisible, setLoginModalVisible] = useState(false);
+    const showLoginModal = () => setLoginModalVisible(!loginModalVisible);
 
     useComponentDidMount(() => {
         const localTheme =
@@ -39,15 +44,16 @@ export default function App({ Component, pageProps }) {
                 : "light");
 
         setTheme(localTheme === "light");
+    });
 
+    useEffect(() => {
         // seteaza daca este autentificat bazat pe existenta cookie-ului pentru cand se viziteaza
         // site-ul, astfel, memorand faptul ca utilizatorul este logat
         // nu conteaza daca este sters cookie-ul de catre client pentru ca putem
         // verifica pe server daca este autentificat cu refreshToken-ul
-
         const cookies = document.cookie && parse(document.cookie);
         if (!isAuthenticated && cookies && cookies["_accessToken"]) setAuthenticatedTo(true);
-    });
+    }, [isAuthenticated]);
 
     return (
         <>
@@ -62,12 +68,26 @@ export default function App({ Component, pageProps }) {
             )}
             <LoadingBar />
             <ThemeContext.Provider value={{ isLightTheme, setTheme }}>
-                <Header />
+                <LoggedInDataContext.Provider value={{ isAuthenticated }}>
+                    <ShowLoginContext.Provider value={showLoginModal}>
+                        <Header />
+                    </ShowLoginContext.Provider>
+                </LoggedInDataContext.Provider>
             </ThemeContext.Provider>
 
             <LoggedInDataContext.Provider value={{ isAuthenticated, setAuthenticatedTo }}>
                 <ShowAlertContext.Provider value={modifyAlert}>
-                    <Component {...pageProps} />
+                    <LoginModalHandler.Provider value={showLoginModal}>
+                        {loginModalVisible && <Login />}
+                    </LoginModalHandler.Provider>
+                </ShowAlertContext.Provider>
+            </LoggedInDataContext.Provider>
+
+            <LoggedInDataContext.Provider value={{ isAuthenticated, setAuthenticatedTo }}>
+                <ShowAlertContext.Provider value={modifyAlert}>
+                    <ShowLoginContext.Provider value={showLoginModal}>
+                        <Component {...pageProps} />
+                    </ShowLoginContext.Provider>
                 </ShowAlertContext.Provider>
             </LoggedInDataContext.Provider>
 
@@ -78,7 +98,7 @@ export default function App({ Component, pageProps }) {
     );
 }
 
-export { ThemeContext, ShowAlertContext, LoggedInDataContext };
+export { ThemeContext, ShowAlertContext, ShowLoginContext, LoginModalHandler, LoggedInDataContext };
 
 function loadingStart() {
     const loadingBar = document.querySelector(".loading-bar");

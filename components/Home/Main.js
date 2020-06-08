@@ -1,22 +1,21 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Register from "../_globals/Register";
-import Login from "../_globals/Login";
 import Link from "next/link";
-import { useState, createContext, useContext, useEffect } from "react";
 
-import { LoggedInDataContext } from "../../pages/_app";
+import { useState, createContext, useContext, useEffect } from "react";
 import { parse } from "cookie";
 
+import { ShowLoginContext, LoggedInDataContext } from "../../pages/_app";
+import LogoutButton from "../utils/LogoutButton";
+
 const RegisterModalHandler = createContext(null);
-const LoginModalHandler = createContext(null);
-export { RegisterModalHandler, LoginModalHandler };
+export { RegisterModalHandler };
 
 export default function Main() {
     const [registerModalVisible, showRegisterModal] = useState(false);
     const showRegisterModalHandler = () => showRegisterModal(!registerModalVisible);
 
-    const [loginModalVisible, showLoginModal] = useState(false);
-    const showLoginModalHandler = () => showLoginModal(!loginModalVisible);
+    const showLoginModal = useContext(ShowLoginContext);
     const { isAuthenticated } = useContext(LoggedInDataContext);
 
     const [isAuthenticatedWithToken, setAuthenticatedWithToken] = useState(false);
@@ -36,9 +35,6 @@ export default function Main() {
             <RegisterModalHandler.Provider value={showRegisterModalHandler}>
                 {registerModalVisible && <Register />}
             </RegisterModalHandler.Provider>
-            <LoginModalHandler.Provider value={showLoginModalHandler}>
-                {loginModalVisible && <Login />}
-            </LoginModalHandler.Provider>
             <div className="main__content-panel">
                 <h1 className="main__primary-heading">infoplus</h1>
                 <div className="main__bullets">
@@ -53,18 +49,18 @@ export default function Main() {
                             title={!isAuthenticatedWithToken ? "Logheaza-te" : "Către contul tău"}
                             icon={!isAuthenticatedWithToken ? "sign-in-alt" : "arrow-right"}
                             link={!isAuthenticatedWithToken ? "" : "/dashboard"}
-                            onClick={!isAuthenticatedWithToken ? showLoginModalHandler : undefined}
+                            onClick={!isAuthenticatedWithToken ? showLoginModal : undefined}
                         />
                         <p className="main__button-make-account">
                             {!isAuthenticatedWithToken && "Nu ai cont? "}
-                            <a
-                                href="#"
-                                onClick={
-                                    !isAuthenticatedWithToken ? showRegisterModalHandler : undefined
-                                }
-                            >
-                                {!isAuthenticatedWithToken ? "Fa-ti unul!" : "Delogheaza-te"}
-                            </a>
+
+                            {!isAuthenticatedWithToken ? (
+                                <a href="#" onClick={showRegisterModalHandler}>
+                                    Fa-ti unul!
+                                </a>
+                            ) : (
+                                <LogoutButton type="anchor" />
+                            )}
                         </p>
                     </div>
                     <Button

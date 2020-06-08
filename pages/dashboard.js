@@ -2,8 +2,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import AccountDetails from "../components/Account/Details";
 import ExercisesDetails from "../components/Account/ExercisesDetails";
 import Exercise from "../components/ExercisesList/Exercise";
-import { useContext, useState } from "react";
-import getTokenInfo from "../utils/getTokenInfo";
+import { useContext } from "react";
+import { getTokenInfo, getNewAccessToken } from "../utils/manageTokens";
 import { serialize } from "cookie";
 import { ShowAlertContext } from "./_app";
 
@@ -11,20 +11,30 @@ import Router from "next/router";
 import useComponentDidMount from "../components/_hooks/componentDidMount";
 
 export async function getServerSideProps({ req, res }) {
-    const { data, err } = await getTokenInfo(req.headers["cookie"]);
+    let { data, err } = await getTokenInfo(req.headers["cookie"]);
 
-    //err = 1 -> neautentificat
-    if (err === 1) return { props: { authenticated: false, userData: null, err: null } };
-    else if (err !== 1 && err) return { props: { authenticated: false, userData: null, err } };
+    if (err) {
+        // v "token invalid"
+        if (err !== "tokinv") return { props: { authenticated: true, userData: data, err } };
+        else {
+            // generam un nou access token
+            data = await getNewAccessToken(req.headers["cookie"]);
+            console.log(data.err, "   access token nou!!");
+            if (data.err) return { props: { authenticated: true, userData: data, err: data.err } };
+        }
+    }
 
-    if (data.newAccessToken)
+    if (data.accessToken) {
+        console.log(data);
         res.setHeader(
             "Set-Cookie",
-            serialize("_accessToken", data.newAccessToken, {
+            serialize("_accessToken", data.accessToken, {
                 sameSite: true,
                 path: "/",
             })
         );
+        data.accessToken = null;
+    }
 
     return { props: { authenticated: true, userData: data, err: null } };
 }
@@ -35,20 +45,17 @@ export default function Dashboard({ authenticated, userData, err }) {
     const modifyAlert = useContext(ShowAlertContext);
 
     useComponentDidMount(() => {
-        if (!authenticated) Router.push("/");
-
-        if (!err) {
+        if (!authenticated || err)
             modifyAlert({
                 isVisible: true,
                 props: {
                     type: 0,
-                    children: err,
+                    children: !authenticated ? "Nu sunteți autentificat." : err,
                 },
                 customToggleHandler: () => Router.push("/"),
             });
-        }
     });
-
+    if (!authenticated || err) return null;
     return (
         <>
             <section className="dashboard">

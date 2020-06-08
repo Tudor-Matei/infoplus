@@ -1,43 +1,47 @@
 import jwt from "jsonwebtoken";
 import { parse } from "cookie";
 
-import connectToDatabase from "../utils/connectToDatabase";
+import connectToDatabase from "./connectToDatabase";
 import { ObjectId } from "mongodb";
 
-export default async function getTokenInfo(cookieHeader) {
-    //err: 1 pentru neautentificat
-    if (!cookieHeader) return { data: null, err: 1 };
+export async function getTokenInfo(cookieHeader) {
+    if (!cookieHeader) return { data: null, err: "Nu sunteți autentificat." };
 
     const tokens = parse(cookieHeader);
-    if (!tokens["_accessToken"] || !tokens["_refreshToken"]) return { data: null, err: 1 };
+    if (!tokens["_accessToken"] || !tokens["_refreshToken"])
+        return { data: null, err: "Nu sunteți autentificat." };
 
     try {
         const decoded = jwt.verify(tokens["_accessToken"], process.env.ACCESS_TOKEN_SECRET);
         return { data: decoded };
     } catch {
-        // in cazul in are accessToken-ul este invalid, functia `verify` va
-        // arunca o eroare, iar astfel vom genera un nou accessToken
-        const accessTokenData = await getNewAccessToken(tokens["_refreshToken"]);
-        if (accessTokenData.err) return { data: null, err: accessTokenData.err };
-
-        return {
-            data: { ...accessTokenData.encodedData, newAccessToken: accessTokenData.accessToken },
-        };
+        return { data: null, err: "tokinv" };
     }
 }
 
-async function getNewAccessToken(refreshToken) {
+export async function getNewAccessToken(cookieHeader) {
+    if (!cookieHeader) return { err: "Nu sunteți autentificat." };
+
+    const tokens = parse(cookieHeader);
+    if (!tokens["_refreshToken"]) return { err: "Nu sunteți autentificat." };
+    const refreshToken = tokens["_refreshToken"];
+
     let closeConnection;
     try {
         const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
         const { db, closeConnectionHandler } = await connectToDatabase();
         closeConnection = closeConnectionHandler;
+        console.log(decoded.id, ObjectId(decoded.id));
+
+        // TODO: formateaza corect ObjectId, pentru ca
+        //  "Error: Argument passed in must be a single String of 12 bytes or a string of 24 hex characters"
+        // si vezi de ce nu apare eroarea in alert uneori.
 
         const foundUser = await db.collection("users").findOne({ _id: ObjectId(decoded.id) });
 
         if (foundUser.refreshToken !== refreshToken) {
             closeConnection();
-            return { err: "Ați alterat cumva cookie-urile?" };
+            return { err: "S-a întâmplat ceva ciudat. Vă rugăm să ne scuzați." };
         }
 
         const userData = {
@@ -51,9 +55,9 @@ async function getNewAccessToken(refreshToken) {
             encodedData: userData,
             accessToken: jwt.sign(userData, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "1m" }),
         };
-    } catch (err) {
-        console.error(err);
+    } catch (e) {
+        console.error(e);
         if (closeConnection) closeConnection();
-        return { err: "A apărut o eroare internă. Vă rugăm să ne scuzați." };
+        return { err: "A apărut o eroare internă, vă rugăm să ne scuzați." };
     }
 }

@@ -11,7 +11,6 @@ export default css.global`
         padding: 0;
         font-family: "Red Hat Display", Arial, sans-serif;
         background-color: var(--background-primary);
-        transition: background-color 300ms ease;
     }
 
     h1,
