@@ -4,6 +4,7 @@ import { useState, useContext } from "react";
 import Link from "next/link";
 import OverlayDarkener from "../utils/OverlayDarkener";
 import { LoggedInDataContext, ShowLoginContext } from "../../pages/_app";
+import LogoutButton from "../utils/LogoutButton";
 
 export default function Header() {
     const [isDropdownToggled, toggleDropdown] = useState(false);
@@ -67,7 +68,11 @@ function IconsRightMenu({ isDropdownToggled, toggleMenuDropdown }) {
                             <FontAwesomeIcon icon="user" className="header__icon" />
                         </div>
                     </Link>
-                    logout
+                    <LogoutButton
+                        type="icon"
+                        className="header__button"
+                        classNameForIcon="header__icon"
+                    />
                 </>
             ) : (
                 <div className="header__button" onClick={showLoginModal}>

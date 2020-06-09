@@ -9,34 +9,76 @@ import { ShowAlertContext } from "./_app";
 
 import Router from "next/router";
 import useComponentDidMount from "../components/_hooks/componentDidMount";
+import connectToDatabase from "../utils/connectToDatabase";
+import { ObjectId } from "mongodb";
+import LogoutButton from "../components/utils/LogoutButton";
 
 export async function getServerSideProps({ req, res }) {
     let { data, err } = await getTokenInfo(req.headers["cookie"]);
 
     if (err) {
         // v "token invalid"
-        if (err !== "tokinv") return { props: { authenticated: true, userData: data, err } };
+        if (err !== "tokinv") return { props: { authenticated: false, userData: null, err } };
         else {
             // generam un nou access token
             data = await getNewAccessToken(req.headers["cookie"]);
-            console.log(data.err, "   access token nou!!");
-            if (data.err) return { props: { authenticated: true, userData: data, err: data.err } };
+            if (data.err) return { props: { authenticated: false, userData: null, err: data.err } };
+
+            res.setHeader(
+                "Set-Cookie",
+                serialize("_accessToken", data.accessToken, {
+                    sameSite: true,
+                    path: "/",
+                })
+            );
+            data.accessToken = null;
         }
     }
 
-    if (data.accessToken) {
-        console.log(data);
-        res.setHeader(
-            "Set-Cookie",
-            serialize("_accessToken", data.accessToken, {
-                sameSite: true,
-                path: "/",
-            })
-        );
-        data.accessToken = null;
-    }
+    let closeConnection;
+    try {
+        const { db, closeConnectionHandler } = await connectToDatabase();
+        closeConnection = closeConnectionHandler;
+        const foundUser = await db.collection("users").findOne({ _id: ObjectId(data.id) });
 
-    return { props: { authenticated: true, userData: data, err: null } };
+        if (!foundUser) {
+            closeConnection();
+            return {
+                props: {
+                    authenticated: false,
+                    userData: null,
+                    err:
+                        "S-a intâmplat ceva ciudat, aveți datele de autentificare prezente, dar invalide.",
+                },
+            };
+        }
+
+        closeConnection();
+        return {
+            props: {
+                authenticated: true,
+                userData: {
+                    name: foundUser.name,
+                    surname: foundUser.surname,
+                    county: foundUser.county,
+                    profession: foundUser.profession,
+                    username: foundUser.username,
+                    email: foundUser.email,
+                },
+                err: null,
+            },
+        };
+    } catch (e) {
+        console.error(e);
+        closeConnection();
+        return {
+            props: {
+                authenticated: false,
+                userData: null,
+                err: "A apărut o eroare internă, vă rugăm să ne scuzați.",
+            },
+        };
+    }
 }
 
 export default function Dashboard({ authenticated, userData, err }) {
@@ -45,12 +87,13 @@ export default function Dashboard({ authenticated, userData, err }) {
     const modifyAlert = useContext(ShowAlertContext);
 
     useComponentDidMount(() => {
+        console.log(err);
         if (!authenticated || err)
             modifyAlert({
                 isVisible: true,
                 props: {
                     type: 0,
-                    children: !authenticated ? "Nu sunteți autentificat." : err,
+                    children: !authenticated && !err ? "Nu sunteți autentificat." : err,
                 },
                 customToggleHandler: () => Router.push("/"),
             });
@@ -60,7 +103,7 @@ export default function Dashboard({ authenticated, userData, err }) {
         <>
             <section className="dashboard">
                 <div className="dashboard__introduction">
-                    <WelcomingMessage />
+                    <WelcomingMessage name={userData.name} surname={userData.surname} />
                     <div className="dashboard__side-info">
                         <div className="dashboard__quick-action-pills">
                             <QuickActionPill icon="external-link-alt">
@@ -77,7 +120,7 @@ export default function Dashboard({ authenticated, userData, err }) {
                 <div className="dashboard__heading">
                     <h3>Detaliile contului tău</h3>
                 </div>
-                <AccountDetails />
+                <AccountDetails userData={userData} />
                 {/* <ProgressDetails /> */}
 
                 <div className="exercises-container">
@@ -206,7 +249,7 @@ export default function Dashboard({ authenticated, userData, err }) {
     );
 }
 
-function WelcomingMessage() {
+function WelcomingMessage({ name, surname }) {
     return (
         <>
             <div className="dashboard__welcoming-message">
@@ -215,11 +258,12 @@ function WelcomingMessage() {
                     <OuterCircleSVG className="dashboard__profile-picture-svg" />
                 </div>
                 <div className="dashboard__title">
-                    <h2>Bună ziua, John Doe</h2>
-                    <a href="#">
-                        Deloghează-te
-                        <FontAwesomeIcon className="dashboard__sign-out-icon" icon="sign-out-alt" />
-                    </a>
+                    <h2>
+                        Bună ziua, {name} {surname}
+                    </h2>
+
+                    <LogoutButton type="anchor" />
+                    <FontAwesomeIcon className="dashboard__sign-out-icon" icon="sign-out-alt" />
                 </div>
             </div>
             <style jsx>{`

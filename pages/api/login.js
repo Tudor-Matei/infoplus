@@ -37,7 +37,7 @@ export default async (req, res) => {
 
         const users = db.collection("users");
         const foundUser = await users.findOne({
-            $or: [{ username: validatedUserData.username }, { email: validatedUserData.email }],
+            $or: [{ username: validatedUserData.username }, { email: validatedUserData.username }],
         });
 
         if (!foundUser)
@@ -56,7 +56,7 @@ export default async (req, res) => {
 
         const accessToken = jwt.sign(
             {
-                id: JSON.stringify(foundUser._id),
+                id: foundUser._id.toHexString(),
                 name: foundUser.name,
                 surname: foundUser.surname,
                 username: foundUser.username,
@@ -67,7 +67,7 @@ export default async (req, res) => {
 
         const refreshToken = jwt.sign(
             {
-                id: JSON.stringify(foundUser._id),
+                id: foundUser._id.toHexString(),
                 username: foundUser.username,
             },
             process.env.REFRESH_TOKEN_SECRET,

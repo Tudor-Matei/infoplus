@@ -68,9 +68,11 @@ export default function App({ Component, pageProps }) {
             )}
             <LoadingBar />
             <ThemeContext.Provider value={{ isLightTheme, setTheme }}>
-                <LoggedInDataContext.Provider value={{ isAuthenticated }}>
+                <LoggedInDataContext.Provider value={{ isAuthenticated, setAuthenticatedTo }}>
                     <ShowLoginContext.Provider value={showLoginModal}>
-                        <Header />
+                        <ShowAlertContext.Provider value={modifyAlert}>
+                            <Header />
+                        </ShowAlertContext.Provider>
                     </ShowLoginContext.Provider>
                 </LoggedInDataContext.Provider>
             </ThemeContext.Provider>

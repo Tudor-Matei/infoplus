@@ -1,8 +1,9 @@
 import { ShowAlertContext, LoggedInDataContext } from "../../pages/_app";
 import { useContext } from "react";
 import { useRouter } from "next/router";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-export default function LogoutButton({ type }) {
+export default function LogoutButton({ type, className, classNameForIcon }) {
     const modifyAlert = useContext(ShowAlertContext);
     const isAuthenticatedHandler = useContext(LoggedInDataContext);
     const router = useRouter();
@@ -12,6 +13,15 @@ export default function LogoutButton({ type }) {
             <a href="#" onClick={() => logout(modifyAlert, router, isAuthenticatedHandler)}>
                 Deloghează-te
             </a>
+        );
+    else if (type === "icon")
+        return (
+            <div
+                className={className}
+                onClick={() => logout(modifyAlert, router, isAuthenticatedHandler)}
+            >
+                <FontAwesomeIcon icon="sign-out-alt" className={classNameForIcon} />
+            </div>
         );
     else
         return (
@@ -25,26 +35,27 @@ export default function LogoutButton({ type }) {
 }
 
 function logout(modifyAlert, router, isAuthenticatedHandler = null) {
-    fetch("http://localhost:3000/api/logout", { method: "DELETE" }).then(({ ok, err }) => {
-        console.log(ok, err);
-        if (!ok) {
-            modifyAlert({
-                isVisible: true,
-                props: {
-                    type: 0,
-                    children: err,
-                },
-            });
-        } else {
-            modifyAlert({
-                isVisible: true,
-                props: {
-                    type: 1,
-                    children: "Operațiunea a fost efectuată cu succes.",
-                },
-                customToggleHandler: () => router.pathname !== "/" && router.push("/"),
-            });
-            if (isAuthenticatedHandler) isAuthenticatedHandler.setAuthenticatedTo(false);
+    fetch("http://localhost:3000/api/logout", { method: "DELETE" }).then(
+        ({ ok, err = "A apărut o eroare internă, vă rugăm să ne scuzați." }) => {
+            if (!ok) {
+                modifyAlert({
+                    isVisible: true,
+                    props: {
+                        type: 0,
+                        children: err,
+                    },
+                });
+            } else {
+                modifyAlert({
+                    isVisible: true,
+                    props: {
+                        type: 1,
+                        children: "Operațiunea a fost efectuată cu succes.",
+                    },
+                    customToggleHandler: () => router.pathname !== "/" && router.push("/"),
+                });
+                if (isAuthenticatedHandler) isAuthenticatedHandler.setAuthenticatedTo(false);
+            }
         }
-    });
+    );
 }

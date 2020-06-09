@@ -31,11 +31,6 @@ export async function getNewAccessToken(cookieHeader) {
         const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
         const { db, closeConnectionHandler } = await connectToDatabase();
         closeConnection = closeConnectionHandler;
-        console.log(decoded.id, ObjectId(decoded.id));
-
-        // TODO: formateaza corect ObjectId, pentru ca
-        //  "Error: Argument passed in must be a single String of 12 bytes or a string of 24 hex characters"
-        // si vezi de ce nu apare eroarea in alert uneori.
 
         const foundUser = await db.collection("users").findOne({ _id: ObjectId(decoded.id) });
 
@@ -45,15 +40,15 @@ export async function getNewAccessToken(cookieHeader) {
         }
 
         const userData = {
-            id: JSON.stringify(foundUser._id),
+            id: foundUser._id.toHexString(),
             name: foundUser.name,
             surname: foundUser.surname,
             username: foundUser.username,
         };
 
         return {
-            encodedData: userData,
-            accessToken: jwt.sign(userData, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "1m" }),
+            ...userData,
+            accessToken: jwt.sign(userData, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "15s" }),
         };
     } catch (e) {
         console.error(e);

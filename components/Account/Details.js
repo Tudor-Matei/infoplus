@@ -1,23 +1,35 @@
-export default function AccountDetails() {
+export default function AccountDetails({ userData }) {
     return (
         <div className="details-account">
             <div className="details-account__category">
                 <div className="details-account__row details-account__row--category">Nume</div>
                 <div className="details-account__row details-account__row--category">Prenume</div>
+                <div className="details-account__row details-account__row--category">
+                    Nume utilizator
+                </div>
                 <div className="details-account__row details-account__row--category">E-Mail</div>
-                <div className="details-account__row details-account__row--category">Telefon</div>
-                <div className="details-account__row details-account__row--category">Regiune</div>
+                <div className="details-account__row details-account__row--category">Județ</div>
+                <div className="details-account__row details-account__row--category">Profesie</div>
             </div>
             <div className="details-account__info">
-                <div className="details-account__row details-account__row--info">John</div>
-                <div className="details-account__row details-account__row--info">Doe</div>
                 <div className="details-account__row details-account__row--info">
-                    johndoe@longexample.com
+                    {userData.name}
                 </div>
                 <div className="details-account__row details-account__row--info">
-                    +0007123456789
+                    {userData.surname}
                 </div>
-                <div className="details-account__row details-account__row--info">USA</div>
+                <div className="details-account__row details-account__row--info">
+                    {userData.username}
+                </div>
+                <div className="details-account__row details-account__row--info">
+                    {userData.email}
+                </div>
+                <div className="details-account__row details-account__row--info">
+                    {userData.county}
+                </div>
+                <div className="details-account__row details-account__row--info">
+                    {userData.profession}
+                </div>
             </div>
             <style jsx>{`
                 .details-account {
