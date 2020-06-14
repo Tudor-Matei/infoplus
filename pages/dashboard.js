@@ -12,6 +12,7 @@ import useComponentDidMount from "../components/_hooks/componentDidMount";
 import connectToDatabase from "../utils/connectToDatabase";
 import { ObjectId } from "mongodb";
 import LogoutButton from "../components/utils/LogoutButton";
+import Link from "next/link";
 
 export async function getServerSideProps({ req, res }) {
     let { data, err } = await getTokenInfo(req.headers["cookie"]);
@@ -70,7 +71,7 @@ export async function getServerSideProps({ req, res }) {
         };
     } catch (e) {
         console.error(e);
-        closeConnection();
+        if (closeConnection) closeConnection();
         return {
             props: {
                 authenticated: false,
@@ -87,7 +88,6 @@ export default function Dashboard({ authenticated, userData, err }) {
     const modifyAlert = useContext(ShowAlertContext);
 
     useComponentDidMount(() => {
-        console.log(err);
         if (!authenticated || err)
             modifyAlert({
                 isVisible: true,
@@ -106,10 +106,10 @@ export default function Dashboard({ authenticated, userData, err }) {
                     <WelcomingMessage name={userData.name} surname={userData.surname} />
                     <div className="dashboard__side-info">
                         <div className="dashboard__quick-action-pills">
-                            <QuickActionPill icon="external-link-alt">
+                            <QuickActionPill icon="external-link-alt" link="/exercitii">
                                 Rezolvă exerciții
                             </QuickActionPill>
-                            <QuickActionPill icon="sign-in-alt">
+                            <QuickActionPill icon="sign-in-alt" link="/resurse">
                                 Vezi secțiunea "Resurse"
                             </QuickActionPill>
                         </div>
@@ -315,15 +315,16 @@ function WelcomingMessage({ name, surname }) {
     );
 }
 
-function QuickActionPill({ icon, children }) {
+function QuickActionPill({ icon, link = "/", children }) {
     return (
         <>
             <div className="dashboard__quick-action-pill">
                 <div className="dashboard__quick-action-icon">
                     <FontAwesomeIcon icon={icon} color="var(--text-button)" />
                 </div>
-
-                {children}
+                <Link href={link}>
+                    <a>{children}</a>
+                </Link>
             </div>
             <style jsx>{`
                 .dashboard__quick-action-pill {
@@ -359,6 +360,9 @@ function QuickActionPill({ icon, children }) {
                     justify-content: center;
                     align-items: center;
                     margin-right: 15px;
+                }
+                a {
+                    text-decoration: none;
                 }
             `}</style>
         </>

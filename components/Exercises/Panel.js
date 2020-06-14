@@ -1,5 +1,7 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
+import { useContext } from "react";
+import { CapitolURLContext } from "./Grades";
 
 export default function ExercisesPanel({ title, children, accent, grade }) {
     return (
@@ -61,9 +63,10 @@ export default function ExercisesPanel({ title, children, accent, grade }) {
 }
 
 function ButtonStart({ grade }) {
+    const capitolURL = useContext(CapitolURLContext);
     return (
         <>
-            <Link href={`/exercitii/${grade}`}>
+            <Link href={`/exercitii/${grade}/${capitolURL}`}>
                 <button className={`button--primary`}>
                     Incepe
                     <FontAwesomeIcon icon="external-link-alt" />
@@ -74,11 +77,7 @@ function ButtonStart({ grade }) {
                     display: block;
                     /* prettier-ignore */
                     background-color: var(--accent-${
-                        grade === "ix"
-                            ? "primary"
-                            : grade === "x"
-                            ? "secondary"
-                            : "tertiary"
+                        grade === "ix" ? "primary" : grade === "x" ? "secondary" : "tertiary"
                     })
                 }
             `}</style>

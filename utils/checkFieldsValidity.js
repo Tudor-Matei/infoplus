@@ -2,7 +2,7 @@ import isEmpty from "validator/lib/isEmpty";
 import isEmail from "validator/lib/isEmail";
 
 export default function checkFieldsValidity({
-    fields = {},
+    fields,
     minimumLengthForEachField = {},
     hasEmail = false,
 }) {
@@ -10,7 +10,7 @@ export default function checkFieldsValidity({
         return "Nu ai completat unul sau mai multe câmpuri.";
     else if (fieldValuesAreNotLongEnough(fields, minimumLengthForEachField))
         return "Unul sau mai multe câmpuri nu indeplinesc numarul de caractere minim.";
-    else if (hasEmail && !isEmail(fields.username || fields.email))
+    else if (hasEmail && !isEmail(fields.email ? fields.email : fields.username))
         return "E-mail-ul pe care l-ai introdus nu este valid.";
 
     return false;

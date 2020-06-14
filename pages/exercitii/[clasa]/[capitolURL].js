@@ -1,31 +1,67 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-import Exercise from "../../components/ExercisesList/Exercise";
+import Exercise from "../../../components/ExercisesList/Exercise";
+import {
+    exercisesGradeIX,
+    exercisesGradeX,
+    exercisesGradeXI,
+} from "../../../components/utils/exercisesGradesData";
+import { useState } from "react";
 
 export async function getStaticPaths() {
     return {
-        paths: [
-            { params: { clasa: "ix" } },
-            { params: { clasa: "x" } },
-            { params: { clasa: "xi" } },
-        ],
+        paths: exercisesGradeIX
+            .map(({ grade, capitolURL }) => ({
+                params: { clasa: grade, capitolURL },
+            }))
+            .concat(
+                exercisesGradeX.map(({ grade, capitolURL }) => ({
+                    params: { clasa: grade, capitolURL },
+                }))
+            )
+            .concat(
+                exercisesGradeXI.map(({ grade, capitolURL }) => ({
+                    params: { clasa: grade, capitolURL },
+                }))
+            ),
         fallback: false,
     };
 }
 
-export async function getStaticProps({ params: { clasa } }) {
+export async function getStaticProps({ params: { clasa, capitolURL } }) {
+    let capitol;
+    if (clasa === "ix")
+        capitol = exercisesGradeIX.find(
+            ({ capitolURL: capitolURLExercise }) => capitolURL === capitolURLExercise
+        );
+    else if (clasa === "x")
+        capitol = exercisesGradeX.find(
+            ({ capitolURL: capitolURLExercise }) => capitolURL === capitolURLExercise
+        );
+    else if (clasa === "xi")
+        capitol = exercisesGradeXI.find(
+            ({ capitolURL: capitolURLExercise }) => capitolURL === capitolURLExercise
+        );
     return {
-        props: { clasa },
+        props: { clasa, capitol: capitol.title, subchapters: capitol.subchapters },
     };
 }
 
-export default function ExercisesList({ clasa }) {
+export default function ExercisesList({ clasa, capitol, subchapters }) {
+    const [subchapter, setSubchapter] = useState(subchapters[0]);
+
     return (
         <>
-            {clasa && <HeaderMainInfo grade={clasa} />}
+            {clasa && (
+                <HeaderMainInfo
+                    grade={clasa}
+                    subchapters={subchapters}
+                    setSubchapter={setSubchapter}
+                />
+            )}
             <CurrentCategoryTitle
-                category="Elemente de bază ale limbajului"
-                subcategory="Operatori și expresii"
+                category={capitol ? capitol : "Se incarcă..."}
+                subcategory={subchapter}
             />
             {clasa && (
                 <>
@@ -39,14 +75,12 @@ export default function ExercisesList({ clasa }) {
                         grade={clasa}
                         exerciseId="1"
                     >
-                        Mollit enim tempor esse magna id pariatur exercitation.
-                        Sint est aute cupidatat dolor adipisicing amet ea ut
-                        deserunt nulla do eiusmod aliqua nulla. Duis tempor
-                        ullamco dolore sit adipisicing dolore voluptate anim ex
-                        officia dolore est occaecat velit voluptate id mollit
-                        irure. Ut deserunt voluptate est qui quis labore fugiat
-                        sint. Dolor qui culpa est ipsum excepteur irure id est
-                        voluptate enim elit quis incididunt dolor.
+                        Mollit enim tempor esse magna id pariatur exercitation. Sint est aute
+                        cupidatat dolor adipisicing amet ea ut deserunt nulla do eiusmod aliqua
+                        nulla. Duis tempor ullamco dolore sit adipisicing dolore voluptate anim ex
+                        officia dolore est occaecat velit voluptate id mollit irure. Ut deserunt
+                        voluptate est qui quis labore fugiat sint. Dolor qui culpa est ipsum
+                        excepteur irure id est voluptate enim elit quis incididunt dolor.
                     </Exercise>
                     <Exercise
                         title="ScriereEcran"
@@ -57,14 +91,12 @@ export default function ExercisesList({ clasa }) {
                         grade={clasa}
                         exerciseId="2"
                     >
-                        Mollit enim tempor esse magna id pariatur exercitation.
-                        Sint est aute cupidatat dolor adipisicing amet ea ut
-                        deserunt nulla do eiusmod aliqua nulla. Duis tempor
-                        ullamco dolore sit adipisicing dolore voluptate anim ex
-                        officia dolore est occaecat velit voluptate id mollit
-                        irure. Ut deserunt voluptate est qui quis labore fugiat
-                        sint. Dolor qui culpa est ipsum excepteur irure id est
-                        voluptate enim elit quis incididunt dolor.
+                        Mollit enim tempor esse magna id pariatur exercitation. Sint est aute
+                        cupidatat dolor adipisicing amet ea ut deserunt nulla do eiusmod aliqua
+                        nulla. Duis tempor ullamco dolore sit adipisicing dolore voluptate anim ex
+                        officia dolore est occaecat velit voluptate id mollit irure. Ut deserunt
+                        voluptate est qui quis labore fugiat sint. Dolor qui culpa est ipsum
+                        excepteur irure id est voluptate enim elit quis incididunt dolor.
                     </Exercise>
 
                     <Exercise
@@ -77,14 +109,12 @@ export default function ExercisesList({ clasa }) {
                         isSolved
                         exerciseId="2"
                     >
-                        Mollit enim tempor esse magna id pariatur exercitation.
-                        Sint est aute cupidatat dolor adipisicing amet ea ut
-                        deserunt nulla do eiusmod aliqua nulla. Duis tempor
-                        ullamco dolore sit adipisicing dolore voluptate anim ex
-                        officia dolore est occaecat velit voluptate id mollit
-                        irure. Ut deserunt voluptate est qui quis labore fugiat
-                        sint. Dolor qui culpa est ipsum excepteur irure id est
-                        voluptate enim elit quis incididunt dolor.
+                        Mollit enim tempor esse magna id pariatur exercitation. Sint est aute
+                        cupidatat dolor adipisicing amet ea ut deserunt nulla do eiusmod aliqua
+                        nulla. Duis tempor ullamco dolore sit adipisicing dolore voluptate anim ex
+                        officia dolore est occaecat velit voluptate id mollit irure. Ut deserunt
+                        voluptate est qui quis labore fugiat sint. Dolor qui culpa est ipsum
+                        excepteur irure id est voluptate enim elit quis incididunt dolor.
                     </Exercise>
                 </>
             )}
@@ -92,12 +122,14 @@ export default function ExercisesList({ clasa }) {
     );
 }
 
-function HeaderMainInfo({ grade }) {
+function HeaderMainInfo({ grade, subchapters, setSubchapter }) {
     return (
         <div className="header-main-info">
             <div className="header-main-info__buttons">
-                <select>
-                    <option>Subcategorii</option>
+                <select onChange={({ target: { value } }) => setSubchapter(value)}>
+                    {subchapters.map((subchapter) => (
+                        <option key={`subchapter__${subchapter}`}>{subchapter}</option>
+                    ))}
                 </select>
                 <FilterButton />
             </div>
@@ -105,7 +137,7 @@ function HeaderMainInfo({ grade }) {
             <style jsx>{`
                 .header-main-info {
                     margin: 160px auto 15px;
-                    padding-bottom: 15px;
+                    padding-bottom: 10px;
                     border-bottom: 5px solid var(--accent-primary);
                     width: 90%;
                     display: flex;
@@ -118,11 +150,11 @@ function HeaderMainInfo({ grade }) {
                 }
 
                 select {
-                    width: 150px;
                     height: 35px;
                     background-color: transparent;
                     border: 1px solid var(--background-quaternary);
                     border-radius: 50px;
+                    margin-bottom: 5px;
                     margin-right: 30px;
                     color: var(--text-primary);
                     font-family: "Red Hat Display";
@@ -138,7 +170,7 @@ function HeaderMainInfo({ grade }) {
                     outline: none;
                 }
 
-                @media screen and (max-width: 560px) {
+                @media screen and (max-width: 825px) {
                     .header-main-info {
                         flex-direction: column-reverse;
                         align-items: flex-start;
@@ -151,8 +183,6 @@ function HeaderMainInfo({ grade }) {
 
                     .header-main-info__buttons {
                         width: 100%;
-                        display: flex;
-                        justify-content: space-between;
                     }
                 }
             `}</style>

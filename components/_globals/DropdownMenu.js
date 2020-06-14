@@ -44,13 +44,9 @@ function DropdownMenuUl() {
     return (
         <>
             <ul className="dropdown-menu-header__ul">
-                <DropdownMenuAccordion title="Exercitii">
-                    {[
-                        { titleLi: "Clasa IX", href: "/exercitii/ix" },
-                        { titleLi: "Clasa X", href: "/exercitii/x" },
-                        { titleLi: "Clasa XI", href: "/exercitii/xi" },
-                    ]}
-                </DropdownMenuAccordion>
+                <Link href="/exercitii">
+                    <li className="dropdown-menu-header__main-li">Exerciții</li>
+                </Link>
                 <hr className="dropdown-menu-header__hr" />
                 <DropdownMenuAccordion title="Resurse">
                     {[

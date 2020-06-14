@@ -24,7 +24,27 @@ export default async (req, res) => {
 
         const { db, closeConnectionHandler } = await connectToDatabase();
         closeConnection = closeConnectionHandler;
-        await db.collection("users").insertOne(validatedUserData);
+        function closeConnectionAndExitWithError(error = "", status) {
+            closeConnection();
+            return res.status(status).json({ ok: false, error });
+        }
+
+        const users = db.collection("users");
+        const existingUser = await users.findOne({
+            $or: [{ username: validatedUserData.username }, { email: validatedUserData.email }],
+        });
+
+        if (!existingUser) await users.insertOne(validatedUserData);
+        else if (existingUser.username === validatedUserData.username)
+            return closeConnectionAndExitWithError(
+                "Există deja o persoană cu același nume de utilizator.",
+                403
+            );
+        else if (existingUser.email === validatedUserData.email)
+            return closeConnectionAndExitWithError(
+                "Există deja o persoană cu aceeași adresă de e-mail.",
+                403
+            );
 
         res.status(200).json({ ok: true });
         return closeConnection();
