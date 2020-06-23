@@ -6,7 +6,28 @@ import {
     exercisesGradeX,
     exercisesGradeXI,
 } from "../../../components/utils/exercisesGradesData";
-import { useState } from "react";
+import performDatabaseOperation from "../../../utils/performDatabaseOperation";
+
+import { useState, useContext } from "react";
+import toReturnForExercisesList from "../../../utils/toReturnForExercisesList";
+import { ShowAlertContext } from "../../_app";
+import useComponentDidMount from "../../../components/_hooks/componentDidMount";
+import formatMonth from "../../../utils/formatMonth";
+
+function getChapterData(grade = "ix", capitolURL) {
+    if (grade === "ix")
+        return exercisesGradeIX.find(
+            ({ capitolURL: capitolURLExercise }) => capitolURL === capitolURLExercise
+        );
+    else if (grade === "x")
+        return exercisesGradeX.find(
+            ({ capitolURL: capitolURLExercise }) => capitolURL === capitolURLExercise
+        );
+    else if (grade === "xi")
+        return exercisesGradeXI.find(
+            ({ capitolURL: capitolURLExercise }) => capitolURL === capitolURLExercise
+        );
+}
 
 export async function getStaticPaths() {
     return {
@@ -29,26 +50,56 @@ export async function getStaticPaths() {
 }
 
 export async function getStaticProps({ params: { clasa, capitolURL } }) {
-    let capitol;
-    if (clasa === "ix")
-        capitol = exercisesGradeIX.find(
-            ({ capitolURL: capitolURLExercise }) => capitolURL === capitolURLExercise
-        );
-    else if (clasa === "x")
-        capitol = exercisesGradeX.find(
-            ({ capitolURL: capitolURLExercise }) => capitolURL === capitolURLExercise
-        );
-    else if (clasa === "xi")
-        capitol = exercisesGradeXI.find(
-            ({ capitolURL: capitolURLExercise }) => capitolURL === capitolURLExercise
-        );
+    const capitol = getChapterData(clasa, capitolURL);
+    const { data, err } = await performDatabaseOperation(async (db, closeConnection) => {
+        const exercisesData = await db
+            .collection("exercises")
+            .find({ category: ["elemente-de-baza", "0"] })
+            .project(toReturnForExercisesList)
+            .toArray();
+
+        if (!exercisesData) {
+            closeConnection();
+            return { data: null, err: "Nu au fost găsite exerciții în această subcategorie..." };
+        }
+        closeConnection();
+        // TODO: daca autentificat -> preia date sa vada daca a rezolvat problema
+
+        for (const exerciseData of exercisesData) {
+            const datePublished = new Date(exerciseData.datePublished);
+            exerciseData.datePublished = `${datePublished.getDate()} ${formatMonth(
+                datePublished.getMonth() + 1
+            )} ${datePublished.getFullYear()}`;
+        }
+        return {
+            data: exercisesData,
+            err: null,
+        };
+    });
+
     return {
-        props: { clasa, capitol: capitol.title, subchapters: capitol.subchapters },
+        props: {
+            clasa,
+            capitol: capitol.title,
+            subchapters: capitol.subchapters,
+            exercises: { data, err },
+        },
     };
 }
 
-export default function ExercisesList({ clasa, capitol, subchapters }) {
+export default function ExercisesList({ clasa, capitol, subchapters, exercises: { data, err } }) {
     const [subchapter, setSubchapter] = useState(subchapters[0]);
+    const modifyAlert = useContext(ShowAlertContext);
+    useComponentDidMount(() => {
+        if (err)
+            return modifyAlert({
+                isVisible: true,
+                props: {
+                    type: 0,
+                    children: err,
+                },
+            });
+    });
 
     return (
         <>
@@ -63,60 +114,26 @@ export default function ExercisesList({ clasa, capitol, subchapters }) {
                 category={capitol ? capitol : "Se incarcă..."}
                 subcategory={subchapter}
             />
-            {clasa && (
-                <>
-                    <Exercise
-                        title="ScriereEcran"
-                        isSolved
-                        authorName="Jane Doe"
-                        datePublished="21 mai 2017"
-                        source="Model Bacalaureat 2009"
-                        difficulty={1}
-                        grade={clasa}
-                        exerciseId="1"
-                    >
-                        Mollit enim tempor esse magna id pariatur exercitation. Sint est aute
-                        cupidatat dolor adipisicing amet ea ut deserunt nulla do eiusmod aliqua
-                        nulla. Duis tempor ullamco dolore sit adipisicing dolore voluptate anim ex
-                        officia dolore est occaecat velit voluptate id mollit irure. Ut deserunt
-                        voluptate est qui quis labore fugiat sint. Dolor qui culpa est ipsum
-                        excepteur irure id est voluptate enim elit quis incididunt dolor.
-                    </Exercise>
-                    <Exercise
-                        title="ScriereEcran"
-                        authorName="Jane Doe"
-                        datePublished="21 mai 2017"
-                        source="Model Bacalaureat 2009"
-                        difficulty={3}
-                        grade={clasa}
-                        exerciseId="2"
-                    >
-                        Mollit enim tempor esse magna id pariatur exercitation. Sint est aute
-                        cupidatat dolor adipisicing amet ea ut deserunt nulla do eiusmod aliqua
-                        nulla. Duis tempor ullamco dolore sit adipisicing dolore voluptate anim ex
-                        officia dolore est occaecat velit voluptate id mollit irure. Ut deserunt
-                        voluptate est qui quis labore fugiat sint. Dolor qui culpa est ipsum
-                        excepteur irure id est voluptate enim elit quis incididunt dolor.
-                    </Exercise>
-
-                    <Exercise
-                        title="ScriereEcran"
-                        authorName="Jane Doe"
-                        datePublished="21 mai 2017"
-                        source="Model Bacalaureat 2009"
-                        difficulty={4}
-                        grade={clasa}
-                        isSolved
-                        exerciseId="2"
-                    >
-                        Mollit enim tempor esse magna id pariatur exercitation. Sint est aute
-                        cupidatat dolor adipisicing amet ea ut deserunt nulla do eiusmod aliqua
-                        nulla. Duis tempor ullamco dolore sit adipisicing dolore voluptate anim ex
-                        officia dolore est occaecat velit voluptate id mollit irure. Ut deserunt
-                        voluptate est qui quis labore fugiat sint. Dolor qui culpa est ipsum
-                        excepteur irure id est voluptate enim elit quis incididunt dolor.
-                    </Exercise>
-                </>
+            {clasa && data ? (
+                data.map(
+                    ({ exerciseId, title, difficulty, author, datePublished, source, content }) => (
+                        <Exercise
+                            key={`exercise_${exerciseId}`}
+                            title={title}
+                            isSolved
+                            authorName={author}
+                            datePublished={datePublished}
+                            source={source}
+                            difficulty={difficulty}
+                            grade={clasa}
+                            exerciseId={exerciseId}
+                        >
+                            {content}
+                        </Exercise>
+                    )
+                )
+            ) : (
+                <p>{err}</p>
             )}
         </>
     );

@@ -1,33 +1,31 @@
 import { getTokenInfo } from "../../utils/manageTokens";
 import { serialize } from "cookie";
-import connectToDatabase from "../../utils/connectToDatabase";
+import performDatabaseOperation from "../../utils/performDatabaseOperation";
 import { ObjectId } from "mongodb";
 
 export default async (req, res) => {
-    const { data } = await getTokenInfo(req.headers["cookie"]);
+    const { data, err } = await getTokenInfo(req.headers["cookie"], true);
 
     if (data) {
-        let closeConnection;
-        try {
-            const { db, closeConnectionHandler } = await connectToDatabase();
-            closeConnection = closeConnectionHandler;
+        const { err: errDb } = await performDatabaseOperation(async (db, closeConnection) => {
             const users = db.collection("users");
             const foundUser = await users.findOne({ _id: ObjectId(data.id) });
 
             await users.updateOne({ _id: foundUser._id }, { $set: { refreshToken: "" } });
-
             removeCookies(res);
             closeConnection();
-        } catch (e) {
-            console.error(e);
-            if (closeConnection) closeConnection();
+            return { err: null };
+        });
+
+        if (errDb) {
             removeCookies(res);
-            return res.status(500).json({ ok: false });
+            return res.status(500).json({ ok: false, err: errDb });
         }
+
+        return res.status(200).json({ ok: true });
     }
 
-    removeCookies(res);
-    return res.status(200).json({ ok: true });
+    return res.status(500).json({ ok: false, err });
 };
 
 function removeCookies(res) {

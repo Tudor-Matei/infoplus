@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 import isEmail from "validator/lib/isEmail";
 import bcrypt from "bcrypt";
 import validateUserData from "../../utils/validateUserData";
-import connectToDatabase from "../../utils/connectToDatabase";
+import performDatabaseOperation from "../../utils/performDatabaseOperation";
 import { serialize, parse } from "cookie";
 
 export default async (req, res) => {
@@ -26,19 +26,15 @@ export default async (req, res) => {
             error: "Ce incerci sa faci? >->. Te rog nu mai umbla la cookie-uri, ms.",
         });
 
-    let closeConnection;
-    try {
-        const { db, closeConnectionHandler } = await connectToDatabase();
-        closeConnection = closeConnectionHandler;
-        function closeConnectionAndExitWithError(error = "", status) {
-            closeConnection();
-            return res.status(status).json({ ok: false, error });
-        }
-
+    const { err, status = 500 } = await performDatabaseOperation(async (db, closeConnection) => {
         const users = db.collection("users");
         const foundUser = await users.findOne({
             $or: [{ username: validatedUserData.username }, { email: validatedUserData.username }],
         });
+        function closeConnectionAndExitWithError(err, status) {
+            closeConnection();
+            return { data: null, err, status };
+        }
 
         if (!foundUser)
             return closeConnectionAndExitWithError(
@@ -47,33 +43,15 @@ export default async (req, res) => {
             );
 
         const passwordsMatch = await bcrypt.compare(validatedUserData.password, foundUser.password);
-
-        if (!passwordsMatch)
+        if (!passwordsMatch) {
+            closeConnection();
             return closeConnectionAndExitWithError(
                 "Parola pe care ați introdus-o nu este corectă.",
                 403
             );
+        }
 
-        const accessToken = jwt.sign(
-            {
-                id: foundUser._id.toHexString(),
-                name: foundUser.name,
-                surname: foundUser.surname,
-                username: foundUser.username,
-            },
-            process.env.ACCESS_TOKEN_SECRET,
-            { expiresIn: "15s" }
-        );
-
-        const refreshToken = jwt.sign(
-            {
-                id: foundUser._id.toHexString(),
-                username: foundUser.username,
-            },
-            process.env.REFRESH_TOKEN_SECRET,
-            { expiresIn: "7d" }
-        );
-
+        const { accessToken, refreshToken } = prepareTokens(foundUser);
         await users.updateOne({ _id: foundUser._id }, { $set: { refreshToken } });
 
         res.setHeader("Set-Cookie", [
@@ -89,11 +67,33 @@ export default async (req, res) => {
         ]);
 
         closeConnection();
-        return res.status(200).json({ ok: true });
-    } catch (e) {
-        if (closeConnection) closeConnection();
+        return { data: null, err: null, status: 200 };
+    });
 
-        console.error(e);
-        return res.status(500).json({ ok: false });
-    }
+    if (err) return res.status(status).json({ ok: false, err });
+
+    return res.status(200).json({ ok: true });
 };
+
+function prepareTokens(foundUser) {
+    const accessToken = jwt.sign(
+        {
+            id: foundUser._id.toHexString(),
+            name: foundUser.name,
+            surname: foundUser.surname,
+            username: foundUser.username,
+        },
+        process.env.ACCESS_TOKEN_SECRET,
+        { expiresIn: "15s" }
+    );
+
+    const refreshToken = jwt.sign(
+        {
+            id: foundUser._id.toHexString(),
+            username: foundUser.username,
+        },
+        process.env.REFRESH_TOKEN_SECRET,
+        { expiresIn: "7d" }
+    );
+    return { accessToken, refreshToken };
+}

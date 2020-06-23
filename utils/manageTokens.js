@@ -1,10 +1,10 @@
 import jwt from "jsonwebtoken";
 import { parse } from "cookie";
 
-import connectToDatabase from "./connectToDatabase";
+import performDatabaseOperation from "./performDatabaseOperation";
 import { ObjectId } from "mongodb";
 
-export async function getTokenInfo(cookieHeader) {
+export async function getTokenInfo(cookieHeader, needsRefreshToken = false) {
     if (!cookieHeader) return { data: null, err: "Nu sunteți autentificat." };
 
     const tokens = parse(cookieHeader);
@@ -12,7 +12,9 @@ export async function getTokenInfo(cookieHeader) {
         return { data: null, err: "Nu sunteți autentificat." };
 
     try {
-        const decoded = jwt.verify(tokens["_accessToken"], process.env.ACCESS_TOKEN_SECRET);
+        const decoded = !needsRefreshToken
+            ? jwt.verify(tokens["_accessToken"], process.env.ACCESS_TOKEN_SECRET)
+            : jwt.verify(tokens["_refreshToken"], process.env.REFRESH_TOKEN_SECRET);
         return { data: decoded };
     } catch {
         return { data: null, err: "tokinv" };
@@ -26,17 +28,13 @@ export async function getNewAccessToken(cookieHeader) {
     if (!tokens["_refreshToken"]) return { err: "Nu sunteți autentificat." };
     const refreshToken = tokens["_refreshToken"];
 
-    let closeConnection;
-    try {
+    const { data, err } = await performDatabaseOperation(async (db, closeConnection) => {
         const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
-        const { db, closeConnectionHandler } = await connectToDatabase();
-        closeConnection = closeConnectionHandler;
-
         const foundUser = await db.collection("users").findOne({ _id: ObjectId(decoded.id) });
 
         if (foundUser.refreshToken !== refreshToken) {
             closeConnection();
-            return { err: "S-a întâmplat ceva ciudat. Vă rugăm să ne scuzați." };
+            return { data: null, err: "S-a întâmplat ceva ciudat. Vă rugăm să ne scuzați." };
         }
 
         const userData = {
@@ -47,12 +45,16 @@ export async function getNewAccessToken(cookieHeader) {
         };
 
         return {
-            ...userData,
-            accessToken: jwt.sign(userData, process.env.ACCESS_TOKEN_SECRET, { expiresIn: "15s" }),
+            data: {
+                ...userData,
+                accessToken: jwt.sign(userData, process.env.ACCESS_TOKEN_SECRET, {
+                    expiresIn: "15s",
+                }),
+            },
+            err: null,
         };
-    } catch (e) {
-        console.error(e);
-        if (closeConnection) closeConnection();
-        return { err: "A apărut o eroare internă, vă rugăm să ne scuzați." };
-    }
+    });
+
+    if (err) return { data: null, err };
+    return { data };
 }

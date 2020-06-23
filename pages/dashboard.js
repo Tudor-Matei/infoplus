@@ -9,7 +9,7 @@ import { ShowAlertContext } from "./_app";
 
 import Router from "next/router";
 import useComponentDidMount from "../components/_hooks/componentDidMount";
-import connectToDatabase from "../utils/connectToDatabase";
+import performDatabaseOperation from "../utils/performDatabaseOperation";
 import { ObjectId } from "mongodb";
 import LogoutButton from "../components/utils/LogoutButton";
 import Link from "next/link";
@@ -36,50 +36,46 @@ export async function getServerSideProps({ req, res }) {
         }
     }
 
-    let closeConnection;
-    try {
-        const { db, closeConnectionHandler } = await connectToDatabase();
-        closeConnection = closeConnectionHandler;
-        const foundUser = await db.collection("users").findOne({ _id: ObjectId(data.id) });
+    const { data: dataDb, err: errDb } = await performDatabaseOperation(
+        async (db, closeConnection) => {
+            const foundUser = await db.collection("users").findOne({ _id: ObjectId(data.id) });
 
-        if (!foundUser) {
-            closeConnection();
-            return {
-                props: {
-                    authenticated: false,
-                    userData: null,
+            if (!foundUser) {
+                closeConnection();
+                return {
+                    data: {
+                        authenticated: false,
+                        userData: null,
+                    },
                     err:
                         "S-a intâmplat ceva ciudat, aveți datele de autentificare prezente, dar invalide.",
-                },
-            };
-        }
+                };
+            }
 
-        closeConnection();
-        return {
-            props: {
-                authenticated: true,
-                userData: {
-                    name: foundUser.name,
-                    surname: foundUser.surname,
-                    county: foundUser.county,
-                    profession: foundUser.profession,
-                    username: foundUser.username,
-                    email: foundUser.email,
+            closeConnection();
+            return {
+                data: {
+                    authenticated: true,
+                    userData: {
+                        name: foundUser.name,
+                        surname: foundUser.surname,
+                        county: foundUser.county,
+                        profession: foundUser.profession,
+                        username: foundUser.username,
+                        email: foundUser.email,
+                    },
                 },
                 err: null,
-            },
-        };
-    } catch (e) {
-        console.error(e);
-        if (closeConnection) closeConnection();
-        return {
-            props: {
-                authenticated: false,
-                userData: null,
-                err: "A apărut o eroare internă, vă rugăm să ne scuzați.",
-            },
-        };
-    }
+            };
+        }
+    );
+
+    return {
+        props: {
+            ...dataDb,
+            err: errDb,
+        },
+    };
 }
 
 export default function Dashboard({ authenticated, userData, err }) {

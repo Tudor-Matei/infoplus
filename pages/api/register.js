@@ -1,4 +1,4 @@
-import connectToDatabase from "../../utils/connectToDatabase";
+import performDatabaseOperation from "../../utils/performDatabaseOperation";
 import validateUserData from "../../utils/validateUserData";
 import bcrypt from "bcrypt";
 
@@ -18,15 +18,11 @@ export default async (req, res) => {
     if (error) return res.status(403).json({ ok: false, error });
     validatedUserData.refreshToken = "";
 
-    let closeConnection;
-    try {
+    const { err, status = 500 } = await performDatabaseOperation(async (db, closeConnection) => {
         validatedUserData.password = await bcrypt.hash(validatedUserData.password, SALT_ROUNDS);
-
-        const { db, closeConnectionHandler } = await connectToDatabase();
-        closeConnection = closeConnectionHandler;
-        function closeConnectionAndExitWithError(error = "", status) {
+        function closeConnectionAndExitWithError(err, status) {
             closeConnection();
-            return res.status(status).json({ ok: false, error });
+            return { err, status };
         }
 
         const users = db.collection("users");
@@ -46,11 +42,10 @@ export default async (req, res) => {
                 403
             );
 
-        res.status(200).json({ ok: true });
-        return closeConnection();
-    } catch (e) {
-        if (closeConnection) closeConection();
-        console.error(e);
-        return res.status(500).json({ ok: false });
-    }
+        closeConnection();
+        return { err: null, status: 200 };
+    });
+
+    if (err) return res.status(status).json({ ok: false, err });
+    return res.status(200).json({ ok: true });
 };
