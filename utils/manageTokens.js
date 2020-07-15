@@ -4,38 +4,41 @@ import { parse } from "cookie";
 import performDatabaseOperation from "./performDatabaseOperation";
 import { ObjectId } from "mongodb";
 
+function errorObject(err) {
+    return { data: null, err };
+}
+
 export async function getTokenInfo(cookieHeader, needsRefreshToken = false) {
-    if (!cookieHeader) return { data: null, err: "Nu sunteți autentificat." };
+    if (!cookieHeader) return errorObject("Nu sunteți autentificat.");
 
     const tokens = parse(cookieHeader);
     if (!tokens["_accessToken"] || !tokens["_refreshToken"])
-        return { data: null, err: "Nu sunteți autentificat." };
-
+        return errorObject("Nu sunteți autentificat.");
     try {
         const decoded = !needsRefreshToken
             ? jwt.verify(tokens["_accessToken"], process.env.ACCESS_TOKEN_SECRET)
             : jwt.verify(tokens["_refreshToken"], process.env.REFRESH_TOKEN_SECRET);
         return { data: decoded };
     } catch {
-        return { data: null, err: "tokinv" };
+        return errorObject("tokinv");
     }
 }
 
 export async function getNewAccessToken(cookieHeader) {
-    if (!cookieHeader) return { err: "Nu sunteți autentificat." };
+    if (!cookieHeader) return errorObject("Nu sunteți autentificat.");
 
     const tokens = parse(cookieHeader);
-    if (!tokens["_refreshToken"]) return { err: "Nu sunteți autentificat." };
+    if (!tokens["_refreshToken"]) return errorObject("Nu sunteți autentificat.");
+
     const refreshToken = tokens["_refreshToken"];
 
     const { data, err } = await performDatabaseOperation(async (db, closeConnection) => {
         const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
         const foundUser = await db.collection("users").findOne({ _id: ObjectId(decoded.id) });
+        closeConnection();
 
-        if (foundUser.refreshToken !== refreshToken) {
-            closeConnection();
-            return { data: null, err: "S-a întâmplat ceva ciudat. Vă rugăm să ne scuzați." };
-        }
+        if (foundUser.refreshToken !== refreshToken)
+            return errorObject("S-a întâmplat ceva ciudat. Vă rugăm să ne scuzați.");
 
         const userData = {
             id: foundUser._id.toHexString(),
@@ -55,6 +58,7 @@ export async function getNewAccessToken(cookieHeader) {
         };
     });
 
-    if (err) return { data: null, err };
-    return { data };
+    if (err) return errorObject(err);
+
+    return data;
 }

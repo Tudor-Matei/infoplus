@@ -3,51 +3,72 @@ import ExerciseInfo from "../../components/IndividualExercise/ExerciseInfo";
 import SolutionArea from "../../components/IndividualExercise/SolutionArea";
 import Results from "../../components/IndividualExercise/ResultsArea";
 
-import { useState } from "react";
-export default function Exercitiu() {
-    const [needsResultsComponent, setResultsComponent] = useState(true);
-    const toggleResultsComponent = () =>
-        setResultsComponent(!needsResultsComponent);
+import { useState, useContext } from "react";
+import { getSingleExerciseData } from "../../utils/getExerciseData";
+import { ShowAlertContext } from "../_app";
+import useComponentDidMount from "../../components/_hooks/componentDidMount";
+import { useRouter } from "next/router";
+import strippedDownResponses from "../../utils/strippedDownResponses";
 
+function propsWithError(err) {
+    return { props: { data: null, err } };
+}
+
+export async function getServerSideProps({ params }) {
+    if (isNaN(params.id)) return propsWithError("Id-ul este invalid.");
+
+    const { data, err } = await getSingleExerciseData({
+        exerciseId: parseInt(params.id),
+        fieldsToExclude: strippedDownResponses.singleExercise,
+    });
+
+    if (err) return propsWithError(err);
+
+    return { props: { exerciseData: data, err: null } };
+}
+
+export default function Exercitiu({ exerciseData, err }) {
+    const [needsResultsComponent, setResultsComponent] = useState(false);
+    const toggleResultsComponent = () => setResultsComponent(!needsResultsComponent);
+    const modifyAlert = useContext(ShowAlertContext);
+    const router = useRouter();
+
+    useComponentDidMount(() => {
+        if (err)
+            modifyAlert({
+                isVisible: true,
+                props: { type: 0, children: err },
+                customToggleHandler: () => router.push("/exercitii"),
+            });
+    });
+    if (err) return null;
     return (
         <>
             <HeaderInfo
-                title="ScriereEcran"
+                title={exerciseData.title}
                 isSolved
-                difficulty={1}
-                authorName="Jane Doe"
-                maxExecutionTime={0.1}
-                maxMemoryConsumption={4}
-                source="Model bacalaureat 2009"
-                sentSolutions={291}
+                difficulty={exerciseData.difficulty}
+                authorName={exerciseData.author}
+                maxExecutionTime={exerciseData.maxExecutionTime / 1000}
+                maxMemoryConsumption={exerciseData.maxMemory}
+                source={exerciseData.source}
+                sentSolutions={Number(exerciseData.sentSolutions).toLocaleString()}
             />
             <ExerciseInfo
                 needsHint
                 userSolutions={2}
                 officialSolution
                 dataInput={{
-                    toInput: "doua numere naturale a si b",
-                    toOutput: "suma acestor numere",
+                    toInput: exerciseData.inputData,
+                    toOutput: exerciseData.outputData,
                 }}
-                importantData={[
-                    "un test",
-                    "doi testi",
-                    "trei tresti",
-                    "4 chestii",
-                ]}
-                inputExample={{ input: "24 2", output: "Test 1234 test test" }}
+                importantData={exerciseData.mentions.split("\\n ")}
+                inputExample={{
+                    input: exerciseData.exampleInputData,
+                    output: exerciseData.exampleOutputData,
+                }}
             >
-                Incididunt aute ex amet quis sint elit. Do mollit in Lorem eu
-                proident elit cupidatat aliquip eu irure exercitation. Laborum
-                ex minim nostrud duis cupidatat quis est proident et nulla
-                deserunt sint Lorem. Eu exercitation sunt et incididunt eu
-                nostrud ad ea velit tempor laborum. Mollit pariatur consectetur
-                ad elit. Incididunt aute ex amet quis sint elit. Do mollit in
-                Lorem eu proident elit cupidatat aliquip eu irure exercitation.
-                Laborum ex minim nostrud duis cupidatat quis est proident et
-                nulla deserunt sint Lorem. Eu exercitation sunt et incididunt eu
-                nostrud ad ea velit tempor laborum. Mollit pariatur consectetur
-                ad elit.
+                {exerciseData.content}
             </ExerciseInfo>
             {needsResultsComponent ? (
                 /* 

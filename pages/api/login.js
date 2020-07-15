@@ -43,15 +43,16 @@ export default async (req, res) => {
             );
 
         const passwordsMatch = await bcrypt.compare(validatedUserData.password, foundUser.password);
-        if (!passwordsMatch) {
-            closeConnection();
+        if (!passwordsMatch)
             return closeConnectionAndExitWithError(
                 "Parola pe care ați introdus-o nu este corectă.",
                 403
             );
-        }
 
         const { accessToken, refreshToken } = prepareTokens(foundUser);
+        if (!accessToken || !refreshToken)
+            return closeConnectionAndExitWithError("Nu v-am gasit in baza de date.", 401);
+
         await users.updateOne({ _id: foundUser._id }, { $set: { refreshToken } });
 
         res.setHeader("Set-Cookie", [
@@ -70,7 +71,7 @@ export default async (req, res) => {
         return { data: null, err: null, status: 200 };
     });
 
-    if (err) return res.status(status).json({ ok: false, err });
+    if (err) return res.status(status).json({ ok: false, error: err });
 
     return res.status(200).json({ ok: true });
 };

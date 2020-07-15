@@ -3,47 +3,22 @@ import Link from "next/link";
 import CheckmarkSolved from "../utils/CheckmarkSolved";
 import difficultyText from "../utils/difficultyText";
 
-export default function Exercise({
-    className = "",
-    title,
-    isSolved = false,
-    children,
-    authorName,
-    datePublished,
-    source,
-    difficulty,
-    exerciseId,
-}) {
+export default function Exercise(props) {
     return (
-        <div className={`exercise ${className}`}>
-            <h2>{title}</h2>
-            {isSolved && <CheckmarkSolved />}
-            <p className="exercise__description">{children}</p>
-
-            <div className="exercise__details-and-button">
-                <div className="exercise__details">
-                    <div className="exercise__author-profile-picture"></div>
-                    <p>{authorName}</p> &#8226;
-                    <p>{datePublished}</p> &#8226;
-                    <p>{source}</p> &#8226;
-                    <p className="exercise__difficulty">{difficultyText(difficulty)}</p>
-                </div>
-
-                <ButtonSolve href={`/exercitiu/${exerciseId}`} difficulty={difficulty} />
-            </div>
-
-            <style jsx>{`
+        <>
+            {props.compact ? <CompactExercise {...props} /> : <DetailedExercise {...props} />}
+            <style jsx global>{`
                 .exercise {
                     /* prettier-ignore */ 
-                    border-bottom: 5px solid var(--difficulty-${difficulty});
+                    border-bottom: 5px solid var(--difficulty-${props.difficulty});
                 }
                 .exercise__difficulty {
                     /* prettier-ignore */
-                    color: var(--difficulty-${difficulty});
+                    color: var(--difficulty-${props.difficulty});
                 }
             `}</style>
 
-            <style jsx>{`
+            <style jsx global>{`
                 .exercise {
                     width: 90%;
                     margin: 100px auto;
@@ -52,11 +27,22 @@ export default function Exercise({
                     padding: 30px;
                     border-radius: 20px;
                     /* prettier-ignore */
-                    border-bottom: 5px solid var(--difficulty-${difficulty});
+                    border-bottom: 5px solid var(--difficulty-${props.difficulty});
                     transition: background-color 300ms ease;
+                    animation: fadeFromBottom 500ms ease forwards;
                 }
 
-                h2 {
+                @keyframes fadeFromBottom { 
+                    from {
+                        opacity: 0;
+                        transform: translateY(50px);
+                    } to {
+                        opacity: 1;
+                        transform: translateY(0);
+                    }
+                }
+
+                .exercise__title {
                     display: inline-block;
                     vertical-align: sub;
                     color: var(--text-primary);
@@ -117,7 +103,84 @@ export default function Exercise({
                 }
 
             `}</style>
+        </>
+    );
+}
+
+function DetailedExercise({
+    className = "",
+    title,
+    isSolved = false,
+    children,
+    authorName = "",
+    datePublished,
+    source = "",
+    difficulty,
+    exerciseId,
+}) {
+    return (
+        <div className={`exercise ${className}`}>
+            <h2 className="exercise__title">{title}</h2>
+            {isSolved && <CheckmarkSolved />}
+            <p className="exercise__description">{children}</p>
+
+            <div className="exercise__details-and-button">
+                <div className="exercise__details">
+                    <div className="exercise__author-profile-picture"></div>
+                    <p>{authorName}</p> &#8226;
+                    <p>ID #{exerciseId}</p> &#8226;
+                    <p>{datePublished}</p> &#8226;
+                    <p>{source}</p> &#8226;
+                    <p className="exercise__difficulty">{difficultyText(difficulty)}</p>
+                </div>
+
+                <ButtonSolve href={`/exercitiu/${exerciseId}`} difficulty={difficulty} />
+            </div>
         </div>
+    );
+}
+
+function CompactExercise({
+    title,
+    children,
+    datePublished,
+    sentSolutions,
+    difficulty,
+    exerciseId,
+}) {
+    return (
+        <>
+            <div className="exercise">
+                <Link href={`../exercitiu/${exerciseId}`}>
+                    <h2 className="exercise__title">{title}</h2>
+                </Link>
+                <FontAwesomeIcon icon="external-link-alt" color="var(--text-primary)" />
+                <p className="exercise__description">{children}</p>
+
+                <div className="exercise__details-and-button">
+                    <div className="exercise__details">
+                        <p>
+                            Soluții trimise: <b>{sentSolutions}</b>
+                        </p>{" "}
+                        &#8226;
+                        <p>{datePublished}</p> &#8226;
+                        <p className="exercise__difficulty">{difficultyText(difficulty)}</p>
+                    </div>
+                </div>
+            </div>
+            <style jsx>{`
+                h2 {
+                    text-decoration: underline;
+                    cursor: pointer;
+                    margin-right: 10px;
+                }
+
+                .exercise {
+                    flex: 1;
+                    margin: 25px;
+                }
+            `}</style>
+        </>
     );
 }
 

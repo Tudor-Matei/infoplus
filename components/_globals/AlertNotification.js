@@ -87,6 +87,7 @@ export default function AlertNotification({
                     align-self: flex-end;
                     margin-right: 0;
                     margin-bottom: -10px;
+                    text-align: right;
                 }
 
                 .alert__button:hover {

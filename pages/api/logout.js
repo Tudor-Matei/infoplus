@@ -24,7 +24,8 @@ export default async (req, res) => {
 
         return res.status(200).json({ ok: true });
     }
-
+    console.error(err);
+    removeCookies(res);
     return res.status(500).json({ ok: false, err });
 };
 

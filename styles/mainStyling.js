@@ -72,7 +72,7 @@ export default css.global`
     }
 
     button {
-        width: 170px;
+        min-width: 175px;
         height: 45px;
         display: inline-block;
         box-shadow: var(--box-shadow);

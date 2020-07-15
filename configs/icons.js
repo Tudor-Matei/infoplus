@@ -26,6 +26,9 @@ const iconNames = [
     "faCodeBranch",
     "faUpload",
     "faTimesCircle",
+    "faTimes",
+    "faPlus",
+    "faPen",
 ];
 
 library.add(iconNames.map((iconName) => icons[iconName]));

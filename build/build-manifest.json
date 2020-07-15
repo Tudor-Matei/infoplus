@@ -26,27 +26,11 @@
       "static/runtime/polyfills.js",
       "static/runtime/polyfills.js.map"
     ],
-    "/dashboard": [
-      "static/runtime/webpack.js",
-      "static/runtime/main.js"
-    ],
-    "/exercitii": [
-      "static/runtime/webpack.js",
-      "static/runtime/main.js"
-    ],
-    "/exercitii/[clasa]/[capitolURL]": [
-      "static/runtime/webpack.js",
-      "static/runtime/main.js"
-    ],
-    "/exercitiu/[id]": [
+    "/exercitii/compuse-de-mine": [
       "static/runtime/webpack.js",
       "static/runtime/main.js"
     ],
     "/index": [
-      "static/runtime/webpack.js",
-      "static/runtime/main.js"
-    ],
-    "/next/dist/pages/_error": [
       "static/runtime/webpack.js",
       "static/runtime/main.js"
     ]

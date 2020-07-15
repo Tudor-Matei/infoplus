@@ -35,8 +35,9 @@ export default function LogoutButton({ type, className, classNameForIcon }) {
 }
 
 function logout(modifyAlert, router, isAuthenticatedHandler = null) {
-    fetch("http://localhost:3000/api/logout", { method: "DELETE" }).then(
-        ({ ok, err = "A apărut o eroare internă, vă rugăm să ne scuzați." }) => {
+    fetch("http://localhost:3000/api/logout", { method: "DELETE" })
+        .then((r) => r.json())
+        .then(({ ok, err = "A apărut o eroare internă, vă rugăm să ne scuzați." }) => {
             if (!ok) {
                 modifyAlert({
                     isVisible: true,
@@ -56,6 +57,5 @@ function logout(modifyAlert, router, isAuthenticatedHandler = null) {
                 });
                 if (isAuthenticatedHandler) isAuthenticatedHandler.setAuthenticatedTo(false);
             }
-        }
-    );
+        });
 }

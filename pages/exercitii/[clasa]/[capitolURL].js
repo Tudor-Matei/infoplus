@@ -6,15 +6,16 @@ import {
     exercisesGradeX,
     exercisesGradeXI,
 } from "../../../components/utils/exercisesGradesData";
-import performDatabaseOperation from "../../../utils/performDatabaseOperation";
 
-import { useState, useContext } from "react";
-import toReturnForExercisesList from "../../../utils/toReturnForExercisesList";
+import { useState, useContext, useEffect, useRef } from "react";
 import { ShowAlertContext } from "../../_app";
-import useComponentDidMount from "../../../components/_hooks/componentDidMount";
-import formatMonth from "../../../utils/formatMonth";
+import Loading from "../../../components/utils/Loading";
+import abortableFetch from "../../../utils/abortableFetch";
+import { getMultipleExercisesData } from "../../../utils/getExerciseData";
+import NotFound from "../../../components/utils/NotFound";
+import strippedDownResponses from "../../../utils/strippedDownResponses";
 
-function getChapterData(grade = "ix", capitolURL) {
+function getChapterData(grade, capitolURL) {
     if (grade === "ix")
         return exercisesGradeIX.find(
             ({ capitolURL: capitolURLExercise }) => capitolURL === capitolURLExercise
@@ -51,74 +52,57 @@ export async function getStaticPaths() {
 
 export async function getStaticProps({ params: { clasa, capitolURL } }) {
     const capitol = getChapterData(clasa, capitolURL);
-    const { data, err } = await performDatabaseOperation(async (db, closeConnection) => {
-        const exercisesData = await db
-            .collection("exercises")
-            .find({ category: ["elemente-de-baza", "0"] })
-            .project(toReturnForExercisesList)
-            .toArray();
-
-        if (!exercisesData) {
-            closeConnection();
-            return { data: null, err: "Nu au fost găsite exerciții în această subcategorie..." };
-        }
-        closeConnection();
-        // TODO: daca autentificat -> preia date sa vada daca a rezolvat problema
-
-        for (const exerciseData of exercisesData) {
-            const datePublished = new Date(exerciseData.datePublished);
-            exerciseData.datePublished = `${datePublished.getDate()} ${formatMonth(
-                datePublished.getMonth() + 1
-            )} ${datePublished.getFullYear()}`;
-        }
-        return {
-            data: exercisesData,
-            err: null,
-        };
+    const { data, err } = await getMultipleExercisesData({
+        chapter: capitolURL,
+        subchapterIndex: "0",
+        fieldsToExclude: strippedDownResponses.exercisesList,
     });
 
     return {
         props: {
             clasa,
-            capitol: capitol.title,
+            capitol: { title: capitol.title, url: capitolURL },
             subchapters: capitol.subchapters,
             exercises: { data, err },
         },
     };
 }
 
-export default function ExercisesList({ clasa, capitol, subchapters, exercises: { data, err } }) {
+export default function ExercisesList({ clasa, capitol, subchapters, exercises }) {
     const [subchapter, setSubchapter] = useState(subchapters[0]);
+    const [exercisesList, setNewExercisesList] = useState(exercises);
+    const [isLoading, changeLoaderState] = useState(false);
     const modifyAlert = useContext(ShowAlertContext);
-    useComponentDidMount(() => {
-        if (err)
-            return modifyAlert({
+
+    useEffect(() => {
+        if (exercisesList.err && exercisesList.err !== "Nu au fost găsite exerciții de acest tip.")
+            modifyAlert({
                 isVisible: true,
                 props: {
                     type: 0,
-                    children: err,
+                    children: exercisesList.err,
                 },
             });
-    });
+    }, [exercisesList]);
 
     return (
         <>
-            {clasa && (
-                <HeaderMainInfo
-                    grade={clasa}
-                    subchapters={subchapters}
-                    setSubchapter={setSubchapter}
-                />
-            )}
-            <CurrentCategoryTitle
-                category={capitol ? capitol : "Se incarcă..."}
-                subcategory={subchapter}
+            <HeaderMainInfo
+                grade={clasa}
+                subchapters={subchapters}
+                chapterData={{ grade: clasa, chapter: capitol.url, subchapters }}
+                setSubchapter={setSubchapter}
+                setNewExercisesList={setNewExercisesList}
+                changeLoaderState={changeLoaderState}
             />
-            {clasa && data ? (
-                data.map(
+            <CurrentCategoryTitle category={capitol.title} subcategory={subchapter} />
+            {isLoading ? (
+                <Loading />
+            ) : exercisesList.data ? (
+                exercisesList.data.map(
                     ({ exerciseId, title, difficulty, author, datePublished, source, content }) => (
                         <Exercise
-                            key={`exercise_${exerciseId}`}
+                            key={`exercise_${title}`}
                             title={title}
                             isSolved
                             authorName={author}
@@ -133,17 +117,65 @@ export default function ExercisesList({ clasa, capitol, subchapters, exercises: 
                     )
                 )
             ) : (
-                <p>{err}</p>
+                <NotFound icon="times">Nu au fost găsite exerciții de acest tip.</NotFound>
             )}
         </>
     );
 }
 
-function HeaderMainInfo({ grade, subchapters, setSubchapter }) {
+function HeaderMainInfo({
+    chapterData: { grade, chapter, subchapters },
+    setSubchapter,
+    setNewExercisesList,
+    changeLoaderState,
+}) {
+    const abortRef = useRef();
+    const modifyAlert = useContext(ShowAlertContext);
+
+    const onChange = (e) => {
+        if (!subchapters.includes(e.target.value)) return location.reload();
+        if (abortRef.current) abortRef.current.abort();
+
+        setSubchapter(e.target.value);
+        changeLoaderState(true);
+
+        const { data, abort } = abortableFetch("/api/exercises", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                chapter,
+                subchapterIndex: JSON.stringify(e.target.selectedIndex),
+            }),
+        });
+
+        abortRef.current = { abort };
+        data.then((r) => (r ? r.json() : null))
+            .then((exercises) => {
+                // so it doesn't deactivate the loader because a new fetch request has been initiated
+                if (exercises === null) return;
+                abortRef.current = null;
+
+                setTimeout(() => {
+                    setNewExercisesList(exercises);
+                    changeLoaderState(false);
+                }, 500);
+            })
+            .catch((e) => {
+                console.error(e);
+                modifyAlert({
+                    isVisible: true,
+                    props: {
+                        type: 0,
+                        children: "A apărut o eroare internă, vă rugăm să ne scuzați.",
+                    },
+                });
+            });
+    };
+
     return (
         <div className="header-main-info">
             <div className="header-main-info__buttons">
-                <select onChange={({ target: { value } }) => setSubchapter(value)}>
+                <select onChange={onChange}>
                     {subchapters.map((subchapter) => (
                         <option key={`subchapter__${subchapter}`}>{subchapter}</option>
                     ))}
@@ -215,7 +247,7 @@ function CurrentCategoryTitle({ category, subcategory }) {
             <style jsx>{`
                 .current-category {
                     width: 90%;
-                    margin: 0 auto 120px;
+                    margin: 0 auto 80px;
                     color: var(--text-primary);
                 }
 

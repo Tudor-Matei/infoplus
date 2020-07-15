@@ -4,9 +4,7 @@ export default function abortableFetch(url, options) {
     const controller = new AbortController();
 
     return {
-        data: fetch(url, { ...options, signal: controller.signal }).catch(
-            console.error
-        ),
+        data: fetch(url, { ...options, signal: controller.signal }).catch(console.error),
         abort: () => controller.abort(),
     };
 }

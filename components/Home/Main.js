@@ -2,8 +2,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Register from "../_globals/Register";
 import Link from "next/link";
 
-import { useState, createContext, useContext, useEffect } from "react";
-import { parse } from "cookie";
+import { useState, createContext, useContext } from "react";
 
 import { ShowLoginContext, LoggedInDataContext } from "../../pages/_app";
 import LogoutButton from "../utils/LogoutButton";
@@ -17,18 +16,6 @@ export default function Main() {
 
     const showLoginModal = useContext(ShowLoginContext);
     const { isAuthenticated } = useContext(LoggedInDataContext);
-
-    const [isAuthenticatedWithToken, setAuthenticatedWithToken] = useState(false);
-
-    useEffect(
-        () =>
-            setAuthenticatedWithToken(
-                document.cookie.length !== 0 &&
-                    parse(document.cookie)["_accessToken"] &&
-                    isAuthenticated
-            ),
-        [isAuthenticated]
-    );
 
     return (
         <section className="main">
@@ -46,15 +33,15 @@ export default function Main() {
                     <div className="main__button-sign-in">
                         <Button
                             type="button--primary"
-                            title={!isAuthenticatedWithToken ? "Logheaza-te" : "Către contul tău"}
-                            icon={!isAuthenticatedWithToken ? "sign-in-alt" : "arrow-right"}
-                            link={!isAuthenticatedWithToken ? "" : "/dashboard"}
-                            onClick={!isAuthenticatedWithToken ? showLoginModal : undefined}
+                            title={!isAuthenticated ? "Logheaza-te" : "Către contul tău"}
+                            icon={!isAuthenticated ? "sign-in-alt" : "arrow-right"}
+                            link={!isAuthenticated ? "" : "/dashboard"}
+                            onClick={!isAuthenticated ? showLoginModal : undefined}
                         />
                         <p className="main__button-make-account">
-                            {!isAuthenticatedWithToken && "Nu ai cont? "}
+                            {!isAuthenticated && "Nu ai cont? "}
 
-                            {!isAuthenticatedWithToken ? (
+                            {!isAuthenticated ? (
                                 <a href="#" onClick={showRegisterModalHandler}>
                                     Fa-ti unul!
                                 </a>

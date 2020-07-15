@@ -9,13 +9,23 @@ async function connectToDatabase() {
 export default async function performDatabaseOperation(callback) {
     let closeConnection;
     try {
+        console.log("Connection with database established at", getDate());
         const { db, closeConnectionHandler } = await connectToDatabase();
         closeConnection = closeConnectionHandler;
-        return await callback(db, closeConnection);
+
+        return callback(db, () => {
+            closeConnection();
+            console.log("Connection with database closed nominally at", getDate());
+        });
     } catch (err) {
         if (closeConnection) closeConnection();
         console.error(err);
-
+        console.log("Connection closed with database with internal error at", getDate());
         return { data: null, err: "A apărut o eroare internă, vă rugăm să ne scuzați." };
     }
+}
+
+function getDate() {
+    const date = new Date();
+    return `${date.toLocaleTimeString()} ms:${date.getMilliseconds()}`;
 }

@@ -46,6 +46,6 @@ export default async (req, res) => {
         return { err: null, status: 200 };
     });
 
-    if (err) return res.status(status).json({ ok: false, err });
+    if (err) return res.status(status).json({ ok: false, error: err });
     return res.status(200).json({ ok: true });
 };

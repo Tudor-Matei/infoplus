@@ -12,6 +12,12 @@ export default function Exercitii() {
         isGradeXIActive: false,
     });
 
+    /*
+            TODO
+    useComponentDidMount(() => {
+        location.pathname
+    });
+    */
     const changeGrade = (grade) =>
         setState({
             isGradeIXActive: grade === "isGradeIXActive",
@@ -44,9 +50,7 @@ function HeaderGrades({ parentState, changeGrade }) {
                 <h3
                     key={`grade_${grade}`}
                     className={`header-grades__heading-${grade.toLowerCase()} ${
-                        parentState[`isGrade${grade}Active`]
-                            ? "header-grades__heading--active"
-                            : ""
+                        parentState[`isGrade${grade}Active`] ? "header-grades__heading--active" : ""
                     }`}
                     onClick={() => changeGrade(`isGrade${grade}Active`)}
                 >
@@ -81,8 +85,7 @@ function HeaderGrades({ parentState, changeGrade }) {
                     width: 100%;
                     height: 3px;
                     z-index: -1;
-                    transition-property: border-top-left-radius,
-                        border-top-right-radius, height;
+                    transition-property: border-top-left-radius, border-top-right-radius, height;
                     transition-duration: 300ms;
                     transition-timing-function: ease;
                 }
