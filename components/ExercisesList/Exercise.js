@@ -1,7 +1,7 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
 import CheckmarkSolved from "../utils/CheckmarkSolved";
-import difficultyText from "../utils/difficultyText";
+import difficultyText from "../../utils/difficultyText";
 
 export default function Exercise(props) {
     return (

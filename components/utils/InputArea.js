@@ -1,5 +1,6 @@
 export default function InputArea({
     title,
+    subtitle = "",
     inputType = "text",
     isSelect = false,
     optionValues = [],
@@ -9,6 +10,7 @@ export default function InputArea({
     return (
         <>
             <h3>{title}</h3>
+            {subtitle && <p>{subtitle}</p>}
             {isSelect ? (
                 <select onInput={eventHandler}>
                     {optionValues.map((optionValue) => (
@@ -24,16 +26,17 @@ export default function InputArea({
                     width: 100%;
                     height: 45px;
                     border-radius: 50px;
-                    border: 1px solid var(--background-quaternary);
+                    border: 1px solid var(--accent-primary);
                     outline: 0;
+                    margin: 10px 0 20px;
                     padding-left: 10px;
                     color: var(--text-primary);
                     background-color: transparent;
                     position: relative;
                 }
 
-                input:invalid:focus {
-                    border-color: var(--accent-quaternary);
+                input:invalid {
+                    border-color: var(--background-quaternary);
                 }
 
                 option {
@@ -42,10 +45,14 @@ export default function InputArea({
 
                 h3 {
                     text-align: left;
-                    margin-bottom: 10px;
                     text-transform: uppercase;
                     color: var(--text-primary);
                     font-size: var(--font-smaller);
+                }
+
+                p {
+                    color: var(--text-primary);
+                    max-width: 400px;
                 }
             `}</style>
         </>

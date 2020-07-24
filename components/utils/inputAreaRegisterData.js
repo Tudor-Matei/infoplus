@@ -32,9 +32,7 @@ export default [
     {
         title: "E-mail",
         inputType: "email",
-        inputProps: {
-            required: true,
-        },
+        inputProps: { required: true },
         fieldName: "email",
     },
     {

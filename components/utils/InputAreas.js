@@ -1,4 +1,4 @@
-import InputArea from "../utils/InputArea";
+import InputArea from "./InputArea";
 
 export default function InputAreas({ updateDetails, inputAreaData }) {
     return inputAreaData.length % 2 !== 0

@@ -1,5 +1,5 @@
 import Exercise from "../../components/ExercisesList/Exercise";
-import PrimaryComposeHeader from "./PrimaryComposeHeader";
+import PrimaryComposeHeader from "./PrimaryHeader";
 
 export default function ExercisesComposedByMe({ setComposeExercisesView }) {
     return (

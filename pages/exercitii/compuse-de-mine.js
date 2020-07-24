@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 import ExercisesComposedByMe from "../../components/ComposeExercise/ExercisesComposedByMe";
-import ComposeExerciseSteps from "../../components/ComposeExercise/ComposeExerciseSteps";
+import ComposeExerciseSteps from "../../components/ComposeExercise/Steps";
 
 export default function CompuseDeMine() {
     const [isComposeExercisesOpen, setComposeExercisesView] = useState(true);

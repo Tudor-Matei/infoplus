@@ -141,8 +141,7 @@ export default css.global`
         font-weight: bold;
         transition: color 300ms linear;
         color: var(--text-primary);
-        width: auto;
-        margin: 0 25px;
+        min-width: 130px;
     }
 
     .button--tertiary:hover {
