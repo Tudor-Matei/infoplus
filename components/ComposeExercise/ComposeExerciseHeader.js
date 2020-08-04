@@ -1,8 +1,26 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import stepTitles from "./stepTitles";
-import { useState } from "react";
+import { useContext, useCallback, useState } from "react";
+import { UpdateStepContext, FieldContext } from "./StepsDisplayer";
+import { ComposeExercisesViewContext } from "../../pages/exercitii/compuse-de-mine";
+import checkFieldsValidity from "../../utils/checkFieldsValidity";
+import omitKey from "../../utils/omitKey";
 
-export default function ComposeExerciseHeader({ step, setStep, setComposeExercisesView }) {
+function StepIndicators({ step }) {
+    return stepTitles.map((_, i) => (
+        <div
+            key={`compose-step__${i}`}
+            className={`compose-exercise-steps__step ${step === i + 1 ? "step--current" : ""}`}
+        >
+            {i + 1}
+        </div>
+    ));
+}
+
+export default function ComposeExerciseHeader({ step }) {
+    const updateView = useContext(ComposeExercisesViewContext);
+    const [error, setError] = useState("");
+
     return (
         <>
             <header>
@@ -11,20 +29,10 @@ export default function ComposeExerciseHeader({ step, setStep, setComposeExercis
                     <h2>{stepTitles[step - 1]}</h2>
                 </div>
                 <div className="compose-exercise-steps__steps-part">
-                    {stepTitles.map((_, i) => (
-                        <div
-                            key={`compose-step__${i}`}
-                            className={`compose-exercise-steps__step ${
-                                step === i + 1 ? "step--current" : ""
-                            }`}
-                        >
-                            {i + 1}
-                        </div>
-                    ))}
-
+                    <StepIndicators step={step} />
                     <h4
                         className="compose-exercise-steps__abort"
-                        onClick={() => setComposeExercisesView(false)}
+                        onClick={() => updateView({ type: "normal" })}
                     >
                         Renunță
                     </h4>
@@ -32,14 +40,18 @@ export default function ComposeExerciseHeader({ step, setStep, setComposeExercis
             </header>
             <div className="sub-header">
                 <div className="error-part">
-                    <FontAwesomeIcon
-                        icon="times-circle"
-                        color="var(--accent-quaternary)"
-                        style={{ verticalAlign: "middle" }}
-                    />
-                    <p className="error-message">you mom gae</p>
+                    {error && (
+                        <>
+                            <FontAwesomeIcon
+                                icon="times-circle"
+                                color="var(--accent-quaternary)"
+                                style={{ verticalAlign: "middle" }}
+                            />
+                            <p className="error-message">{error}</p>
+                        </>
+                    )}
                 </div>
-                <BackNextButtons step={step} setStep={setStep} />
+                <BackNextButtons step={step} setError={setError} />
             </div>
             <style jsx>{`
                 header {
@@ -61,6 +73,10 @@ export default function ComposeExerciseHeader({ step, setStep, setComposeExercis
                     color: var(--text-primary);
                 }
 
+                .error-message {
+                    text-align: left;
+                }
+
                 .compose-exercise-steps__title-part {
                     margin-right: 20px;
                 }
@@ -75,17 +91,7 @@ export default function ComposeExerciseHeader({ step, setStep, setComposeExercis
                     }
                 }
 
-                .compose-exercise-steps__abort {
-                    color: var(--text-tertiary);
-                    cursor: pointer;
-                    transition: color 300ms linear;
-                }
-
-                .compose-exercise-steps__abort:hover {
-                    color: var(--text-primary);
-                }
-
-                .compose-exercise-steps__step {
+                :global(.compose-exercise-steps__step) {
                     width: 30px;
                     height: 30px;
                     border-radius: 50%;
@@ -100,12 +106,18 @@ export default function ComposeExerciseHeader({ step, setStep, setComposeExercis
                     transition: opacity 300ms linear;
                 }
 
-                .compose-exercise-steps__step:last-child {
-                    margin-right: 0;
+                :global(.step--current) {
+                    opacity: 1;
                 }
 
-                .step--current {
-                    opacity: 1;
+                .compose-exercise-steps__abort {
+                    color: var(--text-tertiary);
+                    cursor: pointer;
+                    transition: color 300ms linear;
+                }
+
+                .compose-exercise-steps__abort:hover {
+                    color: var(--text-primary);
                 }
 
                 .sub-header {
@@ -140,23 +152,64 @@ export default function ComposeExerciseHeader({ step, setStep, setComposeExercis
     );
 }
 
-function BackNextButtons({ step, setStep }) {
-    const [isDisabled, setDisabled] = useState(false);
+function getFieldGroupForStep(step) {
+    return arguments[step] || console.error("invalid step stupid");
+}
+
+function isDataFromStepValid(step, fields) {
+    switch (step) {
+        case 1:
+            return checkFieldsValidity({
+                fields: omitKey("category", fields),
+                minimumLengthForEachField: {
+                    title: 3,
+                    source: 5,
+                },
+                customValidation: { forFields: ["title"], validator: /[^a-zA-Z0-9 ]/ },
+            });
+
+        case 2:
+            return checkFieldsValidity({
+                fields,
+                minimumLengthForEachField: {
+                    content: 10,
+                    hints: 5,
+                    mentions: 5,
+                    officialSolution: 10,
+                },
+            });
+    }
+}
+
+function BackNextButtons({ step, setError }) {
+    const updateStep = useContext(UpdateStepContext);
+    const { generalData, contentData, inputData } = useContext(FieldContext);
+
+    const incrementStepValidated = useCallback(() => {
+        const errors = isDataFromStepValid(
+            step,
+            getFieldGroupForStep(step, generalData, contentData, inputData)
+        );
+        if (errors) return setError(errors);
+
+        setError("");
+        updateStep({ type: "increment" });
+    }, [step, generalData, contentData, inputData]);
 
     return (
         <>
             <div className="back-next-buttons">
                 <button
                     className="button--tertiary"
-                    onClick={() => step !== 1 && setStep((previousStep) => previousStep - 1)}
-                    disabled={step === 1 || isDisabled}
+                    onClick={() => step !== 1 && updateStep({ type: "decrement" })}
+                    disabled={step === 1}
                 >
                     <FontAwesomeIcon icon="arrow-left" style={{ marginRight: "10px" }} /> Înapoi
                 </button>
                 <button
                     className="button--primary"
-                    onClick={() => step !== 5 && setStep((previousStep) => previousStep + 1)}
-                    disabled={step === 5 || isDisabled}
+                    onClick={() => step !== 5 && incrementStepValidated()}
+                    disabled={step === 5}
                 >
                     Înainte <FontAwesomeIcon icon="arrow-right" />
                 </button>

@@ -1,14 +1,16 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { ComposeExercisesViewContext } from "../../pages/exercitii/compuse-de-mine";
+import { useContext } from "react";
 
-export default function PrimaryComposeHeader({
-    exercisesComposedByMe,
-    solutionsAttemptedTotal,
-    setComposeExercisesView,
-}) {
+export default function PrimaryComposeHeader({ exercisesComposedByMe, solutionsAttemptedTotal }) {
+    const updateView = useContext(ComposeExercisesViewContext);
     return (
         <>
             <header>
-                <button className="button--primary" onClick={() => setComposeExercisesView(true)}>
+                <button
+                    className="button--primary"
+                    onClick={() => updateView({ type: "compose_exercises" })}
+                >
                     Compune exercițiu
                     <FontAwesomeIcon icon="plus" />
                 </button>

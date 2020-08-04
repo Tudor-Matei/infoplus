@@ -1,52 +1,11 @@
-import { useState, useReducer } from "react";
-import InputArea from "../utils/InputArea";
-import { reducer, initialState } from "./reducer";
-import chapters from "../../utils/chapters";
-import ComposeExerciseHeader from "./ComposeExerciseHeader";
-export default function ComposeExerciseSteps({ setComposeExercisesView }) {
-    const [step, setStep] = useState(1);
+import InputArea from "../../utils/InputArea";
+import chapters from "../../../utils/chapters";
+import { useContext } from "react";
+import { FieldContext } from "../StepsDisplayer";
 
-    const [state, updateField] = useReducer(reducer, initialState);
+export default function GeneralData() {
+    const { generalData, setGeneralData } = useContext(FieldContext);
 
-    // const [tests, setTests] = useState([
-    //     {
-    //         id: 1,
-    //         inputData: "",
-    //         expectedOutput: "",
-    //     },
-    // ]);
-
-    return (
-        <>
-            <div className="compose-exercise-steps">
-                <ComposeExerciseHeader
-                    step={step}
-                    setStep={setStep}
-                    setComposeExercisesView={setComposeExercisesView}
-                />
-                {step === 1 && <GeneralDataStep generalData={state} updateField={updateField} />}
-            </div>
-            <style jsx>{`
-                .compose-exercise-steps {
-                    animation: fadeFromBottom 300ms ease forwards;
-                }
-
-                @keyframes fadeFromBottom {
-                    from {
-                        opacity: 0;
-                        transform: translateY(20px);
-                    }
-                    to {
-                        opacity: 1;
-                        transform: translateY(0);
-                    }
-                }
-            `}</style>
-        </>
-    );
-}
-
-function GeneralDataStep({ generalData, updateField }) {
     return (
         <>
             <div className="general-data-step">
@@ -55,7 +14,7 @@ function GeneralDataStep({ generalData, updateField }) {
                         title="Titlu"
                         subtitle="Poate conține doar litere și cifre."
                         eventHandler={({ target: { value } }) =>
-                            updateField({ type: "title", value })
+                            setGeneralData({ type: "title", value })
                         }
                         inputProps={{
                             required: true,
@@ -63,7 +22,7 @@ function GeneralDataStep({ generalData, updateField }) {
                             defaultValue: generalData.title,
                         }}
                     />
-                    <CategoryInputs generalData={generalData} updateField={updateField} />
+                    <CategoryInputs generalData={generalData} />
                 </div>
                 <div className="input-field">
                     <InputArea
@@ -71,33 +30,46 @@ function GeneralDataStep({ generalData, updateField }) {
                         isSelect
                         optionValues={["Ușor", "Mediu", "Greu", "Dificil"]}
                         eventHandler={({ target: { selectedIndex } }) =>
-                            updateField({ type: "difficulty", value: selectedIndex + 1 })
+                            setGeneralData({ type: "difficulty", value: selectedIndex + 1 })
                         }
+                        inputProps={{ required: true }}
                     />
                     <InputArea
                         title="Timp maxim de execuție"
                         subtitle="Introduceți timpul maxim de execuție în milisecunde (100 millisecunde = 0.1 secunde)."
                         eventHandler={({ target: { value } }) =>
-                            updateField({ type: "maxExecutionTime", value })
+                            setGeneralData({ type: "maxExecutionTime", value: parseInt(value) })
                         }
                         inputType="number"
-                        inputProps={{ required: true, minLength: 2 }}
+                        inputProps={{
+                            required: true,
+                            minLength: 2,
+                            defaultValue: generalData.maxExecutionTime,
+                        }}
                     />
                     <InputArea
                         title="Memorie maximă permisă"
                         subtitle="Memoria maximă permisă va fi exprimată în MB."
                         eventHandler={({ target: { value } }) =>
-                            updateField({ type: "maxMemory", value })
+                            setGeneralData({ type: "maxMemory", value: parseInt(value) })
                         }
                         inputType="number"
-                        inputProps={{ required: true, minLength: 1 }}
+                        inputProps={{
+                            required: true,
+                            minLength: 1,
+                            defaultValue: generalData.maxMemory,
+                        }}
                     />
                     <InputArea
                         title="Sursă"
-                        eventHandler={({ target: { selectedIndex } }) =>
-                            updateField({ type: "difficulty", value: selectedIndex + 1 })
+                        eventHandler={({ target: { value } }) =>
+                            setGeneralData({ type: "source", value })
                         }
-                        inputProps={{ required: true, minLength: 5 }}
+                        inputProps={{
+                            required: true,
+                            minLength: 5,
+                            defaultValue: generalData.source,
+                        }}
                     />
                 </div>
             </div>
@@ -138,7 +110,8 @@ function GeneralDataStep({ generalData, updateField }) {
     );
 }
 
-function CategoryInputs({ generalData, updateField }) {
+function CategoryInputs({ generalData }) {
+    const { setGeneralData } = useContext(FieldContext);
     return (
         <>
             <InputArea
@@ -146,7 +119,7 @@ function CategoryInputs({ generalData, updateField }) {
                 isSelect
                 optionValues={["ix", "x", "xi"]}
                 eventHandler={({ target: { value: grade } }) => {
-                    updateField({
+                    setGeneralData({
                         type: "multiple",
                         updateTheseFields() {
                             return {
@@ -163,7 +136,7 @@ function CategoryInputs({ generalData, updateField }) {
                 isSelect
                 optionValues={chapters[generalData.grade].map(({ title }) => title)}
                 eventHandler={({ target: { selectedIndex } }) => {
-                    updateField({
+                    setGeneralData({
                         type: "multiple",
                         updateTheseFields() {
                             return {
@@ -183,16 +156,10 @@ function CategoryInputs({ generalData, updateField }) {
                 isSelect
                 optionValues={chapters[generalData.grade][generalData.category.index].subchapters}
                 eventHandler={({ target: { selectedIndex } }) =>
-                    updateField({ type: "subcategory", value: `${selectedIndex}` })
+                    setGeneralData({ type: "subcategory", value: `${selectedIndex}` })
                 }
                 inputProps={{ value: generalData.subcategory }}
             />
         </>
     );
 }
-
-/*
- * TODOS:
- * hash contents with key (officialSolution, hint etc so no more unnecessary db queries)
- * build more from figma
- */

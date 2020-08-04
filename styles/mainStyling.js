@@ -83,7 +83,7 @@ export default css.global`
         font-family: "Red Hat Display";
         border-radius: 50px;
         cursor: pointer;
-        transition-property: box-shadow, opacity;
+        transition-property: box-shadow, opacity, transform;
         transition-duration: 300ms;
         transition-timing-function: ease;
     }
@@ -97,6 +97,10 @@ export default css.global`
     }
     button:hover {
         box-shadow: var(--box-shadow-active);
+    }
+
+    button:active {
+        transform: scale(0.95);
     }
 
     button svg {
@@ -139,7 +143,7 @@ export default css.global`
         background-color: transparent;
         box-shadow: none;
         font-weight: bold;
-        transition: color 300ms linear;
+        transition: color, transform 300ms linear;
         color: var(--text-primary);
         min-width: 130px;
     }

@@ -60,7 +60,7 @@ function submitHandler({
     modalHandler = null,
     modifyAlert,
     fetchEndpoint,
-    isAuthenticatedHandler = undefined,
+    isAuthenticatedHandler = null,
 }) {
     e.preventDefault();
     setDisabled(true);

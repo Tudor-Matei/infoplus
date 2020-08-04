@@ -17,16 +17,19 @@ export default function InputArea({
                         <option key={`optiune_${optionValue}`}>{optionValue}</option>
                     ))}
                 </select>
-            ) : (
+            ) : inputType !== "multiline" ? (
                 <input {...inputProps} onInput={eventHandler} type={inputType} />
+            ) : (
+                <textarea rows="30" cols="10" {...inputProps} onInput={eventHandler}></textarea>
             )}
             <style jsx>{`
                 input,
+                textarea,
                 select {
                     width: 100%;
                     height: 45px;
                     border-radius: 50px;
-                    border: 1px solid var(--accent-primary);
+                    border: 1px solid var(--background-quaternary);
                     outline: 0;
                     margin: 10px 0 20px;
                     padding-left: 10px;
@@ -35,8 +38,19 @@ export default function InputArea({
                     position: relative;
                 }
 
-                input:invalid {
-                    border-color: var(--background-quaternary);
+                input:valid,
+                select:valid,
+                textarea:valid {
+                    border-color: var(--accent-primary);
+                }
+
+                textarea {
+                    border-radius: 10px;
+                    max-width: 100%;
+                    min-width: 100%;
+                    min-height: 105px;
+                    padding-top: 10px;
+                    background-color: var(--background-secondary);
                 }
 
                 option {
