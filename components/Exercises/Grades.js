@@ -1,5 +1,9 @@
 import ExercisesPanel from "./Panel";
-import { exercisesGradeIX, exercisesGradeX, exercisesGradeXI } from "../utils/exercisesGradesData";
+import {
+    exercisesGradeIX,
+    exercisesGradeX,
+    exercisesGradeXI,
+} from "../../utils/exercisesGradesData";
 import { createContext } from "react";
 
 const CapitolURLContext = createContext("");

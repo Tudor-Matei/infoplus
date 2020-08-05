@@ -58,3 +58,17 @@ export const fields = {
         return { ...state, [action.type]: action.value };
     },
 };
+
+export const tests = {
+    initalState: [{ input: "", expectedOutput: "" }],
+    reducer(state, action) {
+        switch (action.type) {
+            case "add":
+                return [...state, { input: action.input, expectedOutput: action.expectedOutput }];
+            case "remove":
+                return state.filter((_, i) => action.number !== i);
+            default:
+                throw new Error("stoopid, invalid tests removal operation");
+        }
+    },
+};

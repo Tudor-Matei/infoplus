@@ -46,8 +46,8 @@ export default function InputArea({
 
                 textarea {
                     border-radius: 10px;
-                    max-width: 100%;
-                    min-width: 100%;
+                    resize: vertical;
+                    font-size: var(--font-small);
                     min-height: 105px;
                     padding-top: 10px;
                     background-color: var(--background-secondary);

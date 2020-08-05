@@ -1,10 +1,11 @@
 import { useReducer, useMemo, createContext } from "react";
-import { steps, fields } from "./reducers";
+import { steps, fields, tests } from "./reducers";
 import ComposeExerciseHeader from "./ComposeExerciseHeader";
 
 import GeneralData from "./Steps/GeneralData";
 import Content from "./Steps/Content";
 import InputData from "./Steps/InputData";
+import Tests from "./Steps/Tests";
 
 export const UpdateStepContext = createContext(null);
 export const FieldContext = createContext(null);
@@ -17,25 +18,19 @@ function CurrentStep({ step }) {
             return <Content />;
         case 3:
             return <InputData />;
-        // case 4: return <GeneralData />
+        case 4:
+            return <Tests />;
         // case 5: return <GeneralData />
     }
 }
 
 export default function StepsDisplayer() {
-    const [step, updateStep] = useReducer(steps.reducer, 2);
+    const [step, updateStep] = useReducer(steps.reducer, 4);
     const [generalData, setGeneralData] = useReducer(fields.reducer, fields.generalDataPart);
     const [contentData, setContentData] = useReducer(fields.reducer, fields.contentPart);
     const [inputData, setInputData] = useReducer(fields.reducer, fields.inputDataPart);
-
-    // const [tests, setTests] = useState([
-    //     {
-    //         id: 1,
-    //         inputData: "",
-    //         expectedOutput: "",
-    //     },
-    // ]);
-
+    const [testsData, setTestsData] = useReducer(tests.reducer, tests.initalState);
+    console.log("%c tests data state from main component", "color: gold", testsData);
     return (
         <>
             <div className="compose-exercise-steps">
@@ -47,6 +42,8 @@ export default function StepsDisplayer() {
                         setContentData,
                         inputData,
                         setInputData,
+                        testsData,
+                        setTestsData,
                     }}
                 >
                     <UpdateStepContext.Provider value={updateStep}>

@@ -19,6 +19,7 @@ export default css.global`
     p {
         margin: 0;
         padding: 0;
+        color: var(--text-primary);
     }
 
     h1,

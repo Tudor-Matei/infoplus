@@ -5,7 +5,7 @@ import {
     exercisesGradeIX,
     exercisesGradeX,
     exercisesGradeXI,
-} from "../../../components/utils/exercisesGradesData";
+} from "../../../utils/exercisesGradesData";
 
 import { useState, useContext, useEffect, useRef } from "react";
 import { ShowAlertContext } from "../../_app";
