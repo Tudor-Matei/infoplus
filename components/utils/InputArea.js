@@ -39,9 +39,18 @@ export default function InputArea({
                 }
 
                 input:valid,
+                input:focus:valid,
                 select:valid,
-                textarea:valid {
+                select:focus:valid,
+                textarea:valid,
+                textarea:focus:valid {
                     border-color: var(--accent-primary);
+                }
+
+                input:focus,
+                select:focus,
+                textarea:focus {
+                    border-color: var(--accent-secondary);
                 }
 
                 textarea {

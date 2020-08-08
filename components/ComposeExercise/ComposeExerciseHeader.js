@@ -5,6 +5,7 @@ import { UpdateStepContext, FieldContext } from "./StepsDisplayer";
 import { ComposeExercisesViewContext } from "../../pages/exercitii/compuse-de-mine";
 import checkFieldsValidity from "../../utils/checkFieldsValidity";
 import omitKey from "../../utils/omitKey";
+import isEmpty from "validator/lib/isEmpty";
 
 function StepIndicators({ step }) {
     return stepTitles.map((_, i) => (
@@ -82,10 +83,6 @@ export default function ComposeExerciseHeader({ step }) {
                 }
 
                 @media screen and (max-width: 425px) {
-                    .compose-exercise-steps__title-part {
-                        margin-bottom: 30px;
-                    }
-
                     .compose-exercise-steps__title-part h2 {
                         font-size: var(--font-small);
                     }
@@ -125,17 +122,25 @@ export default function ComposeExerciseHeader({ step }) {
                     display: flex;
                     justify-content: space-between;
                     align-items: center;
-                    margin-top: 15px;
-                    margin-bottom: 40px;
+                    padding-top: 15px;
+                    padding-bottom: 10px;
+                    margin-bottom: 30px;
+                    position: sticky;
+                    top: 60px;
+                    z-index: 5;
                 }
 
                 .error-part {
                     margin-bottom: 5px;
+                    background-color: var(--background-primary);
+                    border-radius: 5px;
+                    display: flex;
+                    align-items: center;
                 }
 
                 .error-message {
-                    display: inline-block;
                     padding-left: 10px;
+                    max-width: 350px;
                 }
 
                 @media screen and (max-width: 768px) {
@@ -143,7 +148,7 @@ export default function ComposeExerciseHeader({ step }) {
                         flex-direction: column-reverse;
                     }
 
-                    .error-message {
+                    .error-part {
                         margin-top: 15px;
                     }
                 }
@@ -178,37 +183,50 @@ function isDataFromStepValid(step, fields) {
                     officialSolution: 10,
                 },
             });
+        case 3:
+            return checkFieldsValidity({ fields });
+        case 4:
+            for (const { input, expectedOutput } of fields)
+                if (isEmpty(input) || isEmpty(expectedOutput))
+                    return "Nu ați completat unul sau mai multe câmpuri de date de intrare/date de ieșire.";
+            return false;
     }
 }
 
 function BackNextButtons({ step, setError }) {
     const updateStep = useContext(UpdateStepContext);
-    const { generalData, contentData, inputData } = useContext(FieldContext);
+    const { generalData, contentData, inputData, testsData } = useContext(FieldContext);
 
     const incrementStepValidated = useCallback(() => {
+        if (step === 5) return;
+
         const errors = isDataFromStepValid(
             step,
-            getFieldGroupForStep(step, generalData, contentData, inputData)
+            getFieldGroupForStep(step, generalData, contentData, inputData, testsData)
         );
         if (errors) return setError(errors);
 
+        document.body.scrollIntoView();
         setError("");
         updateStep({ type: "increment" });
-    }, [step, generalData, contentData, inputData]);
+    }, [step, generalData, contentData, inputData, testsData]);
+
+    const decrementStep = useCallback(() => {
+        if (step === 1) return;
+
+        setError("");
+        updateStep({ type: "decrement" });
+    }, [step]);
 
     return (
         <>
             <div className="back-next-buttons">
-                <button
-                    className="button--tertiary"
-                    onClick={() => step !== 1 && updateStep({ type: "decrement" })}
-                    disabled={step === 1}
-                >
+                <button className="button--tertiary" onClick={decrementStep} disabled={step === 1}>
                     <FontAwesomeIcon icon="arrow-left" style={{ marginRight: "10px" }} /> Înapoi
                 </button>
                 <button
                     className="button--primary"
-                    onClick={() => step !== 5 && incrementStepValidated()}
+                    onClick={incrementStepValidated}
                     disabled={step === 5}
                 >
                     Înainte <FontAwesomeIcon icon="arrow-right" />
@@ -217,8 +235,16 @@ function BackNextButtons({ step, setError }) {
             <style jsx>{`
                 .button--tertiary {
                     margin-right: 10px;
+                    padding-right: 15px;
                     transition: 300ms linear;
                     transition-property: opacity, color;
+                    background-color: var(--background-primary);
+                }
+
+                @media screen and (max-width: 375px) {
+                    .button--tertiary {
+                        margin-bottom: 10px;
+                    }
                 }
             `}</style>
         </>

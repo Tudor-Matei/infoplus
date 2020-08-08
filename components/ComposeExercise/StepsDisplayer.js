@@ -6,6 +6,7 @@ import GeneralData from "./Steps/GeneralData";
 import Content from "./Steps/Content";
 import InputData from "./Steps/InputData";
 import Tests from "./Steps/Tests";
+import Revision from "./Steps/Revision";
 
 export const UpdateStepContext = createContext(null);
 export const FieldContext = createContext(null);
@@ -20,17 +21,17 @@ function CurrentStep({ step }) {
             return <InputData />;
         case 4:
             return <Tests />;
-        // case 5: return <GeneralData />
+        case 5:
+            return <Revision />;
     }
 }
 
 export default function StepsDisplayer() {
-    const [step, updateStep] = useReducer(steps.reducer, 4);
+    const [step, updateStep] = useReducer(steps.reducer, steps.initialState);
     const [generalData, setGeneralData] = useReducer(fields.reducer, fields.generalDataPart);
     const [contentData, setContentData] = useReducer(fields.reducer, fields.contentPart);
     const [inputData, setInputData] = useReducer(fields.reducer, fields.inputDataPart);
-    const [testsData, setTestsData] = useReducer(tests.reducer, tests.initalState);
-    console.log("%c tests data state from main component", "color: gold", testsData);
+    const [testsData, setTestsData] = useReducer(tests.reducer, tests.initialState);
     return (
         <>
             <div className="compose-exercise-steps">

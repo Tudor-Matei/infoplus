@@ -16,7 +16,9 @@ export default function InputData() {
             <InputArea
                 title="Date de ieșire"
                 inputType="multiline"
-                eventHandler={({ target: { value } }) => setInputData({ type: "mentions", value })}
+                eventHandler={({ target: { value } }) =>
+                    setInputData({ type: "outputData", value })
+                }
                 inputProps={{ required: true, defaultValue: inputData.outputData }}
             />
             <InputArea
@@ -27,7 +29,6 @@ export default function InputData() {
                 }
                 inputProps={{
                     required: true,
-
                     defaultValue: inputData.exampleInputData,
                 }}
             />

@@ -117,13 +117,13 @@ function CategoryInputs({ generalData }) {
             <InputArea
                 title="Clasă"
                 isSelect
-                optionValues={["ix", "x", "xi"]}
+                optionValues={["IX", "X", "XI"]}
                 eventHandler={({ target: { value: grade } }) => {
                     setGeneralData({
                         type: "multiple",
                         updateTheseFields() {
                             return {
-                                grade,
+                                grade: grade.toLowerCase(),
                                 category: { title: chapters[grade][0].titleAlias, index: 0 },
                                 subcategory: "0",
                             };

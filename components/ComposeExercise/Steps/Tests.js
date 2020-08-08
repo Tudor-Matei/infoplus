@@ -6,8 +6,6 @@ import InputArea from "../../utils/InputArea";
 
 export default function Tests() {
     const { testsData, setTestsData } = useContext(FieldContext);
-    console.log("%c old state", "color: orange", testsData);
-
     return (
         <>
             <div className="tests-part">
@@ -26,17 +24,17 @@ export default function Tests() {
                             defaultInputValues={[testData.input, testData.expectedOutput]}
                         />
                     ))}
+                    {testsData.length < 10 && (
+                        <IconBubble
+                            text="+"
+                            className="icon-bubble--big-button-add-test"
+                            onClick={() =>
+                                testsData.length < 10 &&
+                                setTestsData({ type: "add", input: "", expectedOutput: "" })
+                            }
+                        />
+                    )}
                 </div>
-                {testsData.length < 10 && (
-                    <IconBubble
-                        text="+"
-                        className="icon-bubble--big-button-add-test"
-                        onClick={() =>
-                            testsData.length < 10 &&
-                            setTestsData({ type: "add", input: "", expectedOutput: "" })
-                        }
-                    />
-                )}
             </div>
 
             <style jsx>{`
@@ -50,8 +48,7 @@ export default function Tests() {
                 .tests {
                     display: inline-flex;
                     flex-wrap: wrap;
-                    vertical-align: middle;
-                    margin-right: 25px;
+                    align-items: center;
                 }
 
                 :global(.icon-bubble--big-button-add-test) {
@@ -61,6 +58,7 @@ export default function Tests() {
                     vertical-align: middle;
                     background-color: var(--accent-primary) !important;
                     color: var(--text-primary) !important;
+                    margin-left: 25px;
                 }
 
                 :global(.icon-bubble--big-button-add-test:hover) {
@@ -93,11 +91,22 @@ function Test({ number, setTestsData, defaultInputValues }) {
                     title="Date de intrare"
                     inputType="multiline"
                     inputProps={{ required: true, defaultValue: defaultInputValues[0] }}
+                    eventHandler={({ target: { value } }) =>
+                        setTestsData({ type: "populate", number, inputType: "input", value })
+                    }
                 />
                 <InputArea
                     title="Date de ieșire așteptate"
                     inputType="multiline"
                     inputProps={{ required: true, defaultValue: defaultInputValues[1] }}
+                    eventHandler={({ target: { value } }) =>
+                        setTestsData({
+                            type: "populate",
+                            number,
+                            inputType: "expectedOutput",
+                            value,
+                        })
+                    }
                 />
             </div>
             <style jsx>{`

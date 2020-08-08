@@ -60,11 +60,15 @@ export const fields = {
 };
 
 export const tests = {
-    initalState: [{ input: "", expectedOutput: "" }],
+    initialState: [{ input: "", expectedOutput: "" }],
     reducer(state, action) {
         switch (action.type) {
             case "add":
-                return [...state, { input: action.input, expectedOutput: action.expectedOutput }];
+                return [...state, { input: "", expectedOutput: "" }];
+            case "populate":
+                const newState = state;
+                newState[action.number - 1][action.inputType] = action.value;
+                return newState;
             case "remove":
                 return state.filter((_, i) => action.number !== i);
             default:

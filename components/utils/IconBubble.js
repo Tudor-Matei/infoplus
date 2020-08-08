@@ -10,7 +10,7 @@ export default function IconBubble({
     return (
         <>
             <div
-                className={`icon-bubble ${className} ${onClick && "icon-bubble--clickable"}`}
+                className={`icon-bubble ${className} ${onClick ? "icon-bubble--clickable" : ""}`}
                 onClick={onClick}
             >
                 {text ? (
@@ -36,11 +36,12 @@ export default function IconBubble({
 
                 .icon-bubble--clickable {
                     cursor: pointer;
-                    transition: 300ms linear;
+                    transition: 300ms ease;
+                    transition-property: opacity, transform;
                 }
 
                 .icon-bubble--clickable:hover {
-                    background-color: var(--background-secondary);
+                    opacity: 0.5;
                 }
                 p {
                     color: var(--text-button);

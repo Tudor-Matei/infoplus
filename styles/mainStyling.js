@@ -52,6 +52,21 @@ export default css.global`
         border-style: solid;
     }
 
+    pre,
+    code {
+        background-color: rgba(0, 0, 0, 0.5);
+        border-radius: 10px;
+        color: var(--text-primary);
+    }
+
+    pre {
+        padding: 15px;
+    }
+
+    code {
+        padding: 5px;
+    }
+
     .overlay-darkener {
         width: 100%;
         height: 100%;
