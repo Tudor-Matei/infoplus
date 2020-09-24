@@ -116,7 +116,6 @@ function DetailedExercise({
     datePublished,
     source = "",
     difficulty,
-    exerciseId,
 }) {
     return (
         <div className={`exercise ${className}`}>
@@ -128,30 +127,22 @@ function DetailedExercise({
                 <div className="exercise__details">
                     <div className="exercise__author-profile-picture"></div>
                     <p>{authorName}</p> &#8226;
-                    <p>ID #{exerciseId}</p> &#8226;
                     <p>{datePublished}</p> &#8226;
                     <p>{source}</p> &#8226;
                     <p className="exercise__difficulty">{difficultyText(difficulty)}</p>
                 </div>
 
-                <ButtonSolve href={`/exercitiu/${exerciseId}`} difficulty={difficulty} />
+                <ButtonSolve href={`/exercitiu/${title}`} difficulty={difficulty} />
             </div>
         </div>
     );
 }
 
-function CompactExercise({
-    title,
-    children,
-    datePublished,
-    sentSolutions,
-    difficulty,
-    exerciseId,
-}) {
+function CompactExercise({ title, children, datePublished, sentSolutions, difficulty }) {
     return (
         <>
             <div className="exercise">
-                <Link href={`../exercitiu/${exerciseId}`}>
+                <Link href={`../exercitiu/${title}`}>
                     <h2 className="exercise__title">{title}</h2>
                 </Link>
                 <FontAwesomeIcon icon="external-link-alt" color="var(--text-primary)" />

@@ -1,6 +1,6 @@
 import CheckmarkSolved from "../utils/CheckmarkSolved";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import difficultyText from "../utils/difficultyText";
+import difficultyText from "../../utils/difficultyText";
 
 export default function HeaderInfo({
     title,
@@ -19,9 +19,7 @@ export default function HeaderInfo({
                     {title}
                     {isSolved && <CheckmarkSolved />}
                 </h2>
-                <h3 className="header-info-exercise__difficulty">
-                    {difficultyText(difficulty)}
-                </h3>
+                <h3 className="header-info-exercise__difficulty">{difficultyText(difficulty)}</h3>
             </div>
 
             <hr />
@@ -30,8 +28,7 @@ export default function HeaderInfo({
                 <div className="header-info-exercise__secondary-detail">
                     <div className="header-info-exercise__profile-picture"></div>
                     <p>
-                        Postată de:{" "}
-                        <span className="underlined">{authorName}</span>
+                        Postată de: <span className="underlined">{authorName}</span>
                     </p>
                 </div>
                 <div className="header-info-exercise__secondary-detail">

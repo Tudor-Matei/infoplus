@@ -1,27 +1,59 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useContext, useState, useCallback } from "react";
+
+import { SolutionAreaContext } from "../../pages/exercitiu/[title]";
+import isEmpty from "validator/lib/isEmpty";
+import { ShowAlertContext } from "../../pages/_app";
+import { useRouter } from "next/router";
+import formatMonth from "../../utils/formatMonth";
+import omitKey from "../../utils/omitKey";
 
 export default function SolutionArea({ toggleResultsComponent }) {
+    const [solution, setSolution] = useState("");
+    const [errorMessage, setErrorMessage] = useState("");
+
+    const writeSolution = useCallback(({ target: { value } }) => setSolution(value), [solution]);
+
     return (
         <>
             <div className="solution-area">
                 <h3>Incarcă soluția aici</h3>
                 <p>
-                    Este recomandată verificarea codului într-un program
-                    corespunzător înainte de a fi postată, pentru a asigura
-                    inexistența erorilor de compilare sau de rezultat.
+                    Este recomandată verificarea codului într-un program corespunzător înainte de a
+                    fi postată, pentru a asigura inexistența erorilor de compilare sau de rezultat.
                 </p>
-                <textarea cols="30" rows="10"></textarea>
+                <textarea cols="30" rows="10" maxLength="50000" onInput={writeSolution}></textarea>
 
-                <SendSolutionButton onClick={toggleResultsComponent} />
+                <div className="send-solution">
+                    <SendSolutionButton
+                        setErrorMessage={setErrorMessage}
+                        solution={solution}
+                        toggleResultsComponent={toggleResultsComponent}
+                    />
+                    {errorMessage && (
+                        <p className="error-message">
+                            {errorMessage} <FontAwesomeIcon icon="times-circle" />
+                        </p>
+                    )}
+                </div>
             </div>
             <style jsx>{`
                 h3,
-                p {
+                p:not(.error-message) {
                     color: var(--text-primary);
                 }
 
                 p {
                     margin-bottom: 50px;
+                }
+
+                .send-solution {
+                    text-align: right;
+                    height: 100px;
+                }
+
+                .error-message {
+                    margin-bottom: 0;
                 }
 
                 .solution-area {
@@ -38,7 +70,7 @@ export default function SolutionArea({ toggleResultsComponent }) {
                     background-color: var(--background-secondary);
                     border-radius: 15px;
                     padding: 10px;
-                    margin-bottom: 60px;
+                    margin-bottom: 25px;
                     color: var(--text-primary);
                     border: 2px solid var(--accent-primary);
                 }
@@ -58,19 +90,181 @@ export default function SolutionArea({ toggleResultsComponent }) {
     );
 }
 
-function SendSolutionButton({ onClick }) {
+// TODO: toate aceste componente care au prea multa logica, sa le abstractez in "containere", care sunt defapt HOC-uri (children)
+
+function SendSolutionButton({ solution, setErrorMessage, toggleResultsComponent }) {
+    const {
+        setLoading,
+        updateTestsStats,
+        exerciseStats,
+        updateExerciseStats,
+        exerciseId,
+        userData,
+        tests,
+        setUserSolutions,
+        maxExecutionTime,
+        maxMemory,
+    } = useContext(SolutionAreaContext);
+
+    const modifyAlert = useContext(ShowAlertContext);
+    const router = useRouter();
+
+    const sendSolution = useCallback(() => {
+        if (isEmpty(solution)) return setErrorMessage("Nici o soluție nu a fost introdusă.");
+
+        setLoading(true);
+        sendToCompile({ solution, tests, maxExecutionTime, maxMemory })
+            .then((compileResponse) => {
+                const { executionWasAllowed, totalPointsGained } = handleCompileResponse(
+                    compileResponse,
+                    {
+                        userData,
+                        router,
+                        setLoading,
+                        setUserSolutions,
+                        updateExerciseStats,
+                        updateTestsStats,
+                        modifyAlert,
+                        toggleResultsComponent,
+                    }
+                );
+
+                if (executionWasAllowed) {
+                    if (!userData)
+                        return modifyAlert({
+                            isVisible: true,
+                            props: {
+                                type: 0,
+                                children:
+                                    "Nu sunteți autentificat. Probabil tocmai ce v-ați autentificat. Apăsați pe 'OK' pentru a reîncărca pagina.",
+                            },
+                            customToggleHandler: () => router.reload(),
+                        });
+
+                    uploadSentSolution(
+                        solution,
+                        totalPointsGained,
+                        exerciseId,
+                        userData,
+                        setUserSolutions
+                    )
+                        .then(({ ok }) => {
+                            console.log("Incarcare solutie --", ok ? "OK" : ":(");
+                            updateExerciseStats({
+                                type: "sentSolutions",
+                                value: exerciseStats.sentSolutions + 1,
+                            });
+                            updateExerciseStats({
+                                type: "userSolutions",
+                                value: exerciseStats.userSolutions + 1,
+                            });
+                        })
+                        .catch(console.error);
+                }
+            })
+            .catch((err) => handleCompileError(err, setLoading, modifyAlert));
+    }, [solution]);
+
     return (
         <>
-            <button className="button--primary" onClick={onClick}>
-                Trimite <FontAwesomeIcon icon="arrow-right" />{" "}
+            <button
+                className="button--primary"
+                style={{ marginBottom: "20px" }}
+                onClick={sendSolution}
+            >
+                Trimite <FontAwesomeIcon icon="arrow-right" />
             </button>
-            <style jsx>{`
-                button {
-                    position: absolute;
-                    right: 0;
-                    bottom: 0;
-                }
-            `}</style>
         </>
     );
+}
+
+// TODO: fa ca accesstoken-ul sa ramana 15 minute in loc de 15 secunde
+function uploadSentSolution(solution, testsPoints, exerciseId, userData, setUserSolutions) {
+    const date = new Date();
+    const body = {
+        exerciseId,
+        ...omitKey(["id", "iat", "exp"], userData),
+        datePublished: `${date.getDate()} ${formatMonth(
+            date.getMonth() + 1
+        )} ${date.getFullYear()}`,
+        solution: btoa(solution),
+        testsPoints,
+    };
+
+    return fetch("/api/publishSolution", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+    }).then((response) => {
+        setUserSolutions({ value: body });
+        return response;
+    });
+}
+
+function sendToCompile({ solution, tests, maxExecutionTime, maxMemory }) {
+    return fetch("http://localhost:3001/compile", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            code: btoa(solution),
+            maxExecutionTime,
+            maxMemory,
+            ...tests,
+        }),
+    }).then((r) => r.json());
+}
+
+function handleCompileResponse(
+    { wasAllowed = true, data: results = [], err = null },
+    {
+        router,
+        setLoading,
+        modifyAlert,
+        updateExerciseStats,
+        updateTestsStats,
+        toggleResultsComponent,
+    }
+) {
+    setLoading(false);
+
+    if (err || !wasAllowed) {
+        modifyAlert({
+            isVisible: true,
+            props: {
+                type: 0,
+                children: err || "lol nu ti-am dat voe sa exekuti codu hahahhgfskml",
+            },
+            customToggleHandler: err ? () => router.push("/exercitii") : null,
+        });
+        return { executionWasAllowed: false, totalPointsGained: null };
+    }
+    const totalPointsGained = calculateTotalPointsGained(results);
+    updateTestsStats({ type: "testsPoints", value: totalPointsGained });
+    updateTestsStats({ type: "testsResults", value: results });
+
+    if (totalPointsGained === 100) updateExerciseStats({ type: "isSolved", value: true });
+    toggleResultsComponent();
+    return { executionWasAllowed: true, totalPointsGained };
+}
+
+function handleCompileError(err, setLoading, modifyAlert) {
+    console.error(err);
+    setLoading(false);
+    modifyAlert({
+        isVisible: true,
+        props: {
+            type: 0,
+            children:
+                "Stai otara ca nu am deschis serveru de compilare inca, sau o fi o eroare. Incearca imd",
+        },
+    });
+}
+
+function calculateTotalPointsGained(testsResults) {
+    const numberOfPointsPerTest = 100 / testsResults.length;
+    const points = testsResults.reduce(
+        (points, { isCorrect = false }) => (isCorrect ? points + numberOfPointsPerTest : points),
+        0
+    );
+    return points >= 99 ? 100 : Math.ceil(points);
 }

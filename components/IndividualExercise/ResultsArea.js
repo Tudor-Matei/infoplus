@@ -1,43 +1,33 @@
-import CheckmarkSolved from "../utils/CheckmarkSolved";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import ErrorCircle from "../utils/ErrorCircle";
+import decideColourFromPoints from "./decideColourFromPoints";
+import TestResult from "./TestResult";
 
-export default function Results({ totalPointsGained, testResults = [], toggleResultsComponent }) {
+export default function Results({ testsPoints, testsResults = [], toggleResultsComponent }) {
     return (
         <>
             <div className="results">
-                <div className="results__band"></div>
+                <ResultsBand totalPointsGained={testsPoints} />
                 <div className="results__points">
                     <p>Total</p>
-                    <h2>{totalPointsGained} puncte</h2>
+                    <h2>{testsPoints} puncte</h2>
                 </div>
+
                 <div className="results__tests">
-                    {testResults.map(({ didPass, timeTaken, memoryUsed, failureCode }, i) => (
-                        <div
-                            className={`results__test ${
-                                !didPass ? "results__test--failed" : "results__test--passed"
-                            }`}
-                            style={{ animationDelay: 200 * (i + 1) + "ms" }}
-                            key={`results__test-container_${i + 1}`}
-                        >
-                            <h3 key={`results__test-number_${i + 1}`}>Testul {i + 1}</h3>
-                            {didPass ? (
-                                <div className="results__details">
-                                    <p className="results__seconds--with-border">
-                                        <FontAwesomeIcon icon="clock" />
-                                        {timeTaken} secunde
-                                    </p>
-                                    <p>
-                                        <FontAwesomeIcon icon="memory" />
-                                        {memoryUsed} MB folosiți
-                                    </p>
-                                    <CheckmarkSolved key={`results__solved-test_${i + 1}`} />
-                                </div>
-                            ) : (
-                                returnElementForFailureCode(failureCode)
-                            )}
-                        </div>
-                    ))}
+                    {testsResults[0] && !testsResults[0].syntaxError ? (
+                        testsResults.map(
+                            ({ isCorrect, executionTime, memoryUsed, errorCode }, i) => (
+                                <TestResult
+                                    key={`test-result__${i}`}
+                                    isCorrect={isCorrect}
+                                    executionTime={executionTime}
+                                    memoryUsed={memoryUsed}
+                                    errorCode={errorCode}
+                                    testNumber={i + 1}
+                                />
+                            )
+                        )
+                    ) : (
+                        <CompilationError>{atob(testsResults[0].syntaxError)}</CompilationError>
+                    )}
                     <ReturnToSolutionButton onClick={toggleResultsComponent} />
                 </div>
             </div>
@@ -53,18 +43,6 @@ export default function Results({ totalPointsGained, testResults = [], toggleRes
                     padding: 0 65px;
                 }
 
-                .results__band {
-                    width: 0;
-                    height: 40%;
-                    min-height: 100px;
-                    max-height: 250px;
-                    left: 0;
-                    position: absolute;
-                    background-color: var(--accent-primary);
-                    z-index: -1;
-                    animation: slideIn 2500ms ease forwards;
-                }
-
                 .results__points {
                     width: 30%;
                     height: 100%;
@@ -74,79 +52,6 @@ export default function Results({ totalPointsGained, testResults = [], toggleRes
                 .results__tests {
                     width: 70%;
                     height: 100%;
-                }
-
-                .results__test {
-                    width: 100%;
-                    padding: 20px 30px;
-                    background-color: var(--background-primary);
-                    display: flex;
-                    justify-content: space-between;
-                    margin-bottom: 10px;
-                    border-radius: 50px;
-                    box-shadow: var(--box-shadow);
-                    align-items: center;
-                    opacity: 0;
-                    transform: translateY(-5px) rotateX(69deg);
-                    transform-origin: top center;
-                    animation: revealIn 500ms ease forwards;
-                }
-
-                .results__details {
-                    display: flex;
-                    align-items: center;
-                }
-
-                :global(.results__details svg) {
-                    margin-right: 10px;
-                }
-
-                .results__seconds--with-border {
-                    position: relative;
-                    padding-right: 15px;
-                }
-
-                .results__seconds--with-border::after {
-                    content: "";
-                    position: absolute;
-                    right: 0;
-                    top: 20%;
-                    width: 1px;
-                    height: 60%;
-                    background-color: var(--text-button);
-                }
-
-                h3 {
-                    font-size: var(--font-smaller);
-                }
-
-                .results__test--passed {
-                    background-color: var(--accent-success);
-                }
-
-                .results__test--failed {
-                    background-color: var(--accent-failure-secondary);
-                }
-
-                :global(.results .error-circle) {
-                    margin-right: 0;
-                }
-
-                .results__test:last-child {
-                    border-bottom: none;
-                }
-
-                :global(.results__test p > svg) {
-                    margin-left: 15px;
-                }
-
-                :global(.results__test p) {
-                    display: flex;
-                    align-items: center;
-                }
-
-                :global(.results .checkmark-solved) {
-                    margin-right: 0;
                 }
 
                 @media screen and (max-width: 825px) {
@@ -162,18 +67,6 @@ export default function Results({ totalPointsGained, testResults = [], toggleRes
                     .results__points {
                         margin: 25px 0 50px;
                     }
-
-                    .results__test {
-                        flex-direction: column;
-                    }
-
-                    .results__test h3 {
-                        margin-bottom: 10px;
-                    }
-
-                    .results__band {
-                        height: 30%;
-                    }
                 }
 
                 @media screen and (max-width: 576px) {
@@ -187,15 +80,62 @@ export default function Results({ totalPointsGained, testResults = [], toggleRes
                         width: 150%;
                     }
                 }
+            `}</style>
+        </>
+    );
+}
 
-                @keyframes revealIn {
-                    from {
-                        transform: translateY(-5px) rotateX(69deg);
-                        opacity: 0;
-                    }
-                    to {
-                        transform: translateY(0) rotateX(0);
-                        opacity: 1;
+function CompilationError({ children }) {
+    return (
+        <>
+            <div className="results__compilation-error">
+                <h3>Eroare de compilare</h3>
+                <hr />
+                <pre>{children}</pre>
+            </div>
+
+            <style jsx>{`
+                .results__compilation-error {
+                    border-radius: 15px;
+                    background-color: var(--accent-failure-secondary);
+                    padding: 20px;
+                    color: var(--text-button);
+                }
+
+                pre {
+                    background-color: transparent;
+                    color: var(--text-button);
+                    white-space: pre-wrap;
+                }
+            `}</style>
+        </>
+    );
+}
+
+function ResultsBand({ totalPointsGained }) {
+    return (
+        <>
+            <div
+                className="results__band"
+                style={{
+                    backgroundColor: `var(--${decideColourFromPoints(totalPointsGained)})`,
+                }}
+            ></div>
+            <style jsx>{`
+                .results__band {
+                    width: 0;
+                    height: 40%;
+                    min-height: 100px;
+                    max-height: 250px;
+                    left: 0;
+                    position: absolute;
+                    z-index: -1;
+                    animation: slideIn 2500ms ease forwards;
+                }
+
+                @media screen and (max-width: 825px) {
+                    .results__band {
+                        height: 30%;
                     }
                 }
 
@@ -216,37 +156,16 @@ function ReturnToSolutionButton({ onClick }) {
     return (
         <>
             <button className="button--tertiary" onClick={onClick}>
-                Întoarce-te înapoi
+                Mergi înapoi
             </button>
             <style jsx>{`
                 button {
                     position: absolute;
                     right: 0;
-                    margin-right: 65px;
+                    margin: 5px 30px 0 0;
                     width: 200px;
                 }
             `}</style>
         </>
     );
-}
-
-function returnElementForFailureCode(failureCode) {
-    if (failureCode === -1)
-        return (
-            <p>
-                Limită de timp depășită <ErrorCircle />{" "}
-            </p>
-        );
-    else if (failureCode === -2)
-        return (
-            <p>
-                Limită de memorie depășită <ErrorCircle />{" "}
-            </p>
-        );
-    else if (failureCode === -3)
-        return (
-            <p>
-                Eroare cod -3 <ErrorCircle />{" "}
-            </p>
-        );
 }

@@ -19,7 +19,6 @@ export default css.global`
     p {
         margin: 0;
         padding: 0;
-        color: var(--text-primary);
     }
 
     h1,
@@ -54,7 +53,7 @@ export default css.global`
 
     pre,
     code {
-        background-color: rgba(0, 0, 0, 0.5);
+        background-color: var(--background-tertiary);
         border-radius: 10px;
         color: var(--text-primary);
     }

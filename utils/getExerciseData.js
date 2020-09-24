@@ -1,25 +1,22 @@
 import performDatabaseOperation from "./performDatabaseOperation";
-import formatMonth from "./formatMonth";
+import formatDate from "./formatDate";
+import { ObjectId } from "mongodb";
 
 function exercisesNotFound() {
     return { data: null, err: "Nu au fost găsite exerciții de acest tip." };
 }
 
 function exerciseNotFound() {
-    return { data: null, err: "Nu s-a găsit exercițiu care să aibă id-ul acesta." };
+    return { data: null, err: "Nu s-a găsit acest tip de exercițiu." };
 }
 
-export function getMultipleExercisesData({ chapter, subchapterIndex, fieldsToExclude = {} }) {
-    if (!chapter || !subchapterIndex) return exercisesNotFound();
-
-    return performDatabaseOperation(async (db, closeConnection) => {
+export function getMultipleExercisesData({ lookAfter = {}, fieldsToExclude = {} }) {
+    return performDatabaseOperation(async (db) => {
         const exercisesDataArray = await db
             .collection("exercises")
-            .find({ category: [chapter, subchapterIndex] })
+            .find(lookAfter)
             .project(fieldsToExclude)
             .toArray();
-
-        closeConnection();
 
         if (!exercisesDataArray.length) return exercisesNotFound();
         for (const exerciseData of exercisesDataArray)
@@ -29,26 +26,30 @@ export function getMultipleExercisesData({ chapter, subchapterIndex, fieldsToExc
     });
 }
 
-export function getSingleExerciseData({ exerciseId, fieldsToExclude = {} }) {
-    if (!exerciseId) return exerciseNotFound();
+export function getSingleExerciseData({ title, fieldsToExclude = {} }) {
+    if (!title) return exerciseNotFound();
 
-    return performDatabaseOperation(async (db, closeConnection) => {
+    return performDatabaseOperation(async (db) => {
         const exerciseData = await db
             .collection("exercises")
-            .findOne({ exerciseId }, { projection: fieldsToExclude });
-        closeConnection();
+            .findOne({ title }, { projection: fieldsToExclude });
 
         if (!exerciseData) return exerciseNotFound();
 
         exerciseData.datePublished = formatDate(exerciseData.datePublished);
-
         return { data: exerciseData, err: null };
     });
 }
 
-function formatDate(badDate) {
-    const goodDate = new Date(badDate);
-    return `${goodDate.getDate()} ${formatMonth(
-        goodDate.getMonth() + 1
-    )} ${goodDate.getFullYear()}`;
+export function getHiddenExerciseData({ exerciseId, fieldsToExclude = {} }) {
+    if (!exerciseId) return exerciseNotFound();
+    return performDatabaseOperation(async (db) => {
+        const exerciseData = await db
+            .collection("exercises_hidden")
+            .findOne({ exerciseId: ObjectId(exerciseId) }, { projection: fieldsToExclude });
+
+        if (!exerciseData) return exerciseNotFound();
+
+        return { data: exerciseData, err: null };
+    });
 }

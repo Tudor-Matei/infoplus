@@ -3,9 +3,7 @@ import stepTitles from "./stepTitles";
 import { useContext, useCallback, useState } from "react";
 import { UpdateStepContext, FieldContext } from "./StepsDisplayer";
 import { ComposeExercisesViewContext } from "../../pages/exercitii/compuse-de-mine";
-import checkFieldsValidity from "../../utils/checkFieldsValidity";
-import omitKey from "../../utils/omitKey";
-import isEmpty from "validator/lib/isEmpty";
+import isDataFromStepValid from "./isDataFromStepValid";
 
 function StepIndicators({ step }) {
     return stepTitles.map((_, i) => (
@@ -161,38 +159,6 @@ function getFieldGroupForStep(step) {
     return arguments[step] || console.error("invalid step stupid");
 }
 
-function isDataFromStepValid(step, fields) {
-    switch (step) {
-        case 1:
-            return checkFieldsValidity({
-                fields: omitKey("category", fields),
-                minimumLengthForEachField: {
-                    title: 3,
-                    source: 5,
-                },
-                customValidation: { forFields: ["title"], validator: /[^a-zA-Z0-9 ]/ },
-            });
-
-        case 2:
-            return checkFieldsValidity({
-                fields,
-                minimumLengthForEachField: {
-                    content: 10,
-                    hints: 5,
-                    mentions: 5,
-                    officialSolution: 10,
-                },
-            });
-        case 3:
-            return checkFieldsValidity({ fields });
-        case 4:
-            for (const { input, expectedOutput } of fields)
-                if (isEmpty(input) || isEmpty(expectedOutput))
-                    return "Nu ați completat unul sau mai multe câmpuri de date de intrare/date de ieșire.";
-            return false;
-    }
-}
-
 function BackNextButtons({ step, setError }) {
     const updateStep = useContext(UpdateStepContext);
     const { generalData, contentData, inputData, testsData } = useContext(FieldContext);
@@ -204,6 +170,7 @@ function BackNextButtons({ step, setError }) {
             step,
             getFieldGroupForStep(step, generalData, contentData, inputData, testsData)
         );
+
         if (errors) return setError(errors);
 
         document.body.scrollIntoView();

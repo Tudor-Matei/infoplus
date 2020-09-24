@@ -1,27 +1,37 @@
 import MongoClient from "mongodb";
 import dbConfig from "../configs/db";
 
-async function connectToDatabase() {
-    const client = await MongoClient.connect(dbConfig.dbURI);
-    return { db: client.db(dbConfig.dbName), closeConnectionHandler: () => client.close() };
+// TODO: retry functionality on setInterval?
+
+let client = null;
+export default async function performDatabaseOperation(callback) {
+    if (!client) {
+        client = await connectToDatabase();
+        if (!client)
+            return { data: null, err: "A apărut o eroare internă, vă rugăm să ne scuzați." };
+    }
+
+    try {
+        return callback(client.db(dbConfig.dbName));
+    } catch (e) {
+        console.error(e);
+        return { data: null, err: "A apărut o eroare internă, vă rugăm să ne scuzați." };
+    }
 }
 
-export default async function performDatabaseOperation(callback) {
-    let closeConnection;
+async function connectToDatabase() {
     try {
-        console.log("Connection with database established at", getDate());
-        const { db, closeConnectionHandler } = await connectToDatabase();
-        closeConnection = closeConnectionHandler;
-
-        return callback(db, () => {
-            closeConnection();
-            console.log("Connection with database closed nominally at", getDate());
-        });
-    } catch (err) {
-        if (closeConnection) closeConnection();
-        console.error(err);
-        console.log("Connection closed with database with internal error at", getDate());
-        return { data: null, err: "A apărut o eroare internă, vă rugăm să ne scuzați." };
+        console.log("Conectare la baza de date... ", getDate());
+        return MongoClient.connect(dbConfig.dbURI, { connectTimeoutMS: 1000 * 60 * 2 }); // 2 minute
+    } catch (e) {
+        console.error("A aparut o eroare: ", e);
+        console.log("Se incearca reconectarea la baza de date...");
+        try {
+            return MongoClient.connect(dbConfig.dbURI, { connectTimeoutMS: 1000 * 60 * 2 });
+        } catch (e2) {
+            console.error("Reconectare nereusita cu eroare: ", e2);
+            return null;
+        }
     }
 }
 

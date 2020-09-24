@@ -7,13 +7,12 @@ export default async (req, res) => {
     const { data, err } = await getTokenInfo(req.headers["cookie"], true);
 
     if (data) {
-        const { err: errDb } = await performDatabaseOperation(async (db, closeConnection) => {
+        const { err: errDb } = await performDatabaseOperation(async (db) => {
             const users = db.collection("users");
             const foundUser = await users.findOne({ _id: ObjectId(data.id) });
 
             await users.updateOne({ _id: foundUser._id }, { $set: { refreshToken: "" } });
             removeCookies(res);
-            closeConnection();
             return { err: null };
         });
 
@@ -24,8 +23,8 @@ export default async (req, res) => {
 
         return res.status(200).json({ ok: true });
     }
+
     console.error(err);
-    removeCookies(res);
     return res.status(500).json({ ok: false, err });
 };
 

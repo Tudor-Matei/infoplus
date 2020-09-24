@@ -1,6 +1,6 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-export default function NotFound({ icon, children }) {
+export default function ErrorComponent({ icon = "times", children }) {
     return (
         <>
             <div className="exercises-not-found">

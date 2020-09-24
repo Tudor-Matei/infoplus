@@ -2,7 +2,6 @@ export default {
     exercisesList: {
         _id: 0,
         category: 1,
-        exerciseId: 1,
         title: 1,
         difficulty: 1,
         author: 1,
@@ -11,9 +10,16 @@ export default {
         content: 1,
     },
     singleExercise: {
-        _id: 0,
         category: 0,
         hint: 0,
         officialSolution: 0,
+    },
+    compactExercise: {
+        _id: 0,
+        title: 1,
+        datePublished: 1,
+        sentSolutions: 1,
+        difficulty: 1,
+        content: 1,
     },
 };

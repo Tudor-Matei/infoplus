@@ -6,7 +6,7 @@ describe("testing field function", () => {
         surname: "",
         password: "",
     };
-    let minimumLengthForEachField = {
+    let lengthBoundariesForEachField = {
         name: 2,
         surname: 5,
         password: 8,
@@ -16,7 +16,7 @@ describe("testing field function", () => {
         expect(
             checkFieldsValidity({
                 fields,
-                minimumLengthForEachField,
+                lengthBoundariesForEachField,
                 hasEmail: false,
             })
         ).toEqual("Nu ai completat unul sau mai multe câmpuri.");
@@ -31,7 +31,7 @@ describe("testing field function", () => {
         expect(
             checkFieldsValidity({
                 fields,
-                minimumLengthForEachField,
+                lengthBoundariesForEachField,
                 hasEmail: false,
             })
         ).toBeFalsy();
@@ -46,12 +46,10 @@ describe("testing field function", () => {
         expect(
             checkFieldsValidity({
                 fields,
-                minimumLengthForEachField,
+                lengthBoundariesForEachField,
                 hasEmail: false,
             })
-        ).toEqual(
-            "Unul sau mai multe câmpuri nu indeplinesc numarul de caractere minim."
-        );
+        ).toEqual("Unul sau mai multe câmpuri nu indeplinesc numarul de caractere minim.");
     });
 
     it("should not find any errors", () => {
@@ -64,7 +62,7 @@ describe("testing field function", () => {
         expect(
             checkFieldsValidity({
                 fields,
-                minimumLengthForEachField,
+                lengthBoundariesForEachField,
                 hasEmail: false,
             })
         ).toBeFalsy();

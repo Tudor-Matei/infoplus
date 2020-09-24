@@ -1,7 +1,7 @@
-export default function Loading() {
+export default function Loading({ style = {} }) {
     return (
         <>
-            <div className="loading-animation">
+            <div className="loading-animation" style={style}>
                 <div className="loading-animation__rotating-square"></div>
                 <h2>Se incarcă...</h2>
             </div>

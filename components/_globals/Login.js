@@ -2,12 +2,13 @@ import { useState, useContext } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import formModal from "../../styles/formModal";
-import OverlayDarkener from "../utils/OverlayDarkener";
+import OverlayDarkener from "./OverlayDarkener";
 import SubmitButton from "../utils/SubmitButton";
 import InputAreas from "../utils/InputAreas";
 import inputAreaLoginData from "../utils/inputAreaLoginData";
 
 import { LoginModalHandler } from "../../pages/_app";
+import { loginFields } from "../../utils/lengthBoundariesForFields";
 
 export default function Login({ cancelDisabled = false }) {
     const [userDetails, setUserDetail] = useState({
@@ -22,6 +23,8 @@ export default function Login({ cancelDisabled = false }) {
 
     const showLoginModalHandler = useContext(LoginModalHandler);
 
+    // TODO: generalise inputAreaLoginData and stuff like that where I see fit, and
+    //       make press on [enter] submit
     return (
         <>
             <OverlayDarkener onClick={showLoginModalHandler} />
@@ -41,12 +44,7 @@ export default function Login({ cancelDisabled = false }) {
                         )}
                         <SubmitButton
                             userDetails={userDetails}
-                            fieldOptions={{
-                                minimumLengthForEachField: {
-                                    username: 5,
-                                    password: 8,
-                                },
-                            }}
+                            fieldOptions={{ lengthBoundariesForEachField: loginFields }}
                             showErrorMessage={showErrorMessage}
                             buttonTitle="Logare"
                             type="login"

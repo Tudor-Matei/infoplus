@@ -1,6 +1,12 @@
 
 
-POST http://localhost:3000/api/register
-Content-Type: 'application/json'
+POST http://localhost:3001/compile
+Content-Type: application/json
 
-{"name":"hearherh","surname":"earhaerh","county":"Alba","profession":"Elev","username":"aerhaerh","email":"eharherah@gmail.com","password":"pdofgjdiabhadiofbjan"}
+{
+    "maxExecutionTime": 20,
+    "maxMemory": 4,
+    "code": "I2luY2x1ZGUgPGlvc3RyZWFtPgppbnQgbWFpbigpewogIGludCBuOwogIHN0ZDo6Y2luID4+IG47CiAgc3RkOjpjb3V0IDw8ICJuIGVzdGUgIiA8PCBuOwp9Cg==",
+    "tests": [{"input": "1234", "expectedOutput": "n este 1235"}, {"input": "1234", "expectedOutput": "n este 1234"}]
+}
+

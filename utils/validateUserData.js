@@ -3,9 +3,9 @@ import escape from "validator/lib/escape";
 
 export default function validateUserData(
     body = "",
-    fieldOptions = { minimumLengthForEachField: {}, hasEmail: false }
+    fieldOptions = { lengthBoundariesForEachField, hasEmail: false }
 ) {
-    const escapedFields = escapeUserData(JSON.parse(body));
+    const escapedFields = escapeUserData(body);
     const errorMessage = checkFieldsValidity({
         fields: escapedFields,
         ...fieldOptions,

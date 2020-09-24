@@ -30,6 +30,7 @@ const iconNames = [
     "faPlus",
     "faPen",
     "faTrash",
+    "faCalendar",
 ];
 
 library.add(iconNames.map((iconName) => icons[iconName]));

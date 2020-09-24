@@ -1,14 +1,24 @@
+import { registerFields } from "../../utils/lengthBoundariesForFields";
+
 export default [
     {
         title: "Nume",
         inputType: "text",
-        inputProps: { minLength: 3, required: true },
+        inputProps: {
+            minLength: registerFields.name[0],
+            maxLength: registerFields.name[1],
+            required: true,
+        },
         fieldName: "name",
     },
     {
         title: "Prenume",
         inputType: "text",
-        inputProps: { minLength: 3, required: true },
+        inputProps: {
+            minLength: registerFields.surname[0],
+            maxLength: registerFields.surname[1],
+            required: true,
+        },
         fieldName: "surname",
     },
     {
@@ -26,13 +36,21 @@ export default [
     {
         title: "Nume Utilizator",
         inputType: "text",
-        inputProps: { minLength: 5, required: true },
+        inputProps: {
+            minLength: registerFields.username[0],
+            maxLength: registerFields.username[1],
+            required: true,
+        },
         fieldName: "username",
     },
     {
         title: "E-mail",
         inputType: "email",
-        inputProps: { required: true },
+        inputProps: {
+            minLength: registerFields.email[0],
+            maxLength: registerFields.email[1],
+            required: true,
+        },
         fieldName: "email",
     },
     {

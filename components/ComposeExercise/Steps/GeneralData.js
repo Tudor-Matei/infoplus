@@ -2,6 +2,7 @@ import InputArea from "../../utils/InputArea";
 import chapters from "../../../utils/chapters";
 import { useContext } from "react";
 import { FieldContext } from "../StepsDisplayer";
+import { generalDataStepFields } from "../../../utils/lengthBoundariesForFields";
 
 export default function GeneralData() {
     const { generalData, setGeneralData } = useContext(FieldContext);
@@ -18,7 +19,8 @@ export default function GeneralData() {
                         }
                         inputProps={{
                             required: true,
-                            minLength: 3,
+                            minLength: generalDataStepFields.title[0],
+                            maxLength: generalDataStepFields.title[1],
                             defaultValue: generalData.title,
                         }}
                     />
@@ -32,7 +34,6 @@ export default function GeneralData() {
                         eventHandler={({ target: { selectedIndex } }) =>
                             setGeneralData({ type: "difficulty", value: selectedIndex + 1 })
                         }
-                        inputProps={{ required: true }}
                     />
                     <InputArea
                         title="Timp maxim de execuție"
@@ -43,7 +44,8 @@ export default function GeneralData() {
                         inputType="number"
                         inputProps={{
                             required: true,
-                            minLength: 2,
+                            minLength: generalDataStepFields.maxExecutionTime[0],
+                            maxLength: generalDataStepFields.maxExecutionTime[1],
                             defaultValue: generalData.maxExecutionTime,
                         }}
                     />
@@ -56,7 +58,8 @@ export default function GeneralData() {
                         inputType="number"
                         inputProps={{
                             required: true,
-                            minLength: 1,
+                            minLength: generalDataStepFields.maxMemory[0],
+                            maxLength: generalDataStepFields.maxMemory[1],
                             defaultValue: generalData.maxMemory,
                         }}
                     />
@@ -67,7 +70,8 @@ export default function GeneralData() {
                         }
                         inputProps={{
                             required: true,
-                            minLength: 5,
+                            minLength: generalDataStepFields.source[0],
+                            maxLength: generalDataStepFields.source[1],
                             defaultValue: generalData.source,
                         }}
                     />
@@ -90,8 +94,9 @@ export default function GeneralData() {
                 .input-field:first-child {
                     margin-right: 50px;
                 }
+
                 .input-field:nth-child(2) {
-                    margin-top: 20px;
+                    margin-top: 21px;
                 }
 
                 @media screen and (max-width: 425px) {
@@ -122,9 +127,10 @@ function CategoryInputs({ generalData }) {
                     setGeneralData({
                         type: "multiple",
                         updateTheseFields() {
+                            const uglifiedGrade = grade.toLowerCase();
                             return {
-                                grade: grade.toLowerCase(),
-                                category: { title: chapters[grade][0].titleAlias, index: 0 },
+                                grade: uglifiedGrade,
+                                category: [chapters[uglifiedGrade][0].titleAlias, "0"],
                                 subcategory: "0",
                             };
                         },
@@ -140,21 +146,22 @@ function CategoryInputs({ generalData }) {
                         type: "multiple",
                         updateTheseFields() {
                             return {
-                                category: {
-                                    title: chapters[generalData.grade][selectedIndex].titleAlias,
-                                    index: selectedIndex,
-                                },
+                                category: [
+                                    chapters[generalData.grade][selectedIndex].titleAlias,
+                                    `${selectedIndex}`,
+                                ],
                                 subcategory: "0",
                             };
                         },
                     });
                 }}
-                inputProps={{ required: true, minLength: 3 }}
             />
+
+            {/* needs better category handle (not an array, but an object instead: [categorie, index]) */}
             <InputArea
                 title="Subcategorie"
                 isSelect
-                optionValues={chapters[generalData.grade][generalData.category.index].subchapters}
+                optionValues={chapters[generalData.grade][generalData.category[1]].subchapters}
                 eventHandler={({ target: { selectedIndex } }) =>
                     setGeneralData({ type: "subcategory", value: `${selectedIndex}` })
                 }

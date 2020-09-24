@@ -32,7 +32,7 @@ export const fields = {
     generalDataPart: {
         title: "",
         grade: "ix",
-        category: { title: chapters.ix[0].titleAlias, index: 0 },
+        category: [chapters.ix[0].titleAlias, "0"],
         subcategory: "0",
         difficulty: 1,
         maxExecutionTime: 100,
@@ -42,7 +42,7 @@ export const fields = {
     contentPart: {
         content: "",
         mentions: "",
-        hints: "",
+        hint: "",
         officialSolution: "",
     },
 

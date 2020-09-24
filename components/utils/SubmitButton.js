@@ -10,6 +10,7 @@ export default function SubmitButton({
     buttonTitle,
     type,
 }) {
+    //TODO: generalize this and replace any other instances of such functionality
     const [isDisabled, setDisabled] = useState(false);
 
     const showModalHandler = useContext(

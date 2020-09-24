@@ -1,6 +1,7 @@
 import { useContext } from "react";
 import { FieldContext } from "../StepsDisplayer";
 import InputArea from "../../utils/InputArea";
+import { contentDataStepFields } from "../../../utils/lengthBoundariesForFields";
 
 export default function Content() {
     const { contentData, setContentData } = useContext(FieldContext);
@@ -10,7 +11,12 @@ export default function Content() {
                 title="Enunțul exercițiului"
                 inputType="multiline"
                 eventHandler={({ target: { value } }) => setContentData({ type: "content", value })}
-                inputProps={{ required: true, minLength: 10, defaultValue: contentData.content }}
+                inputProps={{
+                    required: true,
+                    minLength: contentDataStepFields.content[0],
+                    maxLength: contentDataStepFields.content[1],
+                    defaultValue: contentData.content,
+                }}
             />
             <InputArea
                 title="Observații"
@@ -18,13 +24,23 @@ export default function Content() {
                 eventHandler={({ target: { value } }) =>
                     setContentData({ type: "mentions", value })
                 }
-                inputProps={{ required: true, minLength: 5, defaultValue: contentData.mentions }}
+                inputProps={{
+                    required: true,
+                    minLength: contentDataStepFields.mentions[0],
+                    maxLength: contentDataStepFields.mentions[1],
+                    defaultValue: contentData.mentions,
+                }}
             />
             <InputArea
                 title="Indicii"
                 inputType="multiline"
-                eventHandler={({ target: { value } }) => setContentData({ type: "hints", value })}
-                inputProps={{ required: true, minLength: 5, defaultValue: contentData.hints }}
+                eventHandler={({ target: { value } }) => setContentData({ type: "hint", value })}
+                inputProps={{
+                    required: true,
+                    minLength: contentDataStepFields.hint[0],
+                    maxLength: contentDataStepFields.hint[1],
+                    defaultValue: contentData.hint,
+                }}
             />
             <InputArea
                 title="Soluția oficială"
@@ -34,7 +50,8 @@ export default function Content() {
                 }
                 inputProps={{
                     required: true,
-                    minLength: 10,
+                    minLength: contentDataStepFields.officialSolution[0],
+                    maxLength: contentDataStepFields.officialSolution[1],
                     defaultValue: contentData.officialSolution,
                 }}
             />

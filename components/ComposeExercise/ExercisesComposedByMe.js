@@ -1,29 +1,37 @@
 import Exercise from "../../components/ExercisesList/Exercise";
 import PrimaryComposeHeader from "./PrimaryHeader";
+import { useCallback } from "react";
+import ErrorComponent from "../_globals/ErrorComponent";
 
-export default function ExercisesComposedByMe() {
+export default function ExercisesComposedByMe({ exercisesData }) {
+    const solutionsAttemptedTotal = useCallback(() => {
+        return exercisesData.reduce((amount, { sentSolutions }) => amount + sentSolutions, 0);
+    }, [exercisesData]);
     return (
         <>
             <div className="exercises-composed-by-me">
-                <PrimaryComposeHeader exercisesComposedByMe={483} solutionsAttemptedTotal={37192} />
-                {Array(5)
-                    .fill()
-                    .map((_, i) => (
-                        <Exercise
-                            title="ScriereEcran"
-                            datePublished="21 mai 2017"
-                            sentSolutions={294}
-                            difficulty={1}
-                            exerciseId={1}
-                            key={i}
-                            compact
-                        >
-                            Lorem ipsum dolor sit amet consectetur adipisicing elit. Atque totam
-                            omnis corporis ab magnam aspernatur iste molestiae illo velit vitae qui
-                            magni recusandae, doloribus libero provident nihil iusto quibusdam
-                            repellat!
-                        </Exercise>
-                    ))}
+                <PrimaryComposeHeader
+                    exercisesComposedByMe={exercisesData.length}
+                    solutionsAttemptedTotal={solutionsAttemptedTotal()}
+                />
+                {exercisesData.length !== 0 ? (
+                    exercisesData.map(
+                        ({ title, datePublished, sentSolutions, difficulty, content }, i) => (
+                            <Exercise
+                                title={title}
+                                datePublished={datePublished}
+                                sentSolutions={sentSolutions}
+                                difficulty={difficulty}
+                                key={`own-exercise_${i}`}
+                                compact
+                            >
+                                {content}
+                            </Exercise>
+                        )
+                    )
+                ) : (
+                    <ErrorComponent>Nu ai compus exerciții până acum.</ErrorComponent>
+                )}
             </div>
             <style jsx>{`
                 .exercises-composed-by-me {

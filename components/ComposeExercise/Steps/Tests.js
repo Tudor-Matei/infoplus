@@ -3,6 +3,7 @@ import { FieldContext } from "../StepsDisplayer";
 
 import IconBubble from "../../utils/IconBubble";
 import InputArea from "../../utils/InputArea";
+import { testsDataStepFields } from "../../../utils/lengthBoundariesForFields";
 
 export default function Tests() {
     const { testsData, setTestsData } = useContext(FieldContext);
@@ -40,6 +41,7 @@ export default function Tests() {
             <style jsx>{`
                 .tests-part {
                     margin-left: -20px;
+                    color: var(--text-primary);
                 }
                 .tests-primary-data {
                     margin-left: 20px;
@@ -64,9 +66,6 @@ export default function Tests() {
                 :global(.icon-bubble--big-button-add-test:hover) {
                     transform: scale(0.95);
                 }
-                 {
-                    /* TODO: fix + add button going below when adding new test */
-                }
             `}</style>
         </>
     );
@@ -90,7 +89,12 @@ function Test({ number, setTestsData, defaultInputValues }) {
                 <InputArea
                     title="Date de intrare"
                     inputType="multiline"
-                    inputProps={{ required: true, defaultValue: defaultInputValues[0] }}
+                    inputProps={{
+                        required: true,
+                        minLength: testsDataStepFields.input[0],
+                        maxLength: testsDataStepFields.input[1],
+                        defaultValue: defaultInputValues[0],
+                    }}
                     eventHandler={({ target: { value } }) =>
                         setTestsData({ type: "populate", number, inputType: "input", value })
                     }
@@ -98,7 +102,12 @@ function Test({ number, setTestsData, defaultInputValues }) {
                 <InputArea
                     title="Date de ieșire așteptate"
                     inputType="multiline"
-                    inputProps={{ required: true, defaultValue: defaultInputValues[1] }}
+                    inputProps={{
+                        required: true,
+                        minLength: testsDataStepFields.expectedOutput[0],
+                        maxLength: testsDataStepFields.expectedOutput[1],
+                        defaultValue: defaultInputValues[1],
+                    }}
                     eventHandler={({ target: { value } }) =>
                         setTestsData({
                             type: "populate",

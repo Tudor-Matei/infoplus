@@ -1,27 +1,22 @@
 import performDatabaseOperation from "../../utils/performDatabaseOperation";
 import validateUserData from "../../utils/validateUserData";
 import bcrypt from "bcrypt";
+import { registerFields } from "../../utils/lengthBoundariesForFields";
 
 const SALT_ROUNDS = 10;
 
 export default async (req, res) => {
-    if (!req.body) return res.status(204).end();
-    const { error, validatedUserData } = validateUserData(req.body, {
-        minimumLengthForEachField: {
-            name: 3,
-            surname: 3,
-            username: 5,
-            password: 8,
-        },
+    if (!req.body) return res.status(400).end();
+    const { error, validatedUserData } = validateUserData(JSON.parse(req.body), {
+        lengthBoundariesForEachField: registerFields,
         hasEmail: true,
     });
     if (error) return res.status(403).json({ ok: false, error });
     validatedUserData.refreshToken = "";
 
-    const { err, status = 500 } = await performDatabaseOperation(async (db, closeConnection) => {
+    const { err, status = 500 } = await performDatabaseOperation(async (db) => {
         validatedUserData.password = await bcrypt.hash(validatedUserData.password, SALT_ROUNDS);
-        function closeConnectionAndExitWithError(err, status) {
-            closeConnection();
+        function exitWith(err, status) {
             return { err, status };
         }
 
@@ -32,18 +27,11 @@ export default async (req, res) => {
 
         if (!existingUser) await users.insertOne(validatedUserData);
         else if (existingUser.username === validatedUserData.username)
-            return closeConnectionAndExitWithError(
-                "Există deja o persoană cu același nume de utilizator.",
-                403
-            );
+            return exitWith("Există deja o persoană cu același nume de utilizator.", 403);
         else if (existingUser.email === validatedUserData.email)
-            return closeConnectionAndExitWithError(
-                "Există deja o persoană cu aceeași adresă de e-mail.",
-                403
-            );
+            return exitWith("Există deja o persoană cu aceeași adresă de e-mail.", 403);
 
-        closeConnection();
-        return { err: null, status: 200 };
+        return exitWith(null, 200);
     });
 
     if (err) return res.status(status).json({ ok: false, error: err });

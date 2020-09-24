@@ -1,9 +1,9 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import Link from "next/link";
 
 import { light, dark } from "../../styles/theme";
-import { ThemeContext } from "../../pages/_app";
+import { ThemeContext, LoggedInDataContext } from "../../pages/_app";
 
 export default function DropdownMenu({ isDropdownToggled }) {
     return (
@@ -41,6 +41,7 @@ export default function DropdownMenu({ isDropdownToggled }) {
 }
 
 function DropdownMenuUl() {
+    const { isAuthenticated } = useContext(LoggedInDataContext);
     return (
         <>
             <ul className="dropdown-menu-header__ul">
@@ -59,10 +60,14 @@ function DropdownMenuUl() {
                 <ThemeConsumer Component={ThemeChangerButton} />
                 <hr className="dropdown-menu-header__hr" />
                 <li className="dropdown-menu-header__main-li">Mod proiector</li>
-                <hr className="dropdown-menu-header__hr" />
-                <Link href="/dashboard">
-                    <li className="dropdown-menu-header__main-li">Detalii cont</li>
-                </Link>
+                {isAuthenticated && (
+                    <>
+                        <hr className="dropdown-menu-header__hr" />
+                        <Link href="/exercitii/compuse-de-mine">
+                            <li className="dropdown-menu-header__main-li">Compune exercițiu</li>
+                        </Link>
+                    </>
+                )}
             </ul>
             <style jsx>{`
                 .dropdown-menu-header__hr {

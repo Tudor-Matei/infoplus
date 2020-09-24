@@ -1,6 +1,6 @@
 import CheckmarkSolved from "../utils/CheckmarkSolved";
 import ErrorCircle from "../utils/ErrorCircle";
-import OverlayDarkener from "../utils/OverlayDarkener";
+import OverlayDarkener from "./OverlayDarkener";
 
 export default function AlertNotification({
     type,
@@ -48,6 +48,7 @@ export default function AlertNotification({
                 .alert {
                     max-width: 50%;
                     height: fit-content;
+                    max-height: 180px;
                     padding: 30px 30px 20px;
                     border-radius: 20px;
                     position: fixed;

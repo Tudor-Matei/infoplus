@@ -1,15 +1,14 @@
-import { getMultipleExercisesData } from "../../utils/getExerciseData";
-import strippedDownResponses from "../../utils/strippedDownResponses";
+import { getMultipleExercisesData } from "../../../utils/getExerciseData";
+import strippedDownResponses from "../../../utils/strippedDownResponses";
 
 export default async (req, res) => {
-    if (!req.body || !req.body.chapter || (!req.body.subchapterIndex && !req.body.exerciseId))
+    if (!req.body || !req.body.chapter || !req.body.subchapterIndex)
         return res
             .status(404)
             .json({ data: null, err: "Nu au fost găsite exerciții de acest tip." });
 
     const { data, err } = await getMultipleExercisesData({
-        chapter: req.body.chapter,
-        subchapterIndex: req.body.subchapterIndex,
+        lookAfter: { category: [req.body.chapter, req.body.subchapterIndex] },
         fieldsToExclude: strippedDownResponses.exercisesList,
     });
 

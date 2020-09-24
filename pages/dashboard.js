@@ -2,104 +2,124 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import AccountDetails from "../components/Account/Details";
 import ExercisesDetails from "../components/Account/ExercisesDetails";
 import Exercise from "../components/ExercisesList/Exercise";
-import { useContext } from "react";
-import { getTokenInfo, getNewAccessToken } from "../utils/manageTokens";
-import { serialize } from "cookie";
-import { ShowAlertContext } from "./_app";
 
-import Router from "next/router";
-import useComponentDidMount from "../components/_hooks/componentDidMount";
 import performDatabaseOperation from "../utils/performDatabaseOperation";
 import { ObjectId } from "mongodb";
 import LogoutButton from "../components/utils/LogoutButton";
 import Link from "next/link";
+import getAuthInfo from "../utils/getAuthInfo";
+import HasAuthentication from "../components/utils/HasAuthentication";
+import strippedDownResponses from "../utils/strippedDownResponses";
+import { useMemo } from "react";
+import formatDate from "../utils/formatDate";
 
-export async function getServerSideProps({ req, res }) {
-    let { data, err } = await getTokenInfo(req.headers["cookie"]);
-
-    if (err) {
-        // v "token invalid"
-        if (err !== "tokinv") return { props: { authenticated: false, userData: null, err } };
-        else {
-            // generam un nou access token
-            data = await getNewAccessToken(req.headers["cookie"]);
-            if (data.err) return { props: { authenticated: false, userData: null, err: data.err } };
-
-            res.setHeader(
-                "Set-Cookie",
-                serialize("_accessToken", data.accessToken, {
-                    sameSite: true,
-                    path: "/",
-                })
-            );
-            data.accessToken = null;
-        }
-    }
-
-    const { data: dataDb, err: errDb } = await performDatabaseOperation(
-        async (db, closeConnection) => {
-            const foundUser = await db.collection("users").findOne({ _id: ObjectId(data.id) });
-
-            if (!foundUser) {
-                closeConnection();
-                return {
-                    data: {
-                        authenticated: false,
-                        userData: null,
-                    },
-                    err:
-                        "S-a intâmplat ceva ciudat, aveți datele de autentificare prezente, dar invalide.",
-                };
-            }
-
-            closeConnection();
-            return {
-                data: {
-                    authenticated: true,
-                    userData: {
-                        name: foundUser.name,
-                        surname: foundUser.surname,
-                        county: foundUser.county,
-                        profession: foundUser.profession,
-                        username: foundUser.username,
-                        email: foundUser.email,
-                    },
-                },
-                err: null,
-            };
-        }
-    );
-
+function exitWith(err) {
     return {
         props: {
-            ...dataDb,
-            err: errDb,
+            authenticated: false,
+            userData: null,
+            latestExercisesData: null,
+            solvedFailedExercises: null,
         },
+        err,
     };
 }
 
-export default function Dashboard({ authenticated, userData, err }) {
-    //we are going to have stuff that's like on the header or an option with "log out" (auth: true)
-    // when wee get user data and set it with React Context from SSR routes and login
-    const modifyAlert = useContext(ShowAlertContext);
+function exitOperationWith(err) {
+    return {
+        props: {
+            authenticated: false,
+            userData: null,
+            latestExercisesData: null,
+            solvedFailedExercises: null,
+        },
+        err,
+    };
+}
 
-    useComponentDidMount(() => {
-        if (!authenticated || err)
-            modifyAlert({
-                isVisible: true,
-                props: {
-                    type: 0,
-                    children: !authenticated && !err ? "Nu sunteți autentificat." : err,
+export async function getServerSideProps({ req, res }) {
+    const { authenticated, userData, err } = await getAuthInfo(req, res);
+    if (!authenticated) return exitWith(err);
+
+    const { data: dataDb, err: errDb } = await performDatabaseOperation(async (db) => {
+        const solutions = db.collection("solutions");
+
+        const foundUser = await db.collection("users").findOne({ _id: ObjectId(userData.id) });
+        if (!foundUser)
+            return exitOperationWith(
+                "S-a intâmplat ceva ciudat, aveți datele de autentificare prezente, dar invalide."
+            );
+
+        const latestExercisesData =
+            (await db
+                .collection("exercises")
+                .find()
+                .limit(5)
+                .sort({ datePublished: -1 })
+                .project(strippedDownResponses.exercisesList)
+                .toArray()) || [];
+
+        for (const latestExercisesDatum of latestExercisesData)
+            latestExercisesDatum.datePublished = formatDate(latestExercisesDatum.datePublished);
+
+        return {
+            data: {
+                authenticated: true,
+                userData: {
+                    name: foundUser.name,
+                    surname: foundUser.surname,
+                    county: foundUser.county,
+                    profession: foundUser.profession,
+                    username: foundUser.username,
+                    email: foundUser.email,
                 },
-                customToggleHandler: () => Router.push("/"),
-            });
+                solvedFailedExercises: [
+                    (await solutions.countDocuments({
+                        username: userData.username,
+                        testsPoints: 100,
+                    })) || 0,
+                    (await solutions.countDocuments({
+                        username: userData.username,
+                        testsPoints: 0,
+                    })) || 0,
+                ],
+                latestExercisesData,
+            },
+            err: null,
+        };
     });
-    if (!authenticated || err) return null;
+
+    return { props: { ...dataDb, err: errDb } };
+}
+
+function LatestExercises({ latestExercisesData }) {
+    return latestExercisesData.map((datum, i) => (
+        <Exercise
+            className="exercise--less-margin"
+            key={`latest-exercise_${i}`}
+            title={datum.title}
+            authorName={datum.author}
+            datePublished={datum.datePublished}
+            difficulty={datum.difficulty}
+            source={datum.source}
+        >
+            {datum.content}
+        </Exercise>
+    ));
+}
+
+export default function Dashboard({
+    authenticated,
+    userData,
+    latestExercisesData,
+    solvedFailedExercises,
+    err,
+}) {
     return (
-        <>
+        <HasAuthentication authState={{ authenticated, err }}>
             <section className="dashboard">
                 <div className="dashboard__introduction">
-                    <WelcomingMessage name={userData.name} surname={userData.surname} />
+                    <WelcomingMessage name={userData?.name} surname={userData?.surname} />
                     <div className="dashboard__side-info">
                         <div className="dashboard__quick-action-pills">
                             <QuickActionPill icon="external-link-alt" link="/exercitii">
@@ -110,70 +130,29 @@ export default function Dashboard({ authenticated, userData, err }) {
                             </QuickActionPill>
                         </div>
                         <h3>Status exerciții</h3>
-                        <ExercisesDetails />
+                        <ExercisesDetails solvedFailedExercises={solvedFailedExercises} />
                     </div>
                 </div>
                 <div className="dashboard__heading">
                     <h3>Detaliile contului tău</h3>
                 </div>
-                <AccountDetails userData={userData} />
-                {/* <ProgressDetails /> */}
+                {useMemo(
+                    () => (
+                        <AccountDetails userData={userData} />
+                    ),
+                    [userData]
+                )}
 
                 <div className="exercises-container">
                     <div className="dashboard__heading">
                         <h3>Cele mai noi exerciții</h3>
                     </div>
-                    <Exercise
-                        className="exercise--less-margin-top"
-                        title="Vrei sa pleci dar numa numa yay"
-                        authorName="Your mom"
-                        datePublished="your moeeeem"
-                        source="my ass"
-                        difficulty={3}
-                        exerciseId="3291"
-                    >
-                        numa numa yayyyyeeet
-                    </Exercise>
-                    <Exercise
-                        title="Vrei sa pleci dar numa numa yay"
-                        authorName="Your mom"
-                        datePublished="your moeeeem"
-                        source="my ass"
-                        difficulty={3}
-                        exerciseId="3291"
-                    >
-                        numa numa yayyyyeeet
-                    </Exercise>
-                    <Exercise
-                        title="Vrei sa pleci dar numa numa yay"
-                        authorName="Your mom"
-                        datePublished="your moeeeem"
-                        source="my ass"
-                        difficulty={3}
-                        exerciseId="3291"
-                    >
-                        numa numa yayyyyeeet
-                    </Exercise>
-                    <Exercise
-                        title="Vrei sa pleci dar numa numa yay"
-                        authorName="Your mom"
-                        datePublished="your moeeeem"
-                        source="my ass"
-                        difficulty={3}
-                        exerciseId="3291"
-                    >
-                        numa numa yayyyyeeet
-                    </Exercise>
-                    <Exercise
-                        title="Vrei sa pleci dar numa numa yay"
-                        authorName="Your mom"
-                        datePublished="your moeeeem"
-                        source="my ass"
-                        difficulty={3}
-                        exerciseId="3291"
-                    >
-                        numa numa yayyyyeeet
-                    </Exercise>
+                    {useMemo(
+                        () => (
+                            <LatestExercises latestExercisesData={latestExercisesData} />
+                        ),
+                        [latestExercisesData]
+                    )}
                 </div>
             </section>
 
@@ -214,8 +193,9 @@ export default function Dashboard({ authenticated, userData, err }) {
                     margin-top: 70px;
                 }
 
-                :global(.dashboard .exercise--less-margin-top) {
-                    margin-top: 30px;
+                :global(.dashboard .exercise--less-margin) {
+                    margin-top: 40px;
+                    margin-bottom: 40px;
                 }
 
                 @media screen and (max-width: 1024px) {
@@ -228,7 +208,7 @@ export default function Dashboard({ authenticated, userData, err }) {
                     }
                 }
 
-                @media screen and (max-width: 512px) {
+                @media screen and (max-width: 560px) {
                     .dashboard__introduction {
                         flex-direction: column;
                         padding: 0;
@@ -241,7 +221,7 @@ export default function Dashboard({ authenticated, userData, err }) {
                     }
                 }
             `}</style>
-        </>
+        </HasAuthentication>
     );
 }
 
@@ -329,6 +309,7 @@ function QuickActionPill({ icon, link = "/", children }) {
                     box-shadow: var(--box-shadow);
                     border-radius: 20px;
                     width: 100%;
+                    min-width: 300px;
                     transition: background-color 300ms linear;
                     cursor: pointer;
                     margin-bottom: 20px;
@@ -359,6 +340,12 @@ function QuickActionPill({ icon, link = "/", children }) {
                 }
                 a {
                     text-decoration: none;
+                }
+
+                @media screen and (max-width: 560px) {
+                    .dashboard__quick-action-pill {
+                        min-width: auto;
+                    }
                 }
             `}</style>
         </>

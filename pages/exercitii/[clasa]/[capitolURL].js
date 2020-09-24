@@ -9,25 +9,29 @@ import {
 
 import { useState, useContext, useEffect, useRef } from "react";
 import { ShowAlertContext } from "../../_app";
-import Loading from "../../../components/utils/Loading";
+import Loading from "../../../components/_globals/Loading";
 import abortableFetch from "../../../utils/abortableFetch";
 import { getMultipleExercisesData } from "../../../utils/getExerciseData";
-import NotFound from "../../../components/utils/NotFound";
+import ErrorComponent from "../../../components/_globals/ErrorComponent";
 import strippedDownResponses from "../../../utils/strippedDownResponses";
 
 function getChapterData(grade, capitolURL) {
-    if (grade === "ix")
-        return exercisesGradeIX.find(
-            ({ capitolURL: capitolURLExercise }) => capitolURL === capitolURLExercise
-        );
-    else if (grade === "x")
-        return exercisesGradeX.find(
-            ({ capitolURL: capitolURLExercise }) => capitolURL === capitolURLExercise
-        );
-    else if (grade === "xi")
-        return exercisesGradeXI.find(
-            ({ capitolURL: capitolURLExercise }) => capitolURL === capitolURLExercise
-        );
+    switch (grade) {
+        case "ix":
+            return exercisesGradeIX.find(
+                ({ capitolURL: capitolURLExercise }) => capitolURL === capitolURLExercise
+            );
+        case "x":
+            return exercisesGradeX.find(
+                ({ capitolURL: capitolURLExercise }) => capitolURL === capitolURLExercise
+            );
+        case "xi":
+            return exercisesGradeXI.find(
+                ({ capitolURL: capitolURLExercise }) => capitolURL === capitolURLExercise
+            );
+        default:
+            return null;
+    }
 }
 
 export async function getStaticPaths() {
@@ -53,8 +57,7 @@ export async function getStaticPaths() {
 export async function getStaticProps({ params: { clasa, capitolURL } }) {
     const capitol = getChapterData(clasa, capitolURL);
     const { data, err } = await getMultipleExercisesData({
-        chapter: capitolURL,
-        subchapterIndex: "0",
+        lookAfter: { category: [capitolURL, "0"] },
         fieldsToExclude: strippedDownResponses.exercisesList,
     });
 
@@ -100,24 +103,24 @@ export default function ExercisesList({ clasa, capitol, subchapters, exercises }
                 <Loading />
             ) : exercisesList.data ? (
                 exercisesList.data.map(
-                    ({ exerciseId, title, difficulty, author, datePublished, source, content }) => (
+                    ({ title, difficulty, author, datePublished, source, content }) => (
                         <Exercise
                             key={`exercise_${title}`}
                             title={title}
-                            isSolved
                             authorName={author}
                             datePublished={datePublished}
                             source={source}
                             difficulty={difficulty}
                             grade={clasa}
-                            exerciseId={exerciseId}
                         >
                             {content}
                         </Exercise>
                     )
                 )
             ) : (
-                <NotFound icon="times">Nu au fost găsite exerciții de acest tip.</NotFound>
+                <ErrorComponent icon="times">
+                    Nu au fost găsite exerciții de acest tip.
+                </ErrorComponent>
             )}
         </>
     );

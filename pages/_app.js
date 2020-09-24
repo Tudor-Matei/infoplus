@@ -1,4 +1,4 @@
-import { createContext, useState, useEffect } from "react";
+import { createContext, useState, useEffect, useReducer } from "react";
 import Router from "next/router";
 import useComponentDidMount from "../components/_hooks/componentDidMount";
 
@@ -13,12 +13,14 @@ import AlertNotification from "../components/_globals/AlertNotification";
 import LoadingBar from "../components/_globals/LoadingBar";
 import { parse } from "cookie";
 import Login from "../components/_globals/Login";
+import DataPanel from "../components/_globals/DataPanel";
 
-const ThemeContext = createContext(true);
-const ShowAlertContext = createContext(null);
-const LoginModalHandler = createContext(null);
-const ShowLoginContext = createContext(null);
-const LoggedInDataContext = createContext(null);
+export const ThemeContext = createContext(true),
+    ShowAlertContext = createContext(null),
+    LoginModalHandler = createContext(null),
+    ShowLoginContext = createContext(null),
+    LoggedInDataContext = createContext(null),
+    DataPanelContext = createContext(null);
 
 Router.events.on("routeChangeStart", loadingStart);
 Router.events.on("routeChangeComplete", loadingFinished);
@@ -31,6 +33,8 @@ export default function App({ Component, pageProps }) {
         props: { type: 1, children: "" },
         customToggleHandler: null,
     });
+
+    const [panelData, setPanelData] = useReducer((_, action) => action.value, "");
 
     const [isAuthenticated, setAuthenticatedTo] = useState(false);
     const [loginModalVisible, setLoginModalVisible] = useState(false);
@@ -52,9 +56,10 @@ export default function App({ Component, pageProps }) {
         // nu conteaza daca este sters cookie-ul de catre client pentru ca putem
         // verifica pe server daca este autentificat cu refreshToken-ul
         const cookies = document.cookie && parse(document.cookie);
+        // TODO: rename setAuthenticatedTo, lol.
         if (!isAuthenticated && cookies && cookies["_accessToken"]) setAuthenticatedTo(true);
     }, [isAuthenticated]);
-
+    // TODO: fix providers. own files. this is ugli
     return (
         <>
             {alert.isVisible && (
@@ -85,22 +90,23 @@ export default function App({ Component, pageProps }) {
                 </ShowAlertContext.Provider>
             </LoggedInDataContext.Provider>
 
-            <LoggedInDataContext.Provider value={{ isAuthenticated, setAuthenticatedTo }}>
-                <ShowAlertContext.Provider value={modifyAlert}>
-                    <ShowLoginContext.Provider value={showLoginModal}>
-                        <Component {...pageProps} />
-                    </ShowLoginContext.Provider>
-                </ShowAlertContext.Provider>
-            </LoggedInDataContext.Provider>
+            <DataPanelContext.Provider value={setPanelData}>
+                <LoggedInDataContext.Provider value={{ isAuthenticated, setAuthenticatedTo }}>
+                    <ShowAlertContext.Provider value={modifyAlert}>
+                        <ShowLoginContext.Provider value={showLoginModal}>
+                            <Component {...pageProps} />
+                        </ShowLoginContext.Provider>
+                    </ShowAlertContext.Provider>
+                </LoggedInDataContext.Provider>
+            </DataPanelContext.Provider>
 
+            <DataPanel onClick={() => setPanelData("")}>{panelData}</DataPanel>
             <Contact />
             <Footer />
             <style jsx>{mainStyling}</style>
         </>
     );
 }
-
-export { ThemeContext, ShowAlertContext, ShowLoginContext, LoginModalHandler, LoggedInDataContext };
 
 function loadingStart() {
     const loadingBar = document.querySelector(".loading-bar");

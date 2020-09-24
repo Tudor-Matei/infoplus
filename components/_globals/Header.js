@@ -2,7 +2,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import DropdownMenu from "./DropdownMenu";
 import { useState, useContext } from "react";
 import Link from "next/link";
-import OverlayDarkener from "../utils/OverlayDarkener";
+import OverlayDarkener from "./OverlayDarkener";
 import { LoggedInDataContext, ShowLoginContext } from "../../pages/_app";
 import LogoutButton from "../utils/LogoutButton";
 

@@ -4,15 +4,14 @@ import bcrypt from "bcrypt";
 import validateUserData from "../../utils/validateUserData";
 import performDatabaseOperation from "../../utils/performDatabaseOperation";
 import { serialize, parse } from "cookie";
+import { loginFields } from "../../utils/lengthBoundariesForFields";
 
 export default async (req, res) => {
-    if (!req.body) return res.status(204).end();
-    const { error, validatedUserData } = validateUserData(req.body, {
-        minimumLengthForEachField: {
-            username: 5,
-            password: 8,
-        },
-        hasEmail: isEmail(JSON.parse(req.body).username),
+    if (!req.body) return res.status(400).end();
+    const parsedBody = JSON.parse(req.body);
+    const { error, validatedUserData } = validateUserData(parsedBody, {
+        lengthBoundariesForEachField: loginFields,
+        hasEmail: isEmail(parsedBody.username),
     });
 
     if (error) return res.status(403).json({ ok: false, error });
@@ -26,32 +25,36 @@ export default async (req, res) => {
             error: "Ce incerci sa faci? >->. Te rog nu mai umbla la cookie-uri, ms.",
         });
 
-    const { err, status = 500 } = await performDatabaseOperation(async (db, closeConnection) => {
+    const { err, status = 500 } = await performDatabaseOperation(async (db) => {
         const users = db.collection("users");
         const foundUser = await users.findOne({
             $or: [{ username: validatedUserData.username }, { email: validatedUserData.username }],
         });
-        function closeConnectionAndExitWithError(err, status) {
-            closeConnection();
+        function exitWithError(err, status) {
             return { data: null, err, status };
         }
 
         if (!foundUser)
-            return closeConnectionAndExitWithError(
+            return exitWithError(
                 "Numele de utilizator sau e-mailul pe care l-ați introdus nu este corect.",
                 403
             );
 
         const passwordsMatch = await bcrypt.compare(validatedUserData.password, foundUser.password);
         if (!passwordsMatch)
-            return closeConnectionAndExitWithError(
-                "Parola pe care ați introdus-o nu este corectă.",
+            return exitWithError("Parola pe care ați introdus-o nu este corectă.", 403);
+
+        if (foundUser.refreshToken) {
+            await users.updateOne({ _id: foundUser._id }, { $set: { refreshToken: "" } });
+            removeCookies(res);
+            return exitWithError(
+                "Cineva este deja logat în acest cont. Acel cineva a fost delogat. Încearcă iar.",
                 403
             );
-
+        }
         const { accessToken, refreshToken } = prepareTokens(foundUser);
         if (!accessToken || !refreshToken)
-            return closeConnectionAndExitWithError("Nu v-am gasit in baza de date.", 401);
+            return exitWithError("Nu v-am gasit in baza de date.", 401);
 
         await users.updateOne({ _id: foundUser._id }, { $set: { refreshToken } });
 
@@ -67,7 +70,6 @@ export default async (req, res) => {
             }),
         ]);
 
-        closeConnection();
         return { data: null, err: null, status: 200 };
     });
 
@@ -75,6 +77,22 @@ export default async (req, res) => {
 
     return res.status(200).json({ ok: true });
 };
+
+function removeCookies(res) {
+    res.setHeader("Set-Cookie", [
+        serialize("_accessToken", "", {
+            maxAge: 0,
+            sameSite: true,
+            httpOnly: true,
+            path: "/",
+        }),
+        serialize("_refreshToken", "", {
+            maxAge: 0,
+            sameSite: true,
+            path: "/",
+        }),
+    ]);
+}
 
 function prepareTokens(foundUser) {
     const accessToken = jwt.sign(

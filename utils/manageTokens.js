@@ -4,11 +4,11 @@ import { parse } from "cookie";
 import performDatabaseOperation from "./performDatabaseOperation";
 import { ObjectId } from "mongodb";
 
-function errorObject(err) {
+export function errorObject(err) {
     return { data: null, err };
 }
 
-export async function getTokenInfo(cookieHeader, needsRefreshToken = false) {
+export function getTokenInfo(cookieHeader, needsRefreshToken = false) {
     if (!cookieHeader) return errorObject("Nu sunteți autentificat.");
 
     const tokens = parse(cookieHeader);
@@ -18,7 +18,7 @@ export async function getTokenInfo(cookieHeader, needsRefreshToken = false) {
         const decoded = !needsRefreshToken
             ? jwt.verify(tokens["_accessToken"], process.env.ACCESS_TOKEN_SECRET)
             : jwt.verify(tokens["_refreshToken"], process.env.REFRESH_TOKEN_SECRET);
-        return { data: decoded };
+        return { data: decoded, err: null };
     } catch {
         return errorObject("tokinv");
     }
@@ -32,10 +32,9 @@ export async function getNewAccessToken(cookieHeader) {
 
     const refreshToken = tokens["_refreshToken"];
 
-    const { data, err } = await performDatabaseOperation(async (db, closeConnection) => {
+    const { data, err } = await performDatabaseOperation(async (db) => {
         const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
         const foundUser = await db.collection("users").findOne({ _id: ObjectId(decoded.id) });
-        closeConnection();
 
         if (foundUser.refreshToken !== refreshToken)
             return errorObject("S-a întâmplat ceva ciudat. Vă rugăm să ne scuzați.");

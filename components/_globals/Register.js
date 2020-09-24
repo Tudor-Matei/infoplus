@@ -2,12 +2,13 @@ import { useState, useContext } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import formModal from "../../styles/formModal";
 
-import OverlayDarkener from "../utils/OverlayDarkener";
+import OverlayDarkener from "./OverlayDarkener";
 import InputAreas from "../utils/InputAreas";
 import inputAreaRegisterData from "../utils/inputAreaRegisterData";
 import SubmitButton from "../utils/SubmitButton";
 
 import { RegisterModalHandler } from "../Home/Main";
+import { registerFields } from "../../utils/lengthBoundariesForFields";
 
 export default function Register() {
     const [userDetails, setUserDetail] = useState({
@@ -48,12 +49,7 @@ export default function Register() {
                         <SubmitButton
                             userDetails={userDetails}
                             fieldOptions={{
-                                minimumLengthForEachField: {
-                                    name: 3,
-                                    surname: 3,
-                                    username: 5,
-                                    password: 8,
-                                },
+                                lengthBoundariesForEachField: registerFields,
                                 hasEmail: true,
                             }}
                             showErrorMessage={showErrorMessage}

@@ -1,9 +1,9 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-export default function ErrorCircle() {
+export default function ErrorCircle({ icon = "times-circle" }) {
     return (
         <>
-            <FontAwesomeIcon icon="times-circle" className="error-circle" />
+            <FontAwesomeIcon icon={icon} className="error-circle" />
             <style jsx global>{`
                 .error-circle {
                     background-color: var(--accent-failure-primary);
