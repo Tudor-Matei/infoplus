@@ -27,7 +27,6 @@ Router.events.on("routeChangeComplete", loadingFinished);
 Router.events.on("routeChangeError", loadingFinished);
 
 export default function App({ Component, pageProps }) {
-    const [isLightTheme, setTheme] = useState(true);
     const [alert, modifyAlert] = useState({
         isVisible: false,
         props: { type: 1, children: "" },
@@ -39,16 +38,6 @@ export default function App({ Component, pageProps }) {
     const [isAuthenticated, setAuthenticatedTo] = useState(false);
     const [loginModalVisible, setLoginModalVisible] = useState(false);
     const showLoginModal = () => setLoginModalVisible(!loginModalVisible);
-
-    useComponentDidMount(() => {
-        const localTheme =
-            window.localStorage.getItem("theme") ||
-            (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches
-                ? "dark"
-                : "light");
-
-        setTheme(localTheme === "light");
-    });
 
     useEffect(() => {
         // seteaza daca este autentificat bazat pe existenta cookie-ului pentru cand se viziteaza
@@ -72,15 +61,13 @@ export default function App({ Component, pageProps }) {
                 </AlertNotification>
             )}
             <LoadingBar />
-            <ThemeContext.Provider value={{ isLightTheme, setTheme }}>
-                <LoggedInDataContext.Provider value={{ isAuthenticated, setAuthenticatedTo }}>
-                    <ShowLoginContext.Provider value={showLoginModal}>
-                        <ShowAlertContext.Provider value={modifyAlert}>
-                            <Header />
-                        </ShowAlertContext.Provider>
-                    </ShowLoginContext.Provider>
-                </LoggedInDataContext.Provider>
-            </ThemeContext.Provider>
+            <LoggedInDataContext.Provider value={{ isAuthenticated, setAuthenticatedTo }}>
+                <ShowLoginContext.Provider value={showLoginModal}>
+                    <ShowAlertContext.Provider value={modifyAlert}>
+                        <Header />
+                    </ShowAlertContext.Provider>
+                </ShowLoginContext.Provider>
+            </LoggedInDataContext.Provider>
 
             <LoggedInDataContext.Provider value={{ isAuthenticated, setAuthenticatedTo }}>
                 <ShowAlertContext.Provider value={modifyAlert}>

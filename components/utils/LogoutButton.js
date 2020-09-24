@@ -55,7 +55,7 @@ function logout(modifyAlert, router, isAuthenticatedHandler = null) {
                     },
                     customToggleHandler: () => router.pathname !== "/" && router.push("/"),
                 });
-                if (isAuthenticatedHandler) isAuthenticatedHandler.setAuthenticatedTo(false);
+                window.__setAuthenticated(false);
             }
         });
 }

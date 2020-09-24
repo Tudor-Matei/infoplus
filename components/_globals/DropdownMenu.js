@@ -2,8 +2,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState, useContext } from "react";
 import Link from "next/link";
 
-import { light, dark } from "../../styles/theme";
-import { ThemeContext, LoggedInDataContext } from "../../pages/_app";
+import useComponentDidMount from "../_hooks/componentDidMount";
+import { LoggedInDataContext } from "../../pages/_app";
 
 export default function DropdownMenu({ isDropdownToggled }) {
     return (
@@ -14,7 +14,6 @@ export default function DropdownMenu({ isDropdownToggled }) {
                 }`}
             >
                 <DropdownMenuUl />
-                <ThemeConsumer Component={ThemeStyleSheet} />
             </div>
             <style jsx global>{`
                 .dropdown-menu-header {
@@ -57,7 +56,7 @@ function DropdownMenuUl() {
                     ]}
                 </DropdownMenuAccordion>
                 <hr className="dropdown-menu-header__hr" />
-                <ThemeConsumer Component={ThemeChangerButton} />
+                <ThemeChangerButton />
                 <hr className="dropdown-menu-header__hr" />
                 <li className="dropdown-menu-header__main-li">Mod proiector</li>
                 {isAuthenticated && (
@@ -183,33 +182,24 @@ function DropdownMenuAccordion({ title, children }) {
     );
 }
 
-function ThemeConsumer({ Component }) {
+function ThemeChangerButton() {
+    const [theme, setTheme] = useState("dark");
+    useComponentDidMount(() => {
+        setTheme(window.__THEME);
+    });
+
     return (
-        <ThemeContext.Consumer>
-            {({ isLightTheme, setTheme }) => {
-                return <Component isLightTheme={isLightTheme} setTheme={setTheme} />;
+        <li
+            className="dropdown-menu-header__main-li"
+            onClick={() => {
+                window.__THEME = window.__THEME === "dark" ? "light" : "dark";
+                document.documentElement.className = `theme-${window.__THEME}`;
+
+                localStorage.setItem("theme", window.__THEME);
+                setTheme(window.__THEME);
             }}
-        </ThemeContext.Consumer>
-    );
-}
-
-function ThemeStyleSheet({ isLightTheme }) {
-    const currentTheme = isLightTheme ? light : dark;
-    return (
-        <style jsx global>
-            {currentTheme}
-        </style>
-    );
-}
-
-function ThemeChangerButton({ isLightTheme, setTheme }) {
-    const changeTheme = () => {
-        setTheme(!isLightTheme);
-        window.localStorage.setItem("theme", !isLightTheme ? "light" : "dark");
-    };
-    return (
-        <li className="dropdown-menu-header__main-li" onClick={changeTheme}>
-            Tema {isLightTheme ? "Intunecata" : "Luminoasa"}
+        >
+            Tema {theme === "dark" ? "Întunecată" : "Luminoasă"}
         </li>
     );
 }
