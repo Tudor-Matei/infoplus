@@ -20,8 +20,8 @@ function exitWith(err) {
             userData: null,
             latestExercisesData: null,
             solvedFailedExercises: null,
+            err,
         },
-        err,
     };
 }
 
@@ -32,8 +32,8 @@ function exitOperationWith(err) {
             userData: null,
             latestExercisesData: null,
             solvedFailedExercises: null,
+            err,
         },
-        err,
     };
 }
 

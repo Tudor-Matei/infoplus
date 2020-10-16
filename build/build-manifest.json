@@ -10,7 +10,7 @@
     "static/development/_ssgManifest.js"
   ],
   "pages": {
-    "/": [
+    "/404": [
       "static/runtime/webpack.js",
       "static/runtime/main.js"
     ],
@@ -26,19 +26,7 @@
       "static/runtime/polyfills.js",
       "static/runtime/polyfills.js.map"
     ],
-    "/dashboard": [
-      "static/runtime/webpack.js",
-      "static/runtime/main.js"
-    ],
-    "/index": [
-      "static/runtime/webpack.js",
-      "static/runtime/main.js"
-    ],
-    "/informatii": [
-      "static/runtime/webpack.js",
-      "static/runtime/main.js"
-    ],
-    "/next/dist/pages/_error": [
+    "/exercitiu/[title]": [
       "static/runtime/webpack.js",
       "static/runtime/main.js"
     ]

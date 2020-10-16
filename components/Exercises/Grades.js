@@ -1,15 +1,16 @@
+import { createContext } from "react";
+
 import ExercisesPanel from "./Panel";
 import {
     exercisesGradeIX,
     exercisesGradeX,
     exercisesGradeXI,
 } from "../../utils/exercisesGradesData";
-import { createContext } from "react";
 
-const CapitolURLContext = createContext("");
+export const CapitolURLContext = createContext("");
 export function ExercisesGradeIX() {
     return exercisesGradeIX.map(({ title, accent, grade, description, capitolURL }, i) => (
-        <CapitolURLContext.Provider value={capitolURL}>
+        <CapitolURLContext.Provider key={`grade_${grade}-provider_${i}`} value={capitolURL}>
             <ExercisesPanel
                 key={`exercises-panel_${grade}-${i}`}
                 title={title}
@@ -24,7 +25,7 @@ export function ExercisesGradeIX() {
 
 export function ExercisesGradeX() {
     return exercisesGradeX.map(({ title, accent, grade, description, capitolURL }, i) => (
-        <CapitolURLContext.Provider value={capitolURL}>
+        <CapitolURLContext.Provider key={`grade_${grade}-provider_${i}`} value={capitolURL}>
             <ExercisesPanel
                 key={`exercises-panel_${grade}-${i}`}
                 title={title}
@@ -40,7 +41,7 @@ export function ExercisesGradeX() {
 
 export function ExercisesGradeXI() {
     return exercisesGradeXI.map(({ title, accent, grade, description, capitolURL }, i) => (
-        <CapitolURLContext.Provider value={capitolURL}>
+        <CapitolURLContext.Provider key={`grade_${grade}-provider_${i}`} value={capitolURL}>
             <ExercisesPanel
                 key={`exercises-panel_${grade}-${i}`}
                 title={title}
@@ -53,5 +54,3 @@ export function ExercisesGradeXI() {
         </CapitolURLContext.Provider>
     ));
 }
-
-export { CapitolURLContext };

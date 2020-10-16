@@ -39,6 +39,11 @@ export default function ExercisesPanel({ title, children, accent, grade }) {
                     margin-bottom: 30px;
                 }
 
+                :global(.exercises-container__exercises-panel:hover
+                        .exercises-container__wave-svg) {
+                    transform: scaleX(2.5);
+                }
+
                 @media screen and (max-width: 1024px) {
                     .exercises-container__exercises-panel {
                         width: 90%;
@@ -75,10 +80,9 @@ function ButtonStart({ grade }) {
             <style jsx>{`
                 button {
                     display: block;
-                    /* prettier-ignore */
-                    background-color: var(--accent-${
-                        grade === "ix" ? "primary" : grade === "x" ? "secondary" : "tertiary"
-                    })
+                    background-color: var(
+                        --accent-${grade === "ix" ? "primary" : grade === "x" ? "secondary" : "tertiary"}
+                    );
                 }
             `}</style>
         </>
@@ -91,6 +95,7 @@ function Wave({ accent }) {
             viewBox="-100 0 676 303"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
+            className="exercises-container__wave-svg"
             preserveAspectRatio="none"
         >
             <path
@@ -107,6 +112,7 @@ function Wave({ accent }) {
                     top: 0;
                     right: 0;
                     z-index: -1;
+                    transition: transform 500ms ease;
                 }
             `}</style>
         </svg>

@@ -897,14 +897,14 @@ var __jsx = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement;
       __source: {
         fileName: _jsxFileName,
         lineNumber: 6,
-        columnNumber: 13
+        columnNumber: 7
       }
     }, __jsx(next_document__WEBPACK_IMPORTED_MODULE_1__["Head"], {
       __self: this,
       __source: {
         fileName: _jsxFileName,
         lineNumber: 7,
-        columnNumber: 17
+        columnNumber: 9
       }
     }, __jsx("script", {
       dangerouslySetInnerHTML: {
@@ -915,28 +915,28 @@ var __jsx = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement;
       __source: {
         fileName: _jsxFileName,
         lineNumber: 8,
-        columnNumber: 21
+        columnNumber: 11
       }
     })), __jsx("body", {
       __self: this,
       __source: {
         fileName: _jsxFileName,
         lineNumber: 15,
-        columnNumber: 17
+        columnNumber: 9
       }
     }, __jsx(next_document__WEBPACK_IMPORTED_MODULE_1__["Main"], {
       __self: this,
       __source: {
         fileName: _jsxFileName,
         lineNumber: 16,
-        columnNumber: 21
+        columnNumber: 11
       }
     }), __jsx(next_document__WEBPACK_IMPORTED_MODULE_1__["NextScript"], {
       __self: this,
       __source: {
         fileName: _jsxFileName,
         lineNumber: 17,
-        columnNumber: 21
+        columnNumber: 11
       }
     })));
   }
@@ -951,15 +951,7 @@ function defaultThemeInitializer() {
     console.error("Nu s-a putut seta tema de culoare. Motiv:");
     console.error(e);
   }
-} // TODO: poate?
-// function loggedInDataInitializer() {
-//     window.__setAuthenticated = (status) => {
-//         window.__AUTHENTICATED = status;
-//     };
-//     const cookies = document.cookie && parse(document.cookie);
-//     if (cookies) window.__setAuthenticated(true);
-//     else window.__setAuthenticated(false);
-// }
+}
 
 /***/ }),
 

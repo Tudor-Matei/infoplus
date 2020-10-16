@@ -13,7 +13,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 export default function Revision() {
     const { generalData, contentData, inputData, testsData } = useContext(FieldContext);
     const updateView = useContext(ComposeExercisesViewContext);
-    const modifyAlert = useContext(ShowAlertContext);
+    const createAlert = useContext(ShowAlertContext);
     const abortRef = useRef(null);
 
     const formattedGeneralData = useCallback(() => {
@@ -41,25 +41,19 @@ export default function Revision() {
         });
 
         if (!abortRef.current) abortRef.current = abort;
-        data.then((r) => r.json()).then(({ ok = false, err = null }) => {
-            if (!ok)
-                modifyAlert({
-                    isVisible: true,
-                    props: {
-                        type: 0,
-                        children: err || "A apărut o eroare internă, vă rugăm să ne scuzați.",
-                    },
+        data.then((r) => r.json()).then(
+            ({ ok = false, err = "A apărut o eroare internă, vă rugăm să ne scuzați." }) => {
+                if (!ok) {
+                    createAlert({ ofType: "error", saying: err });
+                    return;
+                }
+
+                createAlert({
+                    ofType: "success",
+                    onClose: () => updateView({ type: "normal" }),
                 });
-            else
-                modifyAlert({
-                    isVisible: true,
-                    props: {
-                        type: 1,
-                        children: "Operațiunea a fost efectuată cu succes!",
-                    },
-                    customToggleHandler: () => updateView({ type: "normal" }),
-                });
-        });
+            }
+        );
     }, [generalData, contentData, inputData, testsData]);
 
     return (

@@ -4,7 +4,7 @@ import performDatabaseOperation from "../../utils/performDatabaseOperation";
 import { ObjectId } from "mongodb";
 
 export default async (req, res) => {
-    const { data, err } = await getTokenInfo(req.headers["cookie"], true);
+    const { data, err } = getTokenInfo(req.headers["cookie"], true);
 
     if (data) {
         const { err: errDb } = await performDatabaseOperation(async (db) => {

@@ -223,12 +223,11 @@ function UserSolution({ name, surname, username, datePublished, testsPoints, sol
             `}</style>
         </>
     );
-    // TODO: dis
 }
 
 function HiddenExerciseDataButton({ whatToGet, children }) {
     const setPanelData = useContext(DataPanelContext);
-    const modifyAlert = useContext(ShowAlertContext);
+    const createAlert = useContext(ShowAlertContext);
     const { exerciseId, hiddenExerciseData, setHiddenExerciseData, userSolutions } = useContext(
         ExerciseInfoData
     );
@@ -258,9 +257,10 @@ function HiddenExerciseDataButton({ whatToGet, children }) {
             })
                 .then((r) => r.json())
                 .then(({ data, err }) => {
-                    if (err)
-                        return modifyAlert({ isVisible: true, props: { type: 0, children: err } });
-
+                    if (err) {
+                        createAlert({ ofType: "error", saying: err });
+                        return;
+                    }
                     setHiddenExerciseData({ value: data });
                     setPanelData({
                         value:

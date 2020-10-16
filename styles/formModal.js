@@ -45,30 +45,25 @@ export default css.global`
 
     .modal__buttons-container {
         display: flex;
-        justify-content: flex-end;
-        margin-top: 30px;
+        flex-flow: wrap row-reverse;
+        justify-content: flex-start;
+        margin-right: 10px;
     }
 
-    :global(.modal__wave) {
+    .modal__wave {
         width: 100%;
         height: 100%;
+    }
+
+    .modal .input-area input,
+    .modal .input-area select {
+        width: 100%;
+        height: 40px;
     }
 
     .modal__input-panels {
         width: 80%;
         margin: 50px auto;
-    }
-
-    .modal__input-panel {
-        width: 100%;
-    }
-
-    .modal__input-panel-group {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        width: 100%;
-        margin: 30px 0;
     }
 
     .error-message {
@@ -83,20 +78,20 @@ export default css.global`
         .modal__input-panels {
             width: 90%;
         }
-
-        .modal__input-panel-group {
-            flex-direction: column;
-            margin: 0;
-        }
-
-        .modal__input-panel:nth-child(n) {
-            margin: 10px 0;
-        }
     }
 
     @media screen and (max-width: 425px) {
         .modal__title {
             font-size: var(--font-smaller);
+        }
+
+        .modal__wave {
+            height: 125px;
+        }
+
+        .modal__buttons-container {
+            justify-content: center;
+            margin-right: 0;
         }
     }
 `;

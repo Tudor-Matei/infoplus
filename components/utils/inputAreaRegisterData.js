@@ -1,22 +1,20 @@
-import { registerFields } from "../../utils/lengthBoundariesForFields";
+import { registerBoundaries } from "../../utils/lengthBoundariesForFields";
 
 export default [
     {
         title: "Nume",
-        inputType: "text",
         inputProps: {
-            minLength: registerFields.name[0],
-            maxLength: registerFields.name[1],
+            minLength: registerBoundaries.name[0],
+            maxLength: registerBoundaries.name[1],
             required: true,
         },
         fieldName: "name",
     },
     {
         title: "Prenume",
-        inputType: "text",
         inputProps: {
-            minLength: registerFields.surname[0],
-            maxLength: registerFields.surname[1],
+            minLength: registerBoundaries.surname[0],
+            maxLength: registerBoundaries.surname[1],
             required: true,
         },
         fieldName: "surname",
@@ -35,28 +33,31 @@ export default [
     },
     {
         title: "Nume Utilizator",
-        inputType: "text",
         inputProps: {
-            minLength: registerFields.username[0],
-            maxLength: registerFields.username[1],
+            minLength: registerBoundaries.username[0],
+            maxLength: registerBoundaries.username[1],
             required: true,
         },
         fieldName: "username",
     },
     {
         title: "E-mail",
-        inputType: "email",
         inputProps: {
-            minLength: registerFields.email[0],
-            maxLength: registerFields.email[1],
+            type: "email",
+            minLength: registerBoundaries.email[0],
+            maxLength: registerBoundaries.email[1],
             required: true,
         },
         fieldName: "email",
     },
     {
         title: "Parola",
-        inputType: "password",
-        inputProps: { minLength: 8, required: true },
+        inputProps: {
+            type: "password",
+            minLength: registerBoundaries.password[0],
+            maxLength: registerBoundaries.password[1],
+            required: true,
+        },
         fieldName: "password",
     },
 ];

@@ -1,51 +1,35 @@
 import Document, { Html, Head, Main, NextScript } from "next/document";
 
 export default class extends Document {
-    render() {
-        return (
-            <Html>
-                <Head>
-                    <script
-                        dangerouslySetInnerHTML={{
-                            __html: `
+  render() {
+    return (
+      <Html>
+        <Head>
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `
                             (${defaultThemeInitializer})()`,
-                        }}
-                    ></script>
-                </Head>
-                <body>
-                    <Main />
-                    <NextScript />
-                </body>
-            </Html>
-        );
-    }
+            }}
+          ></script>
+        </Head>
+        <body>
+          <Main />
+          <NextScript />
+        </body>
+      </Html>
+    );
+  }
 }
 
 function defaultThemeInitializer() {
-    try {
-        window.__THEME =
-            window.localStorage.getItem("theme") ||
-            (window.matchMedia
-                ? window.matchMedia("(prefers-color-scheme: dark)").matches
-                    ? "dark"
-                    : "light"
-                : "light");
+  try {
+    window.__THEME =
+      window.localStorage.getItem("theme") ||
+      (window.matchMedia ? (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light") : "light");
 
-        document.documentElement.className = "theme-" + window.__THEME;
-    } catch (e) {
-        console.error("Nu s-a putut seta tema de culoare. Motiv:");
-        console.error(e);
-    }
+    document.documentElement.className = "theme-" + window.__THEME;
+  } catch (e) {
+    console.error("Nu s-a putut seta tema de culoare. Motiv:");
+    console.error(e);
+  }
 }
-
-// TODO: poate?
-
-// function loggedInDataInitializer() {
-//     window.__setAuthenticated = (status) => {
-//         window.__AUTHENTICATED = status;
-//     };
-
-//     const cookies = document.cookie && parse(document.cookie);
-//     if (cookies) window.__setAuthenticated(true);
-//     else window.__setAuthenticated(false);
-// }

@@ -9,12 +9,11 @@ export default async (req, res) => {
         const solutions = db.collection("solutions");
         const exercises = db.collection("exercises");
 
-        // TODO: incearca sa nu mai suprascriu cu :null gen accessToken: null, ci sa folosesc omitKey.
         req.body.exerciseId = ObjectId(req.body.exerciseId);
         await solutions.insertOne(omitKey(["accessToken"], req.body));
         await exercises.updateOne({ _id: req.body.exerciseId }, { $inc: { sentSolutions: 1 } });
 
-        return { data: null, err: null };
+        return { err: null };
     });
 
     if (err) return res.status(500).json({ ok: false });

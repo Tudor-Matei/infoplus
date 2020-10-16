@@ -5,6 +5,7 @@ import Link from "next/link";
 import OverlayDarkener from "./OverlayDarkener";
 import { LoggedInDataContext, ShowLoginContext } from "../../pages/_app";
 import LogoutButton from "../utils/LogoutButton";
+import SearchExercise from "../utils/SearchExercise";
 
 export default function Header() {
     const [isDropdownToggled, toggleDropdown] = useState(false);
@@ -58,8 +59,10 @@ function IconsRightMenu({ isDropdownToggled, toggleMenuDropdown }) {
 
     return (
         <div className="header__icons-right">
-            <div className="header__button">
-                <FontAwesomeIcon icon="search" className="header__icon" />
+            <div className="header__button header__button--has-search-exercise">
+                <SearchExercise inputWidth="210px">
+                    <FontAwesomeIcon icon="search" className="header__icon header__icon--search" />
+                </SearchExercise>
             </div>
             {isAuthenticated ? (
                 <>
@@ -100,6 +103,12 @@ function IconsRightMenu({ isDropdownToggled, toggleMenuDropdown }) {
                 .header__button {
                     margin: 0 15px;
                     cursor: pointer;
+                    transition: opacity 300ms linear;
+                }
+
+                .header__button:hover:not(.header__button--has-search-exercise),
+                .header__icon--search:hover {
+                    opacity: 0.5;
                 }
 
                 .header__menu-title {
@@ -107,8 +116,11 @@ function IconsRightMenu({ isDropdownToggled, toggleMenuDropdown }) {
                     font-weight: 800;
                 }
 
-                .header__icon,
-                .header__menu-icon {
+                :global(.header__icon) {
+                    transition-property: transform, opacity !important;
+                }
+
+                :global(.header__icon, .header__menu-icon) {
                     fill: var(--background-quaternary);
                     transition: fill 300ms ease;
                     width: 25px !important;
@@ -121,6 +133,12 @@ function IconsRightMenu({ isDropdownToggled, toggleMenuDropdown }) {
 
                 .header__menu-icon--active {
                     transform: rotateZ(90deg);
+                }
+
+                @media screen and (max-width: 576px) {
+                    .header__button--has-search-exercise {
+                        display: none;
+                    }
                 }
             `}</style>
         </div>

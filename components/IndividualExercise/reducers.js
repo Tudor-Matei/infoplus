@@ -1,11 +1,25 @@
+import genericReducer from "../utils/genericReducer";
+
 export const exerciseStatsReducer = {
-    initialState: {
-        isSolved: userSolutions.some(({ testsPoints }) => testsPoints === 100),
-        sentSolutions: exerciseData.sentSolutions,
-        needsHint: userSolutions.length > 1,
-        userSolutions: userSolutions.length,
-    },
+    initialState: (state) => state,
+    reducer: genericReducer,
+};
+
+export const userSolutionsReducer = {
+    initialState: (state) => state,
     reducer(state, action) {
-        return { ...state, [action.type]: action.value };
+        return [...state, action.value];
+    },
+};
+
+export const testsStatsReducer = {
+    initialState: { testsPoints: 0, testsResults: [] },
+    reducer: genericReducer,
+};
+
+export const hiddenExerciseDataReducer = {
+    initialState: null,
+    reducer(_, action) {
+        return { ...action.value };
     },
 };

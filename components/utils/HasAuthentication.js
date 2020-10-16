@@ -10,19 +10,15 @@ export default function HasAuthentication({
     } = {},
     children,
 }) {
-    const modifyAlert = useContext(ShowAlertContext);
+    const createAlert = useContext(ShowAlertContext);
     const router = useRouter();
 
     useComponentDidMount(() => {
         if (!authenticated || err)
-            modifyAlert({
-                isVisible: true,
-                props: {
-                    type: 0,
-                    children: !authenticated && !err ? "Nu sunteți autentificat." : err,
-                },
-                // TODO replace all instances of Router with useRouter
-                customToggleHandler: () => router.push("/"),
+            createAlert({
+                ofType: "error",
+                saying: !authenticated && !err ? "Nu sunteți autentificat." : err,
+                onClose: () => router.push("/"),
             });
     });
     if (!authenticated || err) return null;

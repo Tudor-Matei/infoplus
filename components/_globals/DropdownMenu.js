@@ -4,6 +4,7 @@ import Link from "next/link";
 
 import useComponentDidMount from "../_hooks/componentDidMount";
 import { LoggedInDataContext } from "../../pages/_app";
+import SearchExercise, { SearchInput } from "../utils/SearchExercise";
 
 export default function DropdownMenu({ isDropdownToggled }) {
     return (
@@ -44,9 +45,20 @@ function DropdownMenuUl() {
     return (
         <>
             <ul className="dropdown-menu-header__ul">
-                <Link href="/exercitii">
-                    <li className="dropdown-menu-header__main-li">Exerciții</li>
-                </Link>
+                <SearchExercise
+                    inputWidth="185px"
+                    style={{ marginBottom: "15px", paddingLeft: "15px" }}
+                >
+                    <li className="dropdown-menu-header__main-li">Caută exercițiu</li>
+                </SearchExercise>
+                <hr className="dropdown-menu-header__hr" />
+                <DropdownMenuAccordion title="Exerciții">
+                    {[
+                        { titleLi: "Clasa IX", href: "/exercitii#ix" },
+                        { titleLi: "Clasa X", href: "/exercitii#x" },
+                        { titleLi: "Clasa XI", href: "/exercitii#xi" },
+                    ]}
+                </DropdownMenuAccordion>
                 <hr className="dropdown-menu-header__hr" />
                 <DropdownMenuAccordion title="Resurse">
                     {[

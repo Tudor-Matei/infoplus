@@ -1,14 +1,14 @@
 import performDatabaseOperation from "../../utils/performDatabaseOperation";
 import validateUserData from "../../utils/validateUserData";
 import bcrypt from "bcrypt";
-import { registerFields } from "../../utils/lengthBoundariesForFields";
+import { registerBoundaries } from "../../utils/lengthBoundariesForFields";
 
 const SALT_ROUNDS = 10;
 
 export default async (req, res) => {
     if (!req.body) return res.status(400).end();
     const { error, validatedUserData } = validateUserData(JSON.parse(req.body), {
-        lengthBoundariesForEachField: registerFields,
+        lengthBoundariesForEachField: registerBoundaries,
         hasEmail: true,
     });
     if (error) return res.status(403).json({ ok: false, error });

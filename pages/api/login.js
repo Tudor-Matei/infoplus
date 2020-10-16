@@ -4,13 +4,13 @@ import bcrypt from "bcrypt";
 import validateUserData from "../../utils/validateUserData";
 import performDatabaseOperation from "../../utils/performDatabaseOperation";
 import { serialize, parse } from "cookie";
-import { loginFields } from "../../utils/lengthBoundariesForFields";
+import { loginBoundaries } from "../../utils/lengthBoundariesForFields";
 
 export default async (req, res) => {
     if (!req.body) return res.status(400).end();
     const parsedBody = JSON.parse(req.body);
     const { error, validatedUserData } = validateUserData(parsedBody, {
-        lengthBoundariesForEachField: loginFields,
+        lengthBoundariesForEachField: loginBoundaries,
         hasEmail: isEmail(parsedBody.username),
     });
 
@@ -31,7 +31,7 @@ export default async (req, res) => {
             $or: [{ username: validatedUserData.username }, { email: validatedUserData.username }],
         });
         function exitWithError(err, status) {
-            return { data: null, err, status };
+            return { err, status };
         }
 
         if (!foundUser)
@@ -70,7 +70,7 @@ export default async (req, res) => {
             }),
         ]);
 
-        return { data: null, err: null, status: 200 };
+        return { err: null, status: 200 };
     });
 
     if (err) return res.status(status).json({ ok: false, error: err });
@@ -95,24 +95,25 @@ function removeCookies(res) {
 }
 
 function prepareTokens(foundUser) {
-    const accessToken = jwt.sign(
-        {
-            id: foundUser._id.toHexString(),
-            name: foundUser.name,
-            surname: foundUser.surname,
-            username: foundUser.username,
-        },
-        process.env.ACCESS_TOKEN_SECRET,
-        { expiresIn: "15s" }
-    );
-
-    const refreshToken = jwt.sign(
-        {
-            id: foundUser._id.toHexString(),
-            username: foundUser.username,
-        },
-        process.env.REFRESH_TOKEN_SECRET,
-        { expiresIn: "7d" }
-    );
-    return { accessToken, refreshToken };
+    const foundUserId = foundUser._id.toHexString();
+    return {
+        accessToken: jwt.sign(
+            {
+                id: foundUserId,
+                name: foundUser.name,
+                surname: foundUser.surname,
+                username: foundUser.username,
+            },
+            process.env.ACCESS_TOKEN_SECRET,
+            { expiresIn: "15m" }
+        ),
+        refreshToken: jwt.sign(
+            {
+                id: foundUserId,
+                username: foundUser.username,
+            },
+            process.env.REFRESH_TOKEN_SECRET,
+            { expiresIn: "7d" }
+        ),
+    };
 }

@@ -15,13 +15,19 @@ import strippedDownResponses from "../../utils/strippedDownResponses";
 import getAuthInfo from "../../utils/getAuthInfo";
 
 import { LoggedInDataContext, ShowAlertContext } from "../_app";
+import {
+    exerciseStatsReducer,
+    hiddenExerciseDataReducer,
+    testsStatsReducer,
+    userSolutionsReducer,
+} from "../../components/IndividualExercise/reducers";
 
 function propsWithError(err) {
     return { props: { exerciseData: null, authenticated: null, userData: null, err } };
 }
 
 export async function getServerSideProps({ req, res, params }) {
-    if (!/[a-zA-Z0-9]/g.test(params.title))
+    if (/[^a-zA-Z0-9]/g.test(params.title))
         return propsWithError("Titlul exercițiului este invalid.");
 
     const { authenticated, userData, err: authErr } = await getAuthInfo(req, res);
@@ -33,7 +39,6 @@ export async function getServerSideProps({ req, res, params }) {
     });
     if (singleExerciseErr) return propsWithError(singleExerciseErr);
 
-    // TODO: fa in /compile pentru a privatiza testele... sau encripteaza-le
     const { data: tests, err: errGettingTests } = await getHiddenExerciseData({
         exerciseId: singleExerciseData._id,
         fieldsToExclude: { tests: 1, _id: 0 },
@@ -82,54 +87,50 @@ export default function Exercitiu({
     userData,
     err,
 }) {
+    const createAlert = useContext(ShowAlertContext);
+    const router = useRouter();
+
+    if (err) {
+        useComponentDidMount(() => {
+            createAlert({
+                ofType: "error",
+                saying: err,
+                onClose: () => router.push("/exercitii"),
+            });
+        });
+        return null;
+    }
+
     const [needsResultsComponent, setResultsComponent] = useState(false);
     const toggleResultsComponent = useCallback(() => setResultsComponent(!needsResultsComponent), [
         needsResultsComponent,
     ]);
     const [isLoading, setLoading] = useState(false);
     const [userSolutions, setUserSolutions] = useReducer(
-        (state, action) => [...state, action.value],
-        userSolutionsProp
+        userSolutionsReducer.reducer,
+        userSolutionsReducer.initialState(userSolutionsProp)
     );
 
     const [exerciseStats, updateExerciseStats] = useReducer(
-        (state, action) => ({ ...state, [action.type]: action.value }),
-        {
+        exerciseStatsReducer.reducer,
+        exerciseStatsReducer.initialState({
             isSolved: userSolutions.some(({ testsPoints }) => testsPoints === 100),
             sentSolutions: exerciseData.sentSolutions,
             needsHint: userSolutions.length > 1,
             userSolutions: userSolutions.length,
-        }
+        })
     );
     const [testsStats, updateTestsStats] = useReducer(
-        (state, action) => ({ ...state, [action.type]: action.value }),
-        {
-            testsResults: [],
-            testsPoints: 0,
-        }
+        testsStatsReducer.reducer,
+        testsStatsReducer.initialState
     );
-
-    // TODO: move reducers to own file
 
     const [hiddenExerciseData, setHiddenExerciseData] = useReducer(
-        (_, action) => ({ ...action.value }),
-        null
+        hiddenExerciseDataReducer.reducer,
+        hiddenExerciseDataReducer.initialState
     );
 
-    // TODO: transforma in useReducer
-    const modifyAlert = useContext(ShowAlertContext);
-    const router = useRouter();
     const { isAuthenticated: isAuthenticatedFromState } = useContext(LoggedInDataContext);
-
-    useComponentDidMount(() => {
-        if (err)
-            modifyAlert({
-                isVisible: true,
-                props: { type: 0, children: err },
-                customToggleHandler: () => router.push("/exercitii"),
-            });
-    });
-    if (err) return null;
 
     return (
         <>

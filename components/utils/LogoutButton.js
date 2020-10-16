@@ -4,13 +4,16 @@ import { useRouter } from "next/router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export default function LogoutButton({ type, className, classNameForIcon }) {
-    const modifyAlert = useContext(ShowAlertContext);
+    const createAlert = useContext(ShowAlertContext);
     const isAuthenticatedHandler = useContext(LoggedInDataContext);
     const router = useRouter();
 
     if (type === "anchor")
         return (
-            <a href="#" onClick={() => logout(modifyAlert, router, isAuthenticatedHandler)}>
+            <a
+                href="#"
+                onClick={() => logoutAndShowReults(createAlert, router, isAuthenticatedHandler)}
+            >
                 Deloghează-te
             </a>
         );
@@ -18,7 +21,7 @@ export default function LogoutButton({ type, className, classNameForIcon }) {
         return (
             <div
                 className={className}
-                onClick={() => logout(modifyAlert, router, isAuthenticatedHandler)}
+                onClick={() => logoutAndShowReults(createAlert, router, isAuthenticatedHandler)}
             >
                 <FontAwesomeIcon icon="sign-out-alt" className={classNameForIcon} />
             </div>
@@ -27,35 +30,27 @@ export default function LogoutButton({ type, className, classNameForIcon }) {
         return (
             <button
                 className="button--primary"
-                onClick={() => logout(modifyAlert, router, isAuthenticatedHandler)}
+                onClick={() => logoutAndShowReults(createAlert, router, isAuthenticatedHandler)}
             >
                 Deloghează-te
             </button>
         );
 }
 
-function logout(modifyAlert, router, isAuthenticatedHandler = null) {
+function logoutAndShowReults(createAlert, router, isAuthenticatedHandler = null) {
     fetch("http://localhost:3000/api/logout", { method: "DELETE" })
         .then((r) => r.json())
         .then(({ ok, err = "A apărut o eroare internă, vă rugăm să ne scuzați." }) => {
             if (!ok) {
-                modifyAlert({
-                    isVisible: true,
-                    props: {
-                        type: 0,
-                        children: err,
-                    },
-                });
-            } else {
-                modifyAlert({
-                    isVisible: true,
-                    props: {
-                        type: 1,
-                        children: "Operațiunea a fost efectuată cu succes.",
-                    },
-                    customToggleHandler: () => router.pathname !== "/" && router.push("/"),
-                });
-                window.__setAuthenticated(false);
+                createAlert({ ofType: "error", saying: err });
+                return;
             }
+
+            createAlert({
+                ofType: "success",
+                onClose: () => router.pathname !== "/" && router.push("/"),
+            });
+
+            if (isAuthenticatedHandler) isAuthenticatedHandler.setAuthenticated(false);
         });
 }
