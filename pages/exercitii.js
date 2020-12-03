@@ -5,7 +5,6 @@ import useComponentDidMount from "../components/_hooks/componentDidMount";
 
 export default function Exercitii() {
   const [grade, setGrade] = useState("ix");
-  const [isLoading, setLoading] = useState(true);
   const router = useRouter();
 
   const { current: grades } = useRef(["ix", "x", "xi"]);
@@ -17,18 +16,15 @@ export default function Exercitii() {
     else setGrade(gradeFromHash);
     router.events.on("hashChangeComplete", () => setGrade(location.hash.substring(1)));
 
-    setLoading(false);
     return () => router.events.off("hashChangeComplete");
   });
 
   return (
     <>
       <HeaderGrades grades={grades} grade={grade} setGrade={setGrade} />
-      {!isLoading && (
-        <div className="exercises-container">
-          {grade === "ix" ? <ExercisesGradeIX /> : grade === "x" ? <ExercisesGradeX /> : <ExercisesGradeXI />}
-        </div>
-      )}
+      <div className="exercises-container">
+        {grade === "ix" ? <ExercisesGradeIX /> : grade === "x" ? <ExercisesGradeX /> : <ExercisesGradeXI />}
+      </div>
       <style jsx>{`
         .exercises-container {
           text-align: center;

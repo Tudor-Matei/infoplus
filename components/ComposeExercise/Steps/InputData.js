@@ -13,7 +13,7 @@ export default function InputData() {
           name="inputData"
           required
           minLength={inputDataStepBoundaries.inputData[0]}
-          minLength={inputDataStepBoundaries.inputData[1]}
+          maxLength={inputDataStepBoundaries.inputData[1]}
           defaultValue={inputData.inputData}
           cols="30"
           rows="10"
@@ -25,8 +25,8 @@ export default function InputData() {
         <textarea
           name="outputData"
           required
-          minLength={inputDataStepBoundaries.outputData[1]}
           minLength={inputDataStepBoundaries.outputData[0]}
+          maxLength={inputDataStepBoundaries.outputData[1]}
           defaultValue={inputData.outputData}
           cols="30"
           rows="10"
@@ -38,8 +38,8 @@ export default function InputData() {
         <textarea
           name="exampleInputData"
           required
-          minLength={inputDataStepBoundaries.exampleInputData[1]}
           minLength={inputDataStepBoundaries.exampleInputData[0]}
+          maxLength={inputDataStepBoundaries.exampleInputData[1]}
           defaultValue={inputData.exampleInputData}
           cols="30"
           rows="10"
@@ -51,8 +51,8 @@ export default function InputData() {
         <textarea
           name="exampleOutputData"
           required
-          minLength={inputDataStepBoundaries.exampleInputData[1]}
-          minLength={inputDataStepBoundaries.exampleInputData[0]}
+          minLength={inputDataStepBoundaries.exampleOutputData[0]}
+          maxLength={inputDataStepBoundaries.exampleOutputData[1]}
           defaultValue={inputData.exampleOutputData}
           cols="30"
           rows="10"

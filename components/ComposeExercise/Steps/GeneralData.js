@@ -29,7 +29,7 @@ export default function GeneralData() {
 
 function InputFields() {
   const { generalData, setGeneralData } = useContext(FieldContext);
-  const { current: difficulties } = useRef(["Ușor", "Mediu", "Greu", "Dificil"]);
+  const { current: difficulties } = useRef(["Ușor", "Mediu", "Provocator", "Dificil"]);
 
   return (
     <>
@@ -180,13 +180,15 @@ function CategoryInputs({ generalData }) {
         </select>
       </InputArea>
 
-      <InputArea
-        title="Subcategorie"
-        optionValues={chapters[generalData.grade][generalData.category[1]].subchapters}
-        onChange={({ target: { selectedIndex } }) => setGeneralData({ type: "subcategory", value: `${selectedIndex}` })}
-        inputProps={{ value: generalData.subcategory }}
-      >
-        <select name="Subcategorie" title="Subcategorie">
+      <InputArea title="Subcategorie">
+        <select
+          name="Subcategorie"
+          title="Subcategorie"
+          value={chapters[generalData.grade][generalData.category[1]].subchapters[generalData.subcategory]}
+          onChange={({ target: { selectedIndex } }) =>
+            setGeneralData({ type: "subcategory", value: `${selectedIndex}` })
+          }
+        >
           {chapters[generalData.grade][generalData.category[1]].subchapters.map((subchapter, i) => (
             <option key={`subcategorie_${i}`}>{subchapter}</option>
           ))}

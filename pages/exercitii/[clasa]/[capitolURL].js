@@ -1,5 +1,3 @@
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-
 import Exercise from "../../../components/ExercisesList/Exercise";
 import { exercisesGradeIX, exercisesGradeX, exercisesGradeXI } from "../../../utils/exercisesGradesData";
 
@@ -10,6 +8,7 @@ import abortableFetch from "../../../utils/abortableFetch";
 import { getMultipleExercisesData } from "../../../utils/getExerciseData";
 import ErrorComponent from "../../../components/_globals/ErrorComponent";
 import strippedDownResponses from "../../../utils/strippedDownResponses";
+import chapters from "../../../utils/chapters";
 
 function getChapterData(grade, capitolURL) {
   switch (grade) {
@@ -130,7 +129,8 @@ function HeaderMainInfo({
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         chapter,
-        subchapterIndex: JSON.stringify(e.target.selectedIndex),
+        chapterIndex: chapters[grade].findIndex(({ titleAlias }) => titleAlias === chapter),
+        subchapterIndex: `${e.target.selectedIndex}`,
       }),
     });
 
@@ -164,7 +164,6 @@ function HeaderMainInfo({
             <option key={`subchapter__${subchapter}`}>{subchapter}</option>
           ))}
         </select>
-        <FilterButton />
       </div>
       <h2>Clasa {grade.toUpperCase()}</h2>
       <style jsx>{`
@@ -268,13 +267,5 @@ function CurrentCategoryTitle({ category, subcategory }) {
         }
       `}</style>
     </div>
-  );
-}
-
-function FilterButton() {
-  return (
-    <button className="button--outline">
-      Filtrați <FontAwesomeIcon icon="filter" />
-    </button>
   );
 }

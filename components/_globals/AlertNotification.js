@@ -7,9 +7,6 @@ export default function AlertNotification({ type, children, closeAlert, onClose 
     <>
       <OverlayDarkener
         onClick={onClose ? () => (onClose(), closeAlert()) : closeAlert}
-        onKeyDown={(e) => (
-          console.log(e.keyCode), e.keyCode === 13 && onClose ? () => (onClose(), closeAlert()) : closeAlert
-        )}
         className="overlay-darkener--alert"
       />
       <div className={`alert alert--type-${type}`}>

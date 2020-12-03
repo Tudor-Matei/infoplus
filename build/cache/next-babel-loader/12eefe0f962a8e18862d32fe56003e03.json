@@ -1,1 +1,0 @@
-{"ast":null,"code":"import { useEffect } from \"react\";\nexport default function useComponentDidMount(callback) {\n  return useEffect(callback, []);\n}","map":null,"metadata":{},"sourceType":"module"}

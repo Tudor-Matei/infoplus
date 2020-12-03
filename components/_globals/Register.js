@@ -5,11 +5,11 @@ import formModal from "../../styles/formModal";
 import OverlayDarkener from "./OverlayDarkener";
 import InputAreas from "../utils/InputAreas";
 import inputAreaRegisterData from "../utils/inputAreaRegisterData";
-import SubmitButton from "../utils/SubmitButton";
 
 import { RegisterModalHandler } from "../Home/Main";
 import { registerBoundaries } from "../../utils/lengthBoundariesForFields";
 import submit from "../../utils/submit";
+import { ShowAlertContext } from "../../pages/_app";
 
 export default function Register() {
   const [userDetails, setUserDetail] = useReducer((state, action) => ({ ...state, [action.type]: action.value }), {
@@ -26,6 +26,7 @@ export default function Register() {
   const [errorMessage, setErrorMessage] = useState(false);
 
   const showRegisterModalHandler = useContext(RegisterModalHandler);
+  const createAlert = useContext(ShowAlertContext);
 
   const modalRef = useRef();
 
@@ -42,14 +43,11 @@ export default function Register() {
         if (!ok) {
           createAlert({ ofType: "error", saying: error });
           setSubmitDisabled(false);
-          setTimeout(() => modalRef.current.scrollBy(0, modalRef.current.scrollHeight), 0);
-
           return;
         }
 
         createAlert({ ofType: "success" });
         showRegisterModalHandler(false);
-        setAuthenticated(true);
       })
       .catch((error) => {
         setSubmitDisabled(false);
@@ -86,17 +84,17 @@ export default function Register() {
                 disabled={isSubmitDisabled}
                 onClick={submitRegisterData}
               >
-                Logare
+                Înregistrare
               </button>
               <button className="button--tertiary" onClick={showRegisterModalHandler}>
                 Renunță
               </button>
+              {errorMessage && (
+                <p className="error-message">
+                  {errorMessage} <FontAwesomeIcon icon="times-circle" />
+                </p>
+              )}
             </div>
-            {errorMessage && (
-              <p className="error-message">
-                {errorMessage} <FontAwesomeIcon icon="times-circle" />{" "}
-              </p>
-            )}
           </div>
         </form>
       </div>

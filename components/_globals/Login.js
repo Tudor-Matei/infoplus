@@ -25,7 +25,6 @@ export default function Login({ cancelDisabled = false }) {
 
   const submitLoginData = useCallback((e) => {
     e.preventDefault();
-    console.log(e.target);
     setSubmitDisabled(true);
     submit({
       to: "http://localhost:3000/api/login",

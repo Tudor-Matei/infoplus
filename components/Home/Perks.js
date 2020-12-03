@@ -16,8 +16,8 @@ export default function Perks() {
         la un click depărtare, construite intuitiv.
       </PerkPanel>
       <PerkPanel title="Utilitate" icon="tools">
-        Am creat pentru acest site utilități care chiar sunt dorite, și folositoare în viața reală, cum ar fi: mod
-        proiector, temă întunecată, și altele.
+        Am creat pentru acest site utilități care chiar sunt dorite, și folositoare în viața reală, cum ar fi: temă
+        întunecată, testare automată a exercițiilor, și altele.
       </PerkPanel>
       <PerkPanel title="Stabilitate" icon="mountain">
         Teama că site-ul poate va fi offline temporar și nu vei mai putea accesa contul și probleme pe care trebuie să

@@ -204,7 +204,7 @@ function handleCompileResponse(
     createAlert({
       ofType: "error",
       saying: err,
-      onClose: err ? () => router.push("/exercitii") : null,
+      onClose: err && !err.startsWith("lol") ? () => router.push("/exercitii") : null,
     });
     return { executionWasAllowed: false, totalPointsGained: null };
   }
