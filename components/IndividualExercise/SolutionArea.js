@@ -1,10 +1,10 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useContext, useState, useCallback } from "react";
+import { useCallback, useContext, useState } from "react";
 
-import { SolutionAreaContext } from "../../pages/exercitiu/[title]";
+import { useRouter } from "next/router";
 import isEmpty from "validator/lib/isEmpty";
 import { ShowAlertContext } from "../../pages/_app";
-import { useRouter } from "next/router";
+import { SolutionAreaContext } from "../../pages/exercitiu/[title]";
 import formatMonth from "../../utils/formatMonth";
 import omitKey from "../../utils/omitKey";
 
@@ -108,7 +108,7 @@ function SendSolutionButton({ solution, setErrorMessage, toggleResultsComponent 
   const router = useRouter();
 
   const sendSolution = useCallback(() => {
-    if (isEmpty(solution)) return setErrorMessage("Nici o soluție nu a fost introdusă.");
+    if (isEmpty(solution)) return setErrorMessage("Nicio soluție nu a fost introdusă.");
 
     setLoading(true);
     sendToCompile({ solution, tests, maxExecutionTime, maxMemory })

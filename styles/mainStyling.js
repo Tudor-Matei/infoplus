@@ -1,6 +1,8 @@
 import css from "styled-jsx/css";
 
 export default css.global`
+  @import url("https://fonts.googleapis.com/css2?family=Red+Hat+Display:ital,wght@0,300..900;1,300..900&display=swap");
+
   * {
     box-sizing: border-box;
   }
@@ -40,6 +42,7 @@ export default css.global`
   a {
     color: inherit;
     font-weight: 800;
+    text-decoration: none;
   }
 
   ul {

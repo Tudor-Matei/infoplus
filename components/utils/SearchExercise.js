@@ -1,6 +1,6 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useContext, useState } from "react";
 import { useRouter } from "next/router";
+import { useContext, useState } from "react";
 
 import { ShowAlertContext } from "../../pages/_app";
 
@@ -48,7 +48,7 @@ function SearchInput({ inputWidth, style, setSearch }) {
             return;
           }
 
-          router.push(`/exercitiu/${escape(searchText)}`);
+          router.push(`/exercitiu/${searchText}`);
         }}
       >
         <input

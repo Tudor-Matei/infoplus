@@ -2,7 +2,7 @@ import { getMultipleExercisesData } from "../../../utils/getExerciseData";
 import strippedDownResponses from "../../../utils/strippedDownResponses";
 
 export default async (req, res) => {
-  if (!req.body || !req.body.chapter || !req.body.chapterIndex || !req.body.subchapterIndex)
+  if (!req.body || !req.body.chapter || req.body.chapterIndex == null || !req.body.subchapterIndex)
     return res.status(404).json({ data: null, err: "Nu au fost găsite exerciții de acest tip." });
 
   const { data, err } = await getMultipleExercisesData({

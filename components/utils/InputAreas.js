@@ -5,7 +5,7 @@ export default function InputAreas({ onChange, inputAreaData }) {
     ({ title, subtitle = "", fieldName = "", isSelect = false, optionValues = [], inputProps = {} }, i) => (
       <InputArea title={title} subtitle={subtitle} key={`input__${i}-fields`}>
         {isSelect ? (
-          <select title={title} name={fieldName || title}>
+          <select onChange={onChange} title={title} name={fieldName || title}>
             {optionValues.map((optionValue, i) => (
               <option key={`option_${i}-value_${optionValue}`}>{optionValue}</option>
             ))}

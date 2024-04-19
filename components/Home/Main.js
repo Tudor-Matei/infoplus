@@ -1,12 +1,12 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import Register from "../_globals/Register";
 import Link from "next/link";
+import Register from "../_globals/Register";
 
-import { useState, createContext, useContext } from "react";
+import { createContext, useContext, useState } from "react";
 
-import { ShowLoginContext, LoggedInDataContext } from "../../pages/_app";
-import LogoutButton from "../utils/LogoutButton";
+import { LoggedInDataContext, ShowLoginContext } from "../../pages/_app";
 import ShapesArt from "../_globals/ShapesArt";
+import LogoutButton from "../utils/LogoutButton";
 
 const RegisterModalHandler = createContext(null);
 export { RegisterModalHandler };
@@ -51,7 +51,7 @@ export default function Main() {
               )}
             </p>
           </div>
-          <Button type="button--secondary" title="Vezi mai multe" icon="ellipsis-h" link="/informatii" />
+          <Button type="button--secondary" title="Către Exerciții" icon="dumbbell" link="/exercitii" />
         </div>
       </div>
       <Wave />

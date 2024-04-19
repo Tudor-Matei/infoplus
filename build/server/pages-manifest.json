@@ -1,1 +1,14 @@
-{"/_app":"static/development/pages/_app.js","/_document":"static/development/pages/_document.js","/_error":"static/development/pages/_error.js"}
+{
+  "/_app": "pages/_app.js",
+  "/_error": "pages/_error.js",
+  "/_document": "pages/_document.js",
+  "/exercitii": "pages/exercitii.js",
+  "/": "pages/index.js",
+  "/dashboard": "pages/dashboard.js",
+  "/api/logout": "pages/api/logout.js",
+  "/api/login": "pages/api/login.js",
+  "/exercitii/compuse-de-mine": "pages/exercitii/compuse-de-mine.js",
+  "/exercitii/[clasa]/[capitolURL]": "pages/exercitii/[clasa]/[capitolURL].js",
+  "/api/exercises": "pages/api/exercises.js",
+  "/exercitiu/[title]": "pages/exercitiu/[title].js"
+}

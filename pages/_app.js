@@ -1,18 +1,19 @@
-import { createContext, useState, useEffect, useReducer, useMemo } from "react";
+import jwt from "jsonwebtoken";
 import Router from "next/router";
+import { createContext, useEffect, useMemo, useReducer, useState } from "react";
 
 import "../configs/icons";
 import mainStyling from "../styles/mainStyling";
 
-import Header from "../components/_globals/Header";
 import Contact from "../components/_globals/Contact";
 import Footer from "../components/_globals/Footer";
+import Header from "../components/_globals/Header";
 
-import AlertNotification from "../components/_globals/AlertNotification";
-import RouteLoadingBar from "../components/_globals/RouteLoadingBar";
 import { parse } from "cookie";
-import Login from "../components/_globals/Login";
+import AlertNotification from "../components/_globals/AlertNotification";
 import DataPanel from "../components/_globals/DataPanel";
+import Login from "../components/_globals/Login";
+import RouteLoadingBar from "../components/_globals/RouteLoadingBar";
 import { alertNotification } from "../components/_globals/reducers";
 
 export const ThemeContext = createContext(true),
@@ -32,6 +33,7 @@ export default function App({ Component, pageProps }) {
   const [panelData, setPanelData] = useReducer((_, action) => action.value, "");
 
   const [isAuthenticated, setAuthenticated] = useState(false);
+  const [profession, setProfession] = useState("Elev");
   const [loginModalVisible, setLoginModalVisible] = useState(false);
   const showLoginModal = () => setLoginModalVisible(!loginModalVisible);
 
@@ -41,9 +43,14 @@ export default function App({ Component, pageProps }) {
     // nu conteaza daca este sters cookie-ul de catre client pentru ca putem
     // verifica pe server daca este autentificat cu refreshToken-ul
     const cookies = document.cookie && parse(document.cookie);
+    if (cookies && cookies["_accessToken"]) {
+      const userData = jwt.decode(cookies["_accessToken"]);
+      if (!userData) return;
+      if (!isAuthenticated) setAuthenticated(true);
 
-    if (!isAuthenticated && cookies && cookies["_accessToken"]) setAuthenticated(true);
-  }, [isAuthenticated]);
+      setProfession(userData.profession);
+    }
+  }, [isAuthenticated, profession]);
 
   return (
     <>
@@ -62,7 +69,7 @@ export default function App({ Component, pageProps }) {
       )}
       <RouteLoadingBar />
 
-      <LoggedInDataContext.Provider value={{ isAuthenticated, setAuthenticated }}>
+      <LoggedInDataContext.Provider value={{ isAuthenticated, profession, setAuthenticated }}>
         <ShowLoginContext.Provider value={showLoginModal}>
           <ShowAlertContext.Provider value={createAlert}>
             <Header />

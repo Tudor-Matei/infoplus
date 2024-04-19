@@ -5,8 +5,8 @@ import StepsDisplayer from "../../components/ComposeExercise/StepsDisplayer";
 import { composeExercisesView } from "../../components/ComposeExercise/reducers";
 import HasAuthentication from "../../components/utils/HasAuthentication";
 import getAuthInfo from "../../utils/getAuthInfo";
-import strippedDownResponses from "../../utils/strippedDownResponses";
 import { getMultipleExercisesData } from "../../utils/getExerciseData";
+import strippedDownResponses from "../../utils/strippedDownResponses";
 export const ComposeExercisesViewContext = createContext(null);
 
 function exitWith(err) {
@@ -16,6 +16,7 @@ function exitWith(err) {
 export async function getServerSideProps({ req, res }) {
   const { authenticated, userData, err } = await getAuthInfo(req, res);
   if (!authenticated) return exitWith(err);
+  if (userData?.profession !== "Profesor") return exitWith("Nu ai acces la aceasta pagină.");
 
   const { data: exercisesData, err: exercisesDataErr } = await getMultipleExercisesData({
     lookAfter: { author: `${userData.name} ${userData.surname}` },

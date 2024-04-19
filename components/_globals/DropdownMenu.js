@@ -1,9 +1,9 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useState, useContext } from "react";
 import Link from "next/link";
+import { useContext, useState } from "react";
 
-import useComponentDidMount from "../_hooks/componentDidMount";
 import { LoggedInDataContext } from "../../pages/_app";
+import useComponentDidMount from "../_hooks/componentDidMount";
 import SearchExercise from "../utils/SearchExercise";
 
 export default function DropdownMenu({ isDropdownToggled }) {
@@ -37,7 +37,7 @@ export default function DropdownMenu({ isDropdownToggled }) {
 }
 
 function DropdownMenuUl() {
-  const { isAuthenticated } = useContext(LoggedInDataContext);
+  const { isAuthenticated, profession } = useContext(LoggedInDataContext);
   return (
     <>
       <ul className="dropdown-menu-header__ul">
@@ -53,16 +53,8 @@ function DropdownMenuUl() {
           ]}
         </DropdownMenuAccordion>
         <hr className="dropdown-menu-header__hr" />
-        <DropdownMenuAccordion title="Resurse">
-          {[
-            { titleLi: "Clasa IX", href: "/resurse/ix" },
-            { titleLi: "Clasa X", href: "/resurse/x" },
-            { titleLi: "Clasa XI", href: "/resurse/xi" },
-          ]}
-        </DropdownMenuAccordion>
-        <hr className="dropdown-menu-header__hr" />
         <ThemeChangerButton />
-        {isAuthenticated && (
+        {isAuthenticated && profession === "Profesor" && (
           <>
             <hr className="dropdown-menu-header__hr" />
             <Link href="/exercitii/compuse-de-mine">
